@@ -34,6 +34,8 @@
         </div>
     </body>
 </html> --}}
+
+
 @extends('adminlte::page')
 
 @section('content')
@@ -41,3 +43,37 @@
   @yield('main')
 </div>
 @endsection
+
+
+{{-- <!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config('app.name', 'Laravel') }}</title>
+
+  <!-- Estilos de Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="font-sans antialiased bg-gray-100">
+
+  <!-- Navegación o Header -->
+  <header>
+    <!-- Aquí va tu header de navegación -->
+  </header>
+
+  <!-- Contenido Principal -->
+  <main>
+    {{ $slot }}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-4 text-center">
+    &copy; {{ date('Y') }} Fraschina SRL. Todos los derechos reservados.
+  </footer>
+
+</body>
+
+</html> --}}

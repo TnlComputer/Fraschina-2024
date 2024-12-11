@@ -21,9 +21,9 @@
 <body class="font-sans antialiased bg-gradient-to-b from-gray-100 via-white to-gray-200 min-h-screen">
 
   <!-- Header fijo -->
-  <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+  <header class="fixed top-0 left-0 right-0 bg-slate-800 shadow-md z-50">
     <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="/" class="text-lg font-semibold text-gray-700">Fraschina SRL</a>
+      <a href="/" class="text-lg font-semibold text-gray-300">Fraschina SRL</a>
       <div>
         <a href="{{ route('login') }}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
           Login
@@ -36,19 +36,19 @@
   <main class="pt-20 min-h-screen bg-cover bg-center flex flex-col items-center justify-between"
     style="background-image: url('{{ asset('assets/img/CENTRO-DISTRIBUCION-1920x1181.jpg') }}');">
     <!-- Título superior -->
-    <div class=" mt-48 text-center">
-      <h1 class="text-3xl font-bold text-black">
+    <div class="mt-44 text-center bg-opacity-80">
+      <h1 class=" text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-black ">
         Bienvenido a Fraschina SRL
       </h1>
     </div>
 
     <!-- Texto antes del footer -->
     <div class="flex-grow"></div>
-    <div class="max-w-2xl mx-auto p-6 bg-white bg-opacity-80 rounded-lg shadow mb-16">
+    {{-- <div class="max-w-2xl mx-auto p-6 bg-white bg-opacity-80 rounded-lg shadow mb-16">
       <p class="text-center text-gray-600">
         Accede al sistema usando el botón de login en el menú.
       </p>
-    </div>
+    </div> --}}
   </main>
 
   <!-- Footer -->

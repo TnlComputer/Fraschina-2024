@@ -1,20 +1,44 @@
 <?php
 
+use App\Http\Controllers\AgendaGralController;
+use App\Http\Controllers\AgroController;
+use App\Http\Controllers\DistribucionController;
+use App\Http\Controllers\MolinoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\RepresentacionController;
+use App\Http\Controllers\ToolController;
+use App\Http\Controllers\TransporteController;
+use App\Models\AgendaGral;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+  return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//   Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//   Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+//   Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
-require __DIR__.'/auth.php';
+Route::middleware('auth')->get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::middleware('auth')->patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::middleware('auth')->patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.updateEmail');
+Route::middleware('auth')->patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+
+Route::middleware('auth')->get('/representacion', [RepresentacionController::class, 'index'])->name('representacion.index');
+Route::middleware('auth')->get('/distribucion', [DistribucionController::class, 'index'])->name('distribucion.index');
+Route::middleware('auth')->get('/agro', [AgroController::class, 'index'])->name('agro.index');
+Route::middleware('auth')->get('/proveedor', [ProveedorController::class, 'index'])->name('proveedor.index');
+Route::middleware('auth')->get('/transporte', [TransporteController::class, 'index'])->name('transporte.index');
+Route::middleware('auth')->get('/tools', [ToolController::class, 'index'])->name('tools.index');
+Route::middleware('auth')->get('/molinos', [MolinoController::class, 'index'])->name('molino.index');
+Route::middleware('auth')->resource('AgendaGral', AgendaGralController::class);
+
+require __DIR__ . '/auth.php';
