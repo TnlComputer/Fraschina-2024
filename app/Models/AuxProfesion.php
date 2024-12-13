@@ -9,7 +9,21 @@ class AuxProfesion extends Model
 {
   use HasFactory;
 
-  protected $table = 'auxprofesion';
+  protected $table = 'auxprofesiones';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'nombreprofesion',
+    'representaciones',
+    'distribuciones',
+    'molinos',
+    'proveedores',
+    'agros',
+    'transportes',
+    'agendas'
+  ];
+
+  public function agendas()
+  {
+    return $this->hasMany(AgendaGral::class, 'cod_prof');
+  }
 }

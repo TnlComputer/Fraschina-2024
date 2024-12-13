@@ -1,85 +1,3 @@
-{{-- @extends('adminlte::page')
-
-@section('content')
-<div class="container">
-  <div class="py-2">
-    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-4 text-gray-900">
-          <div class="d-flex justify-content-between mb-3">
-            <form action="#" method="get">
-              <input type="text" placeholder="Type to search" name="name" value="{{ $name }}" class="form-control"
-                style="width: 300px; display: inline;">
-              <button type="submit" class="btn btn-primary">Buscar</button>
-            </form>
-            <a href="{{ route('AgendaGral.create') }}" class="btn btn-success">Nuevo</a>
-          </div>
-
-          <table class="table table-striped table-bordered table-hover table-sm">
-            <thead>
-              <tr class="text-xs">
-                <th>Nombre y Apellido</th>
-                <th>Empresa-Institución</th>
-                <th>Profesión-Especialidad-Oficio</th>
-                <th>Teléfono Particular</th>
-                <th>Teléfono Laboral</th>
-                <th>Int</th>
-                <th>Celular</th>
-                <th>Email</th>
-                <th>Dirección</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse($agendaGral as $agenda)
-              <tr class="text-xs">
-                <td>{{ $agenda->Nombre }} {{ $agenda->Apellido }}</td>
-                <td>{{ $agenda->Empresa_Institucion }}</td>
-                <td>{{ $agenda->Profesion_Especialidad_Oficio }}</td>
-                <td>{{ $agenda->Tel_Particular }}</td>
-                <td>{{ $agenda->Tel_Laboral }}</td>
-                <td>{{ $agenda->Interno }}</td>
-                <td>{{ $agenda->Celular }}</td>
-                <td>{{ $agenda->Mail }}</td>
-                <td>{{ $agenda->Direccion }}</td>
-                <td>{{ $agenda->Observaciones }}</td>
-                <td>
-                  <div class="btn-group" role="group">
-                    <a href="{{ route('AgendaGral.edit', $agenda->IDagenda) }}" class="btn btn-sm btn-primary">
-                      <i class="fa-solid fa-pen-to-square fa-xs"></i>
-                    </a>
-                    <form method="POST" action="{{ route('AgendaGral.destroy', $agenda->IDagenda) }}"
-                      style="display: inline;">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa-solid fa-trash fa-xs"></i>
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-              @empty
-              <tr>
-                <td colspan="12" class="text-center">No hay registros para mostrar...</td>
-              </tr>
-              @endforelse
-            </tbody>
-          </table>
-
-          <div class="d-flex justify-content-center">
-            {{ $agendaGral->links('pagination::bootstrap-4') }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-@endsection --}}
-
-
-
 @extends('adminlte::page')
 
 @section('content')
@@ -120,22 +38,22 @@
               <tbody>
                 @forelse($agendaGral as $agenda)
                 <tr class="text-xs">
-                  <td>{{ $agenda->Nombre }} {{ $agenda->Apellido }}</td>
-                  <td>{{ $agenda->Empresa_Institucion }}</td>
-                  <td>{{ $agenda->Profesion_Especialidad_Oficio }}</td>
-                  <td>{{ $agenda->Tel_Particular }}</td>
-                  <td>{{ $agenda->Tel_Laboral }}</td>
-                  <td>{{ $agenda->Interno }}</td>
-                  <td>{{ $agenda->Celular }}</td>
-                  <td>{{ $agenda->Mail }}</td>
-                  <td>{{ $agenda->Direccion }}</td>
-                  <td>{{ $agenda->Observaciones }}</td>
+                  <td>{{ $agenda->nombre }} {{ $agenda->apellido }}</td>
+                  <td>{{ $agenda->empresa_institucion }}</td>
+                  <td>{{ $agenda->profesion_especialidad_oficio }}</td>
+                  <td>{{ $agenda->tel_particular }}</td>
+                  <td>{{ $agenda->tel_laboral }}</td>
+                  <td>{{ $agenda->interno }}</td>
+                  <td>{{ $agenda->celular }}</td>
+                  <td>{{ $agenda->mail }}</td>
+                  <td>{{ $agenda->direccion }}</td>
+                  <td>{{ $agenda->observaciones }}</td>
                   <td>
                     <div class="btn-group" role="group">
-                      <a href="{{ route('AgendaGral.edit', $agenda->IDagenda) }}" class="btn btn-sm btn-primary">
+                      <a href="{{ route('AgendaGral.edit', $agenda->id) }}" class="btn btn-sm btn-primary">
                         <i class="fa-solid fa-pen-to-square fa-xs"></i>
                       </a>
-                      <form method="POST" action="{{ route('AgendaGral.destroy', $agenda->IDagenda) }}"
+                      <form method="POST" action="{{ route('AgendaGral.destroy', $agenda->id) }}"
                         style="display: inline;">
                         @csrf
                         @method('DELETE')

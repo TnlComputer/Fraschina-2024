@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
   /**
    * Run the migrations.
    */
@@ -18,7 +17,8 @@ return new class extends Migration
       $table->string('nomApe', 200)->nullable();
       $table->string('empresa_institucion')->nullable();
       $table->string('profesion_especialidad_oficio')->nullable();
-      $table->unsignedBigInteger('cod_prof')->nullable();
+      $table->unsignedBigInteger('cod_prof')->nullable(); // Clave foránea
+      $table->foreign('cod_prof')->references('id')->on('auxprofesiones')->onDelete('set null');
       $table->string('tel_particular', 100)->nullable();
       $table->string('tel_laboral', 100)->nullable();
       $table->string('interno', 20)->nullable();
@@ -29,7 +29,7 @@ return new class extends Migration
       $table->string('buscador1', 800)->nullable();
       $table->string('buscador2', 800)->nullable();
       $table->string('buscador3', 800)->nullable();
-      $table->string('status', 1)->nullable();
+      $table->boolean('status', 1)->nullable();
       $table->timestamps();
     });
   }
