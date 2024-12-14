@@ -15,7 +15,7 @@ return new class extends Migration
       $table->id();
       $table->date('fecha')->nullable();
       $table->unsignedBigInteger('tadea_id')->nullable();
-      $table->decimal('cantidad', 8, 0)->nullable();
+      $table->integer('cantidad')->nullable();
       $table->string('linea', 2)->nullable();
       $table->string('bandera', 2)->nullable();
       $table->unsignedBigInteger('distribucion_id');

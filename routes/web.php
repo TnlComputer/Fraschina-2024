@@ -32,13 +32,13 @@ Route::middleware('auth')->patch('/profile', [ProfileController::class, 'update'
 Route::middleware('auth')->patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.updateEmail');
 Route::middleware('auth')->patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
-Route::middleware('auth')->get('/representacion', [RepresentacionController::class, 'index'])->name('representacion.index');
-Route::middleware('auth')->get('/distribucion', [DistribucionController::class, 'index'])->name('distribucion.index');
-Route::middleware('auth')->get('/agro', [AgroController::class, 'index'])->name('agro.index');
-Route::middleware('auth')->get('/proveedor', [ProveedorController::class, 'index'])->name('proveedor.index');
-Route::middleware('auth')->get('/transporte', [TransporteController::class, 'index'])->name('transporte.index');
-Route::middleware('auth')->get('/tools', [ToolController::class, 'index'])->name('tools.index');
-Route::middleware('auth')->get('/molinos', [MolinoController::class, 'index'])->name('molino.index');
+Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
+Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
+Route::middleware('auth')->resource('/agro', AgroController::class);
+Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
+Route::middleware('auth')->resource('/transporte', TransporteController::class);
+Route::middleware('auth')->resource('/tools', ToolController::class);
+Route::middleware('auth')->resource('/molinos', MolinoController::class);
 Route::middleware('auth')->resource('AgendaGral', AgendaGralController::class);
 
 require __DIR__ . '/auth.php';

@@ -16,11 +16,11 @@ return new class extends Migration
       $table->unsignedBigInteger('pedido_id')->nullable();
       $table->date('fecha')->nullable();
       $table->unsignedBigInteger('producto_id')->nullable();
-      $table->decimal('cantidad', 8, 0)->nullable();
-      $table->double('precio_unitario', 12, 2)->nullable();
+      $table->integer('cantidad')->nullable();
+      $table->decimal('precio_unitario', 12, 2)->nullable();
       $table->string('totalPedido', 12)->nullable();
-      $table->double('totalPedidoN', 12, 2)->nullable();
-      $table->double('total_factura', 12, 2)->nullable();
+      $table->decimal('totalPedidoN', 12, 2)->nullable();
+      $table->decimal('total_factura', 12, 2)->nullable();
       $table->string('nombre_producto', 120)->nullable();
       $table->string('linea', 2)->nullable();
       $table->string('bandera', 2)->nullable();
@@ -29,14 +29,14 @@ return new class extends Migration
       $table->string('prePed', 1)->nullable();
       $table->string('cambiar', 2)->nullable();
       $table->string('retirar', 2)->nullable();
-      $table->decimal('estado_pedido', 1, 0)->nullable();
-      $table->decimal('estado_tarea', 1, 0)->nullable();
+      $table->string('estado_pedido', 1, 0)->nullable();
+      $table->string('estado_tarea', 1, 0)->nullable();
       $table->string('chofer', 2)->nullable();
-      $table->decimal('orden', 1, 0)->nullable();
+      $table->string('orden', 2, 0)->nullable();
       $table->date('fechaFactura')->nullable();
-      $table->decimal('nroFactura', 20)->nullable();
-      $table->decimal('estado_stock', 1, 0)->nullable();
-      $table->string('status', 1)->nullable();
+      $table->string('nroFactura', 20)->nullable();
+      $table->string('estado_stock', 1, 0)->nullable();
+      $table->integer('status', 1)->nullable();
       $table->timestamps();
     });
   }

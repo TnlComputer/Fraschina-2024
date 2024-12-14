@@ -1,0 +1,63 @@
+INSERT INTO fraschina_2024.representacions (
+    id,
+    razonsocial,
+    dire_calle,
+    dire_nro,
+    piso,
+    codpost,
+    dire_obs,
+    barrio_id,
+    localidad_id,
+    municipio_id,
+    zona_id,
+    telefono,
+    fax,
+    cuit,
+    excenciones,
+    iva_id,
+    infoenparticular,
+    info,
+    contacto,
+    horario,
+    objetivos,
+    comentarios,
+    fechagira,
+    correo,
+    dpto,
+    status,
+    created_at,
+    updated_at
+)
+SELECT
+    Idcliente AS id,
+    RazonSocial AS razonsocial,
+    dire_calle,
+    dire_nro,
+    piso,
+    codpos AS codpost,
+    dire_obs,
+    Idbarrio AS barrio_id,
+    Idlocalidad AS localidad_id,
+    IdMunicipio AS municipio_id,
+    Zona AS zona_id,
+    Telefono AS telefono,
+    Fax AS fax,
+    CUIT AS cuit,
+    Excenciones AS excenciones,
+    Idiva AS iva_id,
+    INFOenParticular AS infoenparticular,
+    Info AS info,
+    Contacto AS contacto,
+    Horario AS horario,
+    Objetivos AS objetivos,
+    Comentarios AS comentarios,
+    FechaGira AS fechagira,
+    correo,
+    dpto,
+    'A' AS status,  -- Asignar un valor constante para el campo 'status' si es necesario (por ejemplo 'A' para activo)
+    CURRENT_TIMESTAMP AS created_at,  -- Fecha y hora actual para created_at
+    CURRENT_TIMESTAMP AS updated_at  -- Fecha y hora actual para updated_at
+FROM fraschin_backup.clientes
+WHERE 
+    Idcliente IS NOT NULL;  -- Asegurarse de que 'Idcliente' no sea nulo
+
