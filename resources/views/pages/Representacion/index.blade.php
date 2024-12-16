@@ -1,36 +1,100 @@
 @extends('adminlte::page')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <!-- Cambio de Nombre -->
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('Representación') }}</h3>
-        </div>
-        <div class="card-body">
-          <!-- Formulario de Nombre -->
-          {{-- <form method="post" action="{{ route('profile.update') }}" class="mt-4 space-y-6">
-            @csrf
-            @method('patch')
+    <div class="col-12">
+      <div class="card-header">
+        <h3 class="card-title">{{ __('Representación') }}</h3>
+      </div>
+      <div class="col-12">
+        <div class="py-2">
+          <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+              <div class="p-2 text-gray-900 text-left text-xs">
+                <div class="barra__index d-flex justify-content-between align-items-center mb-3">
+                  <div class="div__nuevo">
+                    <form action="{{ route('representacion.create') }}">
+                      <input class="btn btn-primary" type="submit" value="Nuevo">
+                    </form>
+                  </div>
+                  <div class="div__buscar d-flex">
+                    <form method="get" action="{{ route('representacion.index') }}" class="form__buscar d-flex">
+                      @csrf
+                      <input type="text" placeholder="Buscar por nombre" name="name" value="{{ $name }}"
+                        class="form-control me-2" style="max-width: 350px;">
+                      <input type="submit" value="Buscar" class="btn btn-secondary">
+                    </form>
+                  </div>
+                </div>
+                <table class="table table-sm table-striped table-bordered w-100">
+                  <thead>
+                    <tr>
+                      <th class="">Razón social</th>
+                      <th class="">Dirección</th>
+                      <th class="">Barrio</th>
+                      <th class="">Localidad</th>
+                      <th class="">Zona</th>
+                      <th class="">Teléfono</th>
+                      <th class="">Email</th>
+                      <th class="">Cuit</th>
+                      <th class="">Marcas</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  @forelse($representaciones as $representacion)
+                  <tr>
+                    <td data-titulo="Razón social">{{ $representacion->razonsocial }}</td>
+                    <td data-titulo="Dirección">
+                      {{ $representacion->dire_calle }}
+                      {{ $representacion->dire_nro }}
+                      @if($representacion->piso != '')
+                      {{ $representacion->piso }}
+                      @endif
+                      @if($representacion->dpto != '')
+                      Piso {{ $representacion->dpto }}
+                      @endif
+                      @if($representacion->codpost != '')
+                      - ({{ $representacion->codpost }})
+                      @endif
+                    </td>
+                    <td data-titulo="Barrio">{{ $representacion->barrio }}</td>
+                    <td data-titulo="Localidad">{{ $representacion->localidad }}</td>
+                    <td data-titulo="Zona">{{ $representacion->zona }}</td>
+                    <td data-titulo="Teléfono">{{ $representacion->telefono }}</td>
+                    <td class="" data-titulo="Email">{{ $representacion->correo }}</td>
+                    <td data-titulo="Cuit">{{ $representacion->cuit }}</td>
+                    <td data-titulo="Marcas">{{ $representacion->marcas }}</td>
+                    <td class=" d-flex justify-content-between">
+                      <a href="{{ route('representacion.show', $representacion->id) }}" class="btn-xs btn-info"
+                        title="Ver">
+                        <i class="fa-regular fa-eye fa-xs align-middle"></i>
+                      </a>
+                      <a href="{{ route('representacion.edit', $representacion->id) }}" class="btn-xs btn-warning"
+                        title="Editar">
+                        <i class="fa-solid fa-pen-to-square fa-xs "></i>
+                      </a>
+                      <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
+                        onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-xs btn-danger" title="Eliminar">
+                          <i class="fa-solid fa-trash fa-xs"></i>
+                        </button>
+                      </form>
+                    </td>
 
-            <div class="form-group">
-              <label for="name" class="form-label">{{ __('Name') }}</label>
-              <input id="name" name="name" type="text" class="form-control mt-1 block w-full"
-                value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
-              @error('name')
-              <div class="text-danger mt-2">{{ $message }}</div>
-              @enderror
+                  </tr>
+                  @empty
+                  <p>No hay registros para mostrar...</p>
+                  @endforelse
+                </table>
+                {{ $representaciones->links() }}
+              </div>
             </div>
-
-            <div class="d-flex justify-content-between">
-              <button type="submit" class="btn btn-primary">{{ __('Save Name') }}</button>
-            </div>
-          </form> --}}
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-@endsection
+  @endsection

@@ -38,7 +38,7 @@ Route::middleware('auth')->resource('/agro', AgroController::class);
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 Route::middleware('auth')->resource('/transporte', TransporteController::class);
 Route::middleware('auth')->resource('/tools', ToolController::class);
-Route::middleware('auth')->resource('/molinos', MolinoController::class);
+Route::middleware('auth')->resource('/molino', MolinoController::class);
 Route::middleware('auth')->resource('AgendaGral', AgendaGralController::class);
 
 require __DIR__ . '/auth.php';

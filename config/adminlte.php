@@ -320,8 +320,8 @@ return [
       'icon' => 'fas fa-fw fa-truck',
     ],
     [
-      'text' => 'Molinos',
-      'url' => 'molinos',
+      'text' => 'Molino',
+      'url' => 'molino',
       'icon' => 'fas fa-fw fa-industry',
     ],
     [

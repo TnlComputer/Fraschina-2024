@@ -48,16 +48,16 @@
                   <td>{{ $agenda->mail }}</td>
                   <td>{{ $agenda->direccion }}</td>
                   <td>{{ $agenda->observaciones }}</td>
-                  <td>
+                  <td class=" d-flex justify-content-between">
                     <div class="btn-group" role="group">
-                      <a href="{{ route('AgendaGral.edit', $agenda->id) }}" class="btn btn-sm btn-primary">
+                      <a href="{{ route('AgendaGral.edit', $agenda->id) }}" class="btn-xs btn-info">
                         <i class="fa-solid fa-pen-to-square fa-xs"></i>
                       </a>
                       <form method="POST" action="{{ route('AgendaGral.destroy', $agenda->id) }}"
                         style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger">
+                        <button type="submit" class="btn-xs btn-danger">
                           <i class="fa-solid fa-trash fa-xs"></i>
                         </button>
                       </form>
