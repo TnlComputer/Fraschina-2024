@@ -30,8 +30,6 @@
                 <table class="table table-sm table-striped table-bordered w-100">
                   <thead>
                     <tr>
-                      <th></th>
-                      <th></th>
                       <th>Razón social</th>
                       <th colspan="4">Dirección</th>
                       <th>Cod.Post</th>

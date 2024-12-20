@@ -11,5 +11,31 @@ class DistribucionLineaPedidos extends Model
 
   protected $table = 'distribucion_linea_pedidos';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'pedido_nro',
+    'id_linea',
+    'fecha',
+    'producto_id',
+    'cantidad',
+    'precio_unitario',
+    'totalPedido',
+    'totalPedidoN',
+    'total_factura',
+    'nombre_producto',
+    'linea',
+    'bandera',
+    'distribucion_id',
+    'fechaEntrega',
+    'prePed',
+    'cambiar',
+    'retirar',
+    'estado_pedido',
+    'estado_tarea',
+    'chofer',
+    'orden',
+    'fechaFactura',
+    'nroFactura',
+    'estado_stock',
+    'status',
+  ];
 }

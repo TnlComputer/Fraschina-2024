@@ -38,9 +38,13 @@ return new class extends Migration
     //   $table->string('estado_stock', 1, 0)->nullable();
     //   $table->integer('status', 1)->nullable();
     //   $table->timestamps();
+
+
+
     Schema::create('distribucion_linea_pedidos', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('pedido_id')->nullable();
+      $table->unsignedBigInteger('pedido_nro')->nullable();
+      // $table->unsignedBigInteger('lineapedidos_id')->nullable();
       $table->date('fecha')->nullable();
       $table->unsignedBigInteger('producto_id')->nullable();
       $table->integer('cantidad')->nullable();
@@ -67,9 +71,9 @@ return new class extends Migration
       $table->timestamps();
 
       // Claves foráneas
-      $table->foreign('pedido_id')->references('nropedido')->on('distribucion_nropedidos')->onDelete('cascade');
-      $table->foreign('producto_id')->references('id')->on('distribucion_productos')->onDelete('cascade');
-      $table->foreign('distribucion_id')->references('id')->on('distribucions')->onDelete('cascade');
+      // $table->foreign('lineapedidos_id')->references('id_linea')->on('lineapedidos')->onDelete('cascade');
+      // $table->foreign('producto_id')->references('id')->on('distribucion_productos')->onDelete('cascade');
+      // $table->foreign('distribucion_id')->references('id')->on('distribucions')->onDelete('cascade');
     });
   }
 

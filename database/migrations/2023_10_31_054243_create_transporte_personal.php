@@ -20,7 +20,7 @@ return new class extends Migration
       $table->unsignedBigInteger('cargo_id')->nullable();
       $table->unsignedBigInteger('categoriacargo_id')->nullable();
       $table->string('teldirecto', 50)->nullable();
-      $table->string('interno', 4)->nullable();
+      $table->string('interno', 50)->nullable();
       $table->string('telcelular', 50)->nullable();
       $table->unsignedBigInteger('profesion_id')->nullable();
       $table->string('telparticular', 50)->nullable();
