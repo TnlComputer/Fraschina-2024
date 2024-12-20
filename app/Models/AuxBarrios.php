@@ -12,4 +12,9 @@ class AuxBarrios extends Model
   protected $table = 'auxbarrios';
 
   protected $guarded = [];
+
+  public function representacions()
+  {
+    return $this->hasMany(Representacion::class);
+  }
 }

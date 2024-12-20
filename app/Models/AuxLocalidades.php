@@ -12,4 +12,9 @@ class AuxLocalidades extends Model
   protected $table = 'auxlocalidades';
 
   protected $guarded = [];
+
+  public function representacions()
+  {
+    return $this->hasMany(Representacion::class);
+  }
 }

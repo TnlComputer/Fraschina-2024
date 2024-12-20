@@ -13,7 +13,7 @@ return new class extends Migration
   {
     Schema::create('distribucion_nropedidos', function (Blueprint $table) {
       $table->id();
-      $table->string('nropedido')->nullable();
+      $table->unsignedBigInteger('nropedido')->unique();
       $table->unsignedBigInteger('distribucion_id');
       $table->date('fecha')->nullable();
       $table->string('reservado', 2)->nullable();

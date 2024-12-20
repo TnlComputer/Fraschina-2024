@@ -84,10 +84,13 @@
                       </form>
                     </td>
 
+                    @empty
+                  <tr>
+                    <td colspan="10" class="text-center text-red-600 text-2xl">
+                      No hay registros para mostrar...
+                    </td>
                   </tr>
-                  @empty
-                  <p>No hay registros para mostrar...</p>
-                  @endforelse
+                  @endforelse </tr>
                 </table>
                 {{ $representaciones->links() }}
               </div>

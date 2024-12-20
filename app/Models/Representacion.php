@@ -12,5 +12,49 @@ class Representacion extends Model
 
   protected $table = 'representacions';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'razonsocial',
+    'dire_calle',
+    'dire_nro',
+    'piso',
+    'codpost',
+    'dire_obs',
+    'barrio_id',
+    'localidad_id',
+    'zona_id',
+    'municipio_id',
+    'telefono',
+    'fax',
+    'cuit',
+    'excenciones',
+    'marcas',
+    'info',
+    'contacto',
+    'horario',
+    'objetivos',
+    'comentarios',
+    'correo',
+    'dpto',
+    'status'
+  ];
+
+  public function barrio()
+  {
+    return $this->belongsTo(AuxBarrios::class);
+  }
+
+  public function localidad()
+  {
+    return $this->belongsTo(AuxLocalidades::class);
+  }
+
+  public function zona()
+  {
+    return $this->belongsTo(AuxZonas::class);
+  }
+
+  public function municipio()
+  {
+    return $this->belongsTo(AuxMunicipios::class);
+  }
 }
