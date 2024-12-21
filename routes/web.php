@@ -45,4 +45,7 @@ Route::middleware('auth')->resource('/molino', MolinoController::class);
 Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
 Route::middleware('auth')->resource('/AgendaGral', AgendaGralController::class);
 
+// Route::get('/admin', [AdminController::class, 'index'])->middleware('permission:1');
+// Route::get('/reportes', [ReporteController::class, 'index'])->middleware('permission:2');
+
 require __DIR__ . '/auth.php';
