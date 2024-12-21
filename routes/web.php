@@ -3,6 +3,8 @@
 use App\Http\Controllers\AgendaGralController;
 use App\Http\Controllers\AgroController;
 use App\Http\Controllers\DistribucionController;
+use App\Http\Controllers\ExpedicionController;
+use App\Http\Controllers\ExpedicionMolinosController;
 use App\Http\Controllers\MolinoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProveedorController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\RepresentacionController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\TransporteController;
 use App\Models\AgendaGral;
+use App\Models\Expedicion_molinos;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,6 +42,7 @@ Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 Route::middleware('auth')->resource('/transporte', TransporteController::class);
 Route::middleware('auth')->resource('/tools', ToolController::class);
 Route::middleware('auth')->resource('/molino', MolinoController::class);
-Route::middleware('auth')->resource('AgendaGral', AgendaGralController::class);
+Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
+Route::middleware('auth')->resource('/AgendaGral', AgendaGralController::class);
 
 require __DIR__ . '/auth.php';

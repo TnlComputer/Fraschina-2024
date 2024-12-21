@@ -340,6 +340,17 @@ return [
       'icon' => 'fas fa-fw fa-bus',
     ],
     [
+      'text' => 'Expedición',
+      'icon' => 'fas fa-fw fa-map-marked-alt',
+      'submenu' => [
+        [
+          'text' => 'Expedición Molinos',
+          'url' => 'expedicion_molinos',
+          'icon' => 'fas fa-fw fa-map-marked-alt',
+        ],
+      ],
+    ],
+    [
       'text' => 'Agenda',
       'url' => 'AgendaGral',
       'icon' => 'fas fa-fw fa-calendar',
@@ -347,9 +358,51 @@ return [
     ['header' => 'ADMIN SETTINGS'],
     [
       'text' => 'Tools',
-      'url' => 'tools',
       'icon' => 'fas fa-fw fa-tools',
+      // 'icon' => 'fas fa-fw fa-share',
+      'submenu' => [
+        [
+          'text' => 'Usuarios',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Calles',
+          'url' => '#',
+        ],
+        [
+          'text' => 'level_one',
+          'url' => '#',
+          'submenu' => [
+            [
+              'text' => 'level_two',
+              'url' => '#',
+            ],
+            [
+              'text' => 'level_two',
+              'url' => '#',
+              'submenu' => [
+                [
+                  'text' => 'level_three',
+                  'url' => '#',
+                ],
+                [
+                  'text' => 'level_three',
+                  'url' => '#',
+                ],
+              ],
+            ],
+          ],
+        ],
+        [
+          'text' => 'level_one',
+          'url' => '#',
+        ],
+      ],
     ],
+
+
+
+
 
     ['header' => 'account_settings'],
     [
