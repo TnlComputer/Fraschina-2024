@@ -355,10 +355,14 @@ return [
       'url' => 'AgendaGral',
       'icon' => 'fas fa-fw fa-calendar',
     ],
-    ['header' => 'ADMIN SETTINGS'],
+    [
+      'header' => 'ADMIN SETTINGS',
+      'can' => ['permiso_99', 'permiso_9'],
+    ],
     [
       'text' => 'Tools',
       'icon' => 'fas fa-fw fa-tools',
+      'can' => ['permiso_99', 'permiso_9'],
       // 'icon' => 'fas fa-fw fa-share',
       'submenu' => [
         [
@@ -370,33 +374,106 @@ return [
           'url' => '#',
         ],
         [
-          'text' => 'level_one',
+          'text' => 'Barrios',
           'url' => '#',
-          'submenu' => [
-            [
-              'text' => 'level_two',
-              'url' => '#',
-            ],
-            [
-              'text' => 'level_two',
-              'url' => '#',
-              'submenu' => [
-                [
-                  'text' => 'level_three',
-                  'url' => '#',
-                ],
-                [
-                  'text' => 'level_three',
-                  'url' => '#',
-                ],
-              ],
-            ],
-          ],
         ],
         [
-          'text' => 'level_one',
+          'text' => 'Ciudades/Municipios',
           'url' => '#',
         ],
+        [
+          'text' => 'Localidades',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Zonas',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Familias',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Rubros',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Cargos',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Modos',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Tamaños',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Areas',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Contacto Inicial',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Prioridades',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Estados',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Tipo Personas',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Acciones',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Veraz',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Tareas',
+          'url' => '#',
+        ],
+        [
+          'text' => 'Exportar Tablas',
+          'url' => '#',
+        ],
+
+        // [
+        //   'text' => 'Productos',
+        //   'url' => '#',
+        //   'submenu' => [
+        //     [
+        //       'text' => 'level_two',
+        //       'url' => '#',
+        //     ],
+        //     [
+        //       'text' => 'level_two',
+        //       'url' => '#',
+        //       'submenu' => [
+        //         [
+        //           'text' => 'level_three',
+        //           'url' => '#',
+        //         ],
+        //         [
+        //           'text' => 'level_three',
+        //           'url' => '#',
+        //         ],
+        //       ],
+        //     ],
+        //   ],
+        // ],
+        // [
+        //   'text' => 'level_one',
+        //   'url' => '#',
+        // ],
       ],
     ],
 
