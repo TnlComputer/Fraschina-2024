@@ -1,5 +1,7 @@
 <?php
 
+// use Illuminate\Support\Facades\Request;
+
 return [
 
   /*
@@ -257,7 +259,7 @@ return [
     */
 
   'use_route_url' => false,
-  'dashboard_url' => '/',
+  'dashboard_url' => '/dashboard',
   'logout_url' => 'logout',
   'login_url' => 'login',
   'register_url' => 'register',
@@ -430,12 +432,18 @@ return [
         [
           'text' => 'Tamaños',
           'icon' => 'fas fa-fw fa-ruler-combined',
-          'url' => 'tools/tamaños',
+          'url' => 'tools/dimension',
+          // 'url' => 'tools/tamanios',
         ],
         [
           'text' => 'Areas',
           'icon' => 'fas fa-fw fa-layer-group',
           'url' => 'tools/areas',
+        ],
+        [
+          'text' => 'Horarios',
+          'icon' => 'fas fa-fw fa-clock',
+          'url' => 'tools/horas',
         ],
         [
           'text' => 'Contacto Inicial',
@@ -456,7 +464,7 @@ return [
         [
           'text' => 'Tipo Personas',
           'icon' => 'fas fa-fw fa-user',
-          'url' => 'tools/tipo_personas',
+          'url' => 'tools/tipo_persona',
         ],
         [
           'text' => 'Acciones',

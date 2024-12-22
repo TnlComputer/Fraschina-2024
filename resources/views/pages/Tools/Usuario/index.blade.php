@@ -27,7 +27,7 @@
                     </form>
                   </div>
                 </div>
-                <table class="table table-sm table-striped table-bordered w-100">
+                <table class="table table-sm table-striped table-bordered w-100 text-md">
                   <thead>
                     <tr>
                       <th>Nombre</th>
