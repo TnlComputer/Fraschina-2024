@@ -313,35 +313,44 @@ return [
       'text' => 'Representación',
       'url' => 'representacion',
       'icon' => 'fas fa-fw fa-briefcase',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+
     ],
     [
       'text' => 'Distribución',
       'url' => 'distribucion',
       'icon' => 'fas fa-fw fa-truck',
+      'can' => ['permiso_99','permiso_9', 'permiso_8','permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
     ],
     [
       'text' => 'Molino',
       'url' => 'molino',
       'icon' => 'fas fa-fw fa-industry',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+
     ],
     [
       'text' => 'Agro/AgroInd',
       'url' => 'agro',
       'icon' => 'fas fa-fw fa-leaf',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
     ],
     [
       'text' => 'Proveedor',
       'url' => 'proveedor',
       'icon' => 'fas fa-fw fa-cogs',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
     ],
     [
       'text' => 'Transporte',
       'url' => 'transporte',
       'icon' => 'fas fa-fw fa-bus',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
     ],
     [
       'text' => 'Expedición',
       'icon' => 'fas fa-fw fa-map-marked-alt',
+      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
       'submenu' => [
         [
           'text' => 'Expedición Molinos',
@@ -351,9 +360,11 @@ return [
       ],
     ],
     [
-      'text' => 'Agenda',
+      'text' => 'Agenda General',
       'url' => 'AgendaGral',
       'icon' => 'fas fa-fw fa-calendar',
+      'can' => ['permiso_99', 'permiso_9'],
+
     ],
     [
       'header' => 'ADMIN SETTINGS',
@@ -367,82 +378,104 @@ return [
       'submenu' => [
         [
           'text' => 'Usuarios',
-          'url' => '#',
+          'icon' => 'fas fa-fw fa-users',
+          'url' => 'tools/usuarios',
         ],
         [
           'text' => 'Calles',
+          'icon' => 'fas fa-fw fa-road',
           'url' => '#',
         ],
         [
           'text' => 'Barrios',
+          'icon' => 'fas fa-fw fa-building',
           'url' => '#',
         ],
         [
           'text' => 'Ciudades/Municipios',
+          'icon' => 'fas fa-fw fa-city',
           'url' => '#',
         ],
         [
           'text' => 'Localidades',
+          'icon' => 'fas fa-fw fa-location-arrow',
           'url' => '#',
         ],
         [
           'text' => 'Zonas',
+          'icon' => 'fas fa-fw fa-th-large',
+          // 'icon' => 'fas fa-fw fa-layer-group',
           'url' => '#',
         ],
         [
           'text' => 'Familias',
+          'icon' => 'fas fa-fw fa-briefcase',
           'url' => '#',
         ],
         [
           'text' => 'Rubros',
+          'icon' => 'fas fa-fw fa-cogs',
           'url' => '#',
         ],
         [
           'text' => 'Cargos',
+          'icon' => 'fas fa-fw fa-user-tie',
           'url' => '#',
         ],
         [
           'text' => 'Modos',
+          'icon' => 'fas fa-fw fa-sliders-h',
           'url' => '#',
         ],
         [
           'text' => 'Tamaños',
+          'icon' => 'fas fa-fw fa-ruler-combined',
           'url' => '#',
         ],
         [
           'text' => 'Areas',
+          'icon' => 'fas fa-fw fa-layer-group',
           'url' => '#',
         ],
         [
           'text' => 'Contacto Inicial',
+          'icon' => 'fas fa-fw fa-phone',
           'url' => '#',
         ],
         [
           'text' => 'Prioridades',
+          // 'icon' => 'fas fa-fw fa-phone',
+          'icon' => 'fas fa-fw fa-fire',
           'url' => '#',
         ],
         [
           'text' => 'Estados',
+          'icon' => 'fas fa-fw fa-spinner',
           'url' => '#',
         ],
         [
           'text' => 'Tipo Personas',
+          'icon' => 'fas fa-fw fa-user',
           'url' => '#',
         ],
         [
           'text' => 'Acciones',
+          'icon' => 'fas fa-fw fa-tasks',
           'url' => '#',
         ],
         [
           'text' => 'Veraz',
+          'icon' => 'fas fa-fw fa-check-circle',
           'url' => '#',
         ],
         [
           'text' => 'Tareas',
+          'icon' => 'fas fa-fw fa-clipboard-list',
           'url' => '#',
         ],
         [
           'text' => 'Exportar Tablas',
+          'icon' => 'fas fa-fw fa-file-export',
           'url' => '#',
         ],
 

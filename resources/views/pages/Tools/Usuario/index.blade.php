@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12">
       <div class="card-header">
-        <h3 class="card-title">{{ __('Tools') }}</h3>
+        <h3 class="card-title">{{ __('Usuarios') }}</h3>
       </div>
       <div class="col-12">
         <div class="py-2">
@@ -13,51 +13,44 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
               <div class="p-2 text-gray-900 text-left text-xs">
                 <div class="barra__index d-flex justify-content-between align-items-center mb-3">
-                  <h2>Proximamente</h2>
-                  {{-- <div class="div__nuevo">
-                    <form action="{{ route('transporte.create') }}">
+                  <div class="div__nuevo">
+                    <form action="{{ route('usuarios.create') }}">
                       <input class="btn btn-primary" type="submit" value="Nuevo">
                     </form>
                   </div>
                   <div class="div__buscar d-flex">
-                    <form method="get" action="{{ route('transporte.index') }}" class="form__buscar d-flex">
+                    <form method="get" action="{{ route('usuarios.index') }}" class="form__buscar d-flex">
                       @csrf
                       <input type="text" placeholder="Buscar por nombre" name="name" value="{{ $name }}"
                         class="form-control me-2" style="max-width: 350px;">
                       <input type="submit" value="Buscar" class="btn btn-secondary">
                     </form>
-                  </div> --}}
+                  </div>
                 </div>
-                {{-- <table class="table table-sm table-striped table-bordered w-100">
+                <table class="table table-sm table-striped table-bordered w-100">
                   <thead>
                     <tr>
-                      <th></th>
-                      <th></th>
-                      <th>Razón social</th>
-                      <th colspan="4">Dirección</th>
-                      <th>Cod.Post</th>
-                      <th>Telefono</th>
+                      <th>Nombre</th>
+                      <th>Email</th>
+                      <th>Permiso</th>
+                      <th>Estado</th>
                       <th></th>
                     </tr>
                   </thead>
-                  @forelse($transportes as $transporte)
+                  @forelse($usuarios as $usuario)
                   <tr>
-                    <td>{{ $transporte->razonsocial }}</td>
-                    <td>{{ $transporte->dire_calle }}</td>
-                    <td>{{ $transporte->dire_nro }}</td>
-                    <td>{{ $transporte->piso }}</td>
-                    <td>{{ $transporte->dpto }}</td>
-                    <td>{{ $transporte->codpost }}</td>
-                    <td>{{ $transporte->telefono }}</td>
+                    <td>{{ $usuario->name }}</td>
+                    <td>{{ $usuario->email }}</td>
+                    <td>{{ $usuario->permiso }}</td>
+                    <td>{{ $usuario->status }}</td>
                     <td class=" d-flex justify-content-between">
-                      <a href="{{ route('transporte.show', $transporte->id) }}" class="btn-xs btn-info" title="Ver">
+                      {{-- <a href="{{ route('usuario.show', $usuario->id) }}" class="btn-xs btn-info" title="Ver">
                         <i class="fa-regular fa-eye fa-xs align-middle"></i>
-                      </a>
-                      <a href="{{ route('transporte.edit', $transporte->id) }}" class="btn-xs btn-warning"
-                        title="Editar">
+                      </a> --}}
+                      <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn-xs btn-warning" title="Editar">
                         <i class="fa-solid fa-pen-to-square fa-xs "></i>
                       </a>
-                      <form method="POST" action="{{ route('transporte.destroy', $transporte->id) }}"
+                      <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
                         @method('DELETE')
@@ -71,8 +64,8 @@
                   @empty
                   <p>No hay registros para mostrar...</p>
                   @endforelse
-                </table> --}}
-                {{-- {{ $transportes->links() }} --}}
+                </table>
+                {{ $usuarios->links() }}
               </div>
             </div>
           </div>
