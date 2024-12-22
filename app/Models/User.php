@@ -35,6 +35,11 @@ class User extends Authenticatable
     'remember_token',
   ];
 
+  public function getStatusAttribute()
+  {
+    return $this->is_active == 1 ? 'A' : 'D';
+  }
+
   /**
    * Get the attributes that should be cast.
    *

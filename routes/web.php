@@ -2,50 +2,41 @@
 
 use App\Http\Controllers\AgendaGralController;
 use App\Http\Controllers\AgroController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DistribucionController;
-use App\Http\Controllers\ExpedicionController;
 use App\Http\Controllers\ExpedicionMolinosController;
 use App\Http\Controllers\MolinoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RepresentacionController;
-use App\Http\Controllers\ToolController;
 use App\Http\Controllers\TransporteController;
-use App\Models\AgendaGral;
-use App\Models\Expedicion_molinos;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
   return view('welcome');
 });
 
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+
 Route::get('/dashboard', function () {
   return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::middleware('auth')->group(function () {
-//   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//   Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//   Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
-//   Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 Route::middleware('auth')->get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::middleware('auth')->patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::middleware('auth')->patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.updateEmail');
 Route::middleware('auth')->patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
-Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
-Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
-Route::middleware('auth')->resource('/agro', AgroController::class);
-Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
-Route::middleware('auth')->resource('/transporte', TransporteController::class);
-Route::middleware('auth')->resource('/tools', ToolController::class);
-Route::middleware('auth')->resource('/molino', MolinoController::class);
-Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
 Route::middleware('auth')->resource('/AgendaGral', AgendaGralController::class);
+Route::middleware('auth')->resource('/agro', AgroController::class);
+Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
+Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
+Route::middleware('auth')->resource('/molino', MolinoController::class);
+Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
+Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
+Route::middleware('auth')->resource('/transporte', TransporteController::class);
+Route::middleware('auth')->resource('/tools/usuarios', UsuarioController::class);
 
-// Route::get('/admin', [AdminController::class, 'index'])->middleware('permission:1');
-// Route::get('/reportes', [ReporteController::class, 'index'])->middleware('permission:2');
 
 require __DIR__ . '/auth.php';
