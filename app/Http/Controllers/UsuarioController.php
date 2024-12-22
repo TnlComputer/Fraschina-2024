@@ -18,6 +18,8 @@ class UsuarioController extends Controller
   {
     // dd($request, 'aca entro');
     $name = trim($request->get('name'));
+    $sortField = $request->get('sort', 'name'); // Campo por defecto
+
 
     // Comienza la consulta con los usuarios activos
     $query = User::where('is_active', '=', '1')
@@ -32,7 +34,7 @@ class UsuarioController extends Controller
     }
 
     // Ejecuta la consulta y paginación
-    $usuarios = $query->paginate(15);
+    $usuarios = $query->orderBy($sortField)->paginate(15);
     // dd($usuarios);
 
     // Devuelve la vista con los usuarios
