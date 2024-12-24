@@ -384,10 +384,10 @@ return [
       'can' => ['permiso_99', 'permiso_8'],
 
     ],
-    [
-      'header' => 'ADMIN SETTINGS',
-      'can' => ['permiso_99', 'permiso_9'],
-    ],
+    // [
+    //   'header' => 'ADMIN SETTINGS',
+    //   'can' => ['permiso_99', 'permiso_9'],
+    // ],
     [
       'text' => 'Tools',
       'icon' => 'fas fa-fw fa-tools',
@@ -397,48 +397,125 @@ return [
         [
           'text' => 'Usuarios',
           'icon' => 'fas fa-fw fa-users',
-          'url' => 'tools/usuarios',
+          'can' => ['permiso_99', 'permiso_9'],
+          'submenu' => [
+            [
+              'text' => 'Usuario',
+              'icon' => 'fas fa-fw fa-user',
+              'url' => 'tools/usuarios',
+            ],
+            [
+              'text' => 'Role',
+              'icon' => 'fas fa-fw fa-user-shield',
+              'url' => 'tools/roles',
+            ],
+            [
+              'text' => 'Permiso',
+              'icon' => 'fas fa-fw fa-id-badge',
+              'url' => 'tools/permissions',
+            ],
+          ],
         ],
         [
-          'text' => 'Calles',
-          'icon' => 'fas fa-fw fa-road',
-          'url' => 'tools/calles',
+          'text' => 'Ubicación',
+          'icon' => 'fas fa-fw fa-location-pin',
+          'can' => ['permiso_99', 'permiso_9'],
+          'submenu' => [
+            [
+              'text' => 'Barrios',
+              'icon' => 'fas fa-fw fa-building',
+              'url' => 'tools/barrios',
+            ],
+            [
+              'text' => 'Calles',
+              'icon' => 'fas fa-fw fa-road',
+              'url' => 'tools/calles',
+            ],
+            [
+              'text' => 'Ciudades/Municipios',
+              'icon' => 'fas fa-fw fa-city',
+              'url' => 'tools/ciudades_municipios',
+            ],
+            [
+              'text' => 'Localidades',
+              'icon' => 'fas fa-fw fa-location-arrow',
+              'url' => 'tools/localidades',
+            ],
+            [
+              'text' => 'Zonas',
+              'icon' => 'fas fa-fw fa-th-large',
+              // 'icon' => 'fas fa-fw fa-layer-group',
+              'url' => 'tools/zonas',
+            ],
+          ],
         ],
         [
-          'text' => 'Barrios',
-          'icon' => 'fas fa-fw fa-building',
-          'url' => 'tools/barrios',
-        ],
-        [
-          'text' => 'Ciudades/Municipios',
-          'icon' => 'fas fa-fw fa-city',
-          'url' => 'tools/ciudades_municipios',
-        ],
-        [
-          'text' => 'Localidades',
-          'icon' => 'fas fa-fw fa-location-arrow',
-          'url' => 'tools/localidades',
-        ],
-        [
-          'text' => 'Zonas',
-          'icon' => 'fas fa-fw fa-th-large',
-          // 'icon' => 'fas fa-fw fa-layer-group',
-          'url' => 'tools/zonas',
-        ],
-        [
-          'text' => 'Familias',
-          'icon' => 'fas fa-fw fa-briefcase',
-          'url' => 'tools/familias',
-        ],
-        [
-          'text' => 'Rubros',
-          'icon' => 'fas fa-fw fa-cogs',
-          'url' => 'tools/rubros',
-        ],
-        [
-          'text' => 'Cargos',
-          'icon' => 'fas fa-fw fa-user-tie',
-          'url' => 'tools/cargos',
+          'text' => 'Auxiliares',
+          'icon' => 'fas fa-fw fa-question-circle',
+          'can' => ['permiso_99', 'permiso_9'],
+          'submenu' => [
+            [
+              'text' => 'Acciones',
+              'icon' => 'fas fa-fw fa-tasks',
+              'url' => 'tools/acciones',
+            ],
+            [
+              'text' => 'Areas',
+              'icon' => 'fas fa-fw fa-layer-group',
+              'url' => 'tools/areas',
+            ],
+            [
+              'text' => 'Contacto Inicial',
+              'icon' => 'fas fa-fw fa-phone',
+              'url' => 'tools/contacto_inicial',
+            ],
+            [
+              'text' => 'Cargos',
+              'icon' => 'fas fa-fw fa-user-tie',
+              'url' => 'tools/cargos',
+            ],
+            [
+              'text' => 'Estados',
+              'icon' => 'fas fa-fw fa-spinner',
+              'url' => 'tools/estados',
+            ],
+            [
+              'text' => 'Horarios',
+              'icon' => 'fas fa-fw fa-clock',
+              'url' => 'tools/horas',
+            ],
+            [
+              'text' => 'Prioridades',
+              // 'icon' => 'fas fa-fw fa-phone',
+              'icon' => 'fas fa-fw fa-fire',
+              'url' => 'tools/prioridades',
+            ],
+            [
+              'text' => 'Rubros',
+              'icon' => 'fas fa-fw fa-cogs',
+              'url' => 'tools/rubros',
+            ],
+            [
+              'text' => 'Tareas',
+              'icon' => 'fas fa-fw fa-clipboard-list',
+              'url' => 'tools/tareas',
+            ],
+            [
+              'text' => 'Tipo Personas',
+              'icon' => 'fas fa-fw fa-user',
+              'url' => 'tools/tipo_persona',
+            ],
+            [
+              'text' => 'Veraz',
+              'icon' => 'fas fa-fw fa-check-circle',
+              'url' => 'tools/veraz',
+            ],
+            [
+              'text' => 'Exportar Tablas',
+              'icon' => 'fas fa-fw fa-file-export',
+              'url' => 'tools/export',
+            ],
+          ],
         ],
         [
           'text' => 'Modos',
@@ -446,61 +523,15 @@ return [
           'url' => 'tools/modos',
         ],
         [
+          'text' => 'Familias',
+          'icon' => 'fas fa-fw fa-briefcase',
+          'url' => 'tools/familias',
+        ],
+        [
           'text' => 'Tamaños',
           'icon' => 'fas fa-fw fa-ruler-combined',
           'url' => 'tools/dimension',
           // 'url' => 'tools/tamanios',
-        ],
-        [
-          'text' => 'Areas',
-          'icon' => 'fas fa-fw fa-layer-group',
-          'url' => 'tools/areas',
-        ],
-        [
-          'text' => 'Horarios',
-          'icon' => 'fas fa-fw fa-clock',
-          'url' => 'tools/horas',
-        ],
-        [
-          'text' => 'Contacto Inicial',
-          'icon' => 'fas fa-fw fa-phone',
-          'url' => 'tools/contacto_inicial',
-        ],
-        [
-          'text' => 'Prioridades',
-          // 'icon' => 'fas fa-fw fa-phone',
-          'icon' => 'fas fa-fw fa-fire',
-          'url' => 'tools/prioridades',
-        ],
-        [
-          'text' => 'Estados',
-          'icon' => 'fas fa-fw fa-spinner',
-          'url' => 'tools/estados',
-        ],
-        [
-          'text' => 'Tipo Personas',
-          'icon' => 'fas fa-fw fa-user',
-          'url' => 'tools/tipo_persona',
-        ],
-        [
-          'text' => 'Acciones',
-          'icon' => 'fas fa-fw fa-tasks',
-          'url' => 'tools/acciones',
-        ],
-        [
-          'text' => 'Veraz',
-          'icon' => 'fas fa-fw fa-check-circle',
-          'url' => 'tools/veraz',
-        ],
-        [
-          'text' => 'Tareas',
-          'icon' => 'fas fa-fw fa-clipboard-list',
-          'url' => 'tools/tareas',
-        ],
-        [
-          'text' => 'Exportar Tablas',
-          'icon' => 'fas fa-fw fa-file-export',
-          'url' => 'tools/export',
         ],
       ],
     ],

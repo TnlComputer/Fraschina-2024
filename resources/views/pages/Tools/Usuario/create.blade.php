@@ -28,7 +28,7 @@
       <label for="password_confirmation">Confirmar Contraseña</label>
       <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
     </div>
-    
+
     <!-- Roles -->
     <div class="form-group">
       <label for="role">Rol</label>
@@ -43,21 +43,26 @@
     </div>
 
     <!-- Campo para is_active -->
-    <div class="form-group">
+    {{-- <div class="form-group">
       <label for="is_active">Activo</label>
       <input type="checkbox" name="is_active" id="is_active" checked>
+    </div> --}}
+    <div class="form-group">
+      <label for="is_active">Activo</label>
+      <input type="hidden" name="is_active" value="0"> {{-- Campo oculto para el valor falso --}}
+      <input type="checkbox" name="is_active" id="is_active" value="1" checked>
     </div>
-
+    @if ($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+    @endif
+    <br>
     <button type="submit" class="btn btn-primary">Crear Usuario</button>
   </form>
-  @if ($errors->any())
-  <div class="alert alert-danger">
-    <ul>
-      @foreach ($errors->all() as $error)
-      <li>{{ $error }}</li>
-      @endforeach
-    </ul>
-  </div>
-  @endif
 </div>
 @endsection

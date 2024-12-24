@@ -28,6 +28,14 @@
                   </div>
                 </div>
                 <table class="table table-sm table-striped table-bordered w-100 text-md">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Email</th>
+                      <th>Permiso</th>
+                      <th>Estado</th>
+                      <th></th>
+                    </tr>
                   </thead>
                   @forelse($usuarios as $usuario)
                   <tr>
@@ -60,14 +68,10 @@
                       @endif
                     </td> --}}
                     <td>{{ $usuario->status }}</td>
-                    {{-- <td>{{ $user->status }}</td> --}}
                     <td class=" d-flex justify-content-between">
-                      {{-- <a href="{{ route('usuario.show', $usuario->id) }}" class="btn-xs btn-info" title="Ver">
-                        <i class="fa-regular fa-eye fa-xs align-middle"></i>
-                      </a> --}}
-                      <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn-xs btn-warning" title="Editar">
-                        <i class="fa-solid fa-pen-to-square fa-xs "></i>
-                      </a>
+                      {{-- Verifica el estado del usuario --}}
+                      @if ($usuario->status == 'A')
+                      {{-- Formulario para desactivar/eliminar usuario --}}
                       <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
@@ -76,8 +80,18 @@
                           <i class="fa-solid fa-trash fa-xs"></i>
                         </button>
                       </form>
+                      @else
+                      {{-- Formulario para activar usuario --}}
+                      <form method="POST" action="{{ route('usuarios.activate', $usuario->id) }}"
+                        onsubmit="return confirm('¿Estás seguro de activar este usuario?');">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn-xs btn-primary" title="Activar">
+                          <i class="fa-solid fa-check fa-xs"></i>
+                        </button>
+                      </form>
+                      @endif
                     </td>
-
                   </tr>
                   @empty
                   <p>No hay registros para mostrar...</p>
