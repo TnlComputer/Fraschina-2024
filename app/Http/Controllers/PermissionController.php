@@ -10,22 +10,27 @@ class PermissionController extends Controller
 {
   public function index()
   {
-    $permissions = Permission::paginate(10);
+    // $permissions = Permission::paginate(10);
+    $permissions = Permission::where('name', '!=', 'permiso_99')->paginate(10);
     return view('Pages.Tools.Permiso.index', compact('permissions'));
   }
 
   public function create()
   {
-    return view('permissions.create');
+    return view('Pages.Tools.Permiso.create');
   }
 
   public function store(Request $request)
   {
     $request->validate([
       'name' => 'required|unique:permissions|max:255',
+      'description' => 'required|max:255',
     ]);
 
-    Permission::create(['name' => $request->name]);
+    Permission::create([
+      'name' => $request->name,
+      'description' => $request->description,
+    ]);
 
     return redirect()->route('permissions.index')->with('success', 'Permiso creado correctamente.');
   }
@@ -39,9 +44,13 @@ class PermissionController extends Controller
   {
     $request->validate([
       'name' => 'required|max:255|unique:permissions,name,' . $permission->id,
+      'description' => 'required|max:255',
     ]);
 
-    $permission->update(['name' => $request->name]);
+    $permission->update([
+        'name' => $request->name,
+        'description' => $request->description,
+      ]);
 
     return redirect()->route('permissions.index')->with('success', 'Permiso actualizado correctamente.');
   }

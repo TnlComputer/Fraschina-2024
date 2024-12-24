@@ -413,6 +413,7 @@ return [
               'text' => 'Permiso',
               'icon' => 'fas fa-fw fa-id-badge',
               'url' => 'tools/permissions',
+              'can' => ['permiso_99'],
             ],
           ],
         ],

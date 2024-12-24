@@ -21,20 +21,35 @@ class RolesAndPermissionsSeeder extends Seeder
     DB::table('roles')->truncate();
 
     // Crear permisos
+    // $permissions = [
+    //   'permiso_1',  // Representación
+    //   'permiso_2',  // Distribución
+    //   'permiso_3',  // Molino
+    //   'permiso_4',  // Agro
+    //   'permiso_5',  // Proveedores
+    //   'permiso_6',  // Transportes
+    //   'permiso_7',  // Expedición
+    //   'permiso_8',  // Agenda General
+    //   'permiso_9',  // Tools
+    //   'permiso_11', // Alta
+    //   'permiso_12', // Editar
+    //   'permiso_13', // Eliminar
+    //   'permiso_99', // Super permiso
+    // ];
     $permissions = [
-      'permiso_1',  // Representación
-      'permiso_2',  // Distribución
-      'permiso_3',  // Molino
-      'permiso_4',  // Agro
-      'permiso_5',  // Proveedores
-      'permiso_6',  // Transportes
-      'permiso_7',  // Expedición
-      'permiso_8',  // Agenda General
-      'permiso_9',  // Tools
-      'permiso_11', // Alta
-      'permiso_12', // Editar
-      'permiso_13', // Eliminar
-      'permiso_99', // Super permiso
+      ['name' => 'permiso_1', 'description' => 'Representación'],
+      ['name' => 'permiso_2', 'description' => 'Distribución'],
+      ['name' => 'permiso_3', 'description' => 'Molino'],
+      ['name' => 'permiso_4', 'description' => 'Agro'],
+      ['name' => 'permiso_5', 'description' => 'Proveedores'],
+      ['name' => 'permiso_6', 'description' => 'Transportes'],
+      ['name' => 'permiso_7', 'description' => 'Expedición'],
+      ['name' => 'permiso_8', 'description' => 'Agenda General'],
+      ['name' => 'permiso_9', 'description' => 'Tools'],
+      ['name' => 'permiso_11', 'description' => 'Alta registros'],
+      ['name' => 'permiso_12', 'description' => 'Editar registros'],
+      ['name' => 'permiso_13', 'description' => 'Eliminar registros'],
+      ['name' => 'permiso_99', 'description' => 'Super Usuario'],
     ];
 
     // Crear todos los permisos en un solo paso
