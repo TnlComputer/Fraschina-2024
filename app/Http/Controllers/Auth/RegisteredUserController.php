@@ -11,44 +11,51 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RegisteredUserController extends Controller
 {
   /**
-   * Display the registration view.
+   * Muestra la vista de registro.
    */
   public function create(): View
   {
-    return view('auth.register');
+    $roles = Role::all(); // Obtener todos los roles
+    return view('auth.register', compact('roles'));
   }
 
   /**
-   * Handle an incoming registration request.
-   *
-   * @throws \Illuminate\Validation\ValidationException
+   * Maneja una solicitud de registro entrante.
    */
   public function store(Request $request): RedirectResponse
   {
     $request->validate([
       'name' => ['required', 'string', 'max:255'],
-      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+      'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
       'password' => ['required', 'confirmed', Rules\Password::defaults()],
-      'permiso' => ['nullable', 'integer'], // Validar 'permiso' como opcional
-      'is_active' => ['nullable', 'boolean'], // Validar 'is_active' como opcional
+      'roles' => ['nullable', 'array'], // Permitir que se asignen roles
+      'roles.*' => ['exists:roles,name'], // Validar que los roles existan en la tabla roles
+      'is_active' => ['nullable', 'boolean'], // Validar el campo is_active como booleano
     ]);
 
+    // Crear el usuario
     $user = User::create([
       'name' => $request->name,
       'email' => $request->email,
       'password' => Hash::make($request->password),
-      'permiso' => $request->permiso ?? null, // Si no está presente, asignar null
-      'is_active' => $request->is_active ?? 1, // Si no está presente, asignar 1 (activo por defecto)
+      'is_active' => $request->is_active ?? 1, // Valor predeterminado activo
     ]);
 
-    event(new Registered($user));
+    // Asignar roles al usuario si están presentes
+    if ($request->has('roles')) {
+      $user->assignRole($request->roles);
+    }
 
+    // Emitir evento de registro y autenticar usuario
+    event(new Registered($user));
     Auth::login($user);
 
-    return redirect(route('dashboard', absolute: false));
+    return redirect(route('dashboard'))->with('success', 'Usuario registrado correctamente.');
   }
 }

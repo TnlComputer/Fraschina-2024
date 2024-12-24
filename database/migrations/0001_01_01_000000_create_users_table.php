@@ -11,7 +11,7 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('users', function (Blueprint $table) {
+      Schema::create('users', function (Blueprint $table) {
       $table->id();
       $table->string('name');
       $table->string('email')->unique();
@@ -19,9 +19,9 @@ return new class extends Migration
       $table->string('password');
       $table->rememberToken();
       $table->unsignedInteger('permiso')->nullable(); // Campo 'permiso' tipo INT
-      $table->tinyInteger('is_active')->default(1);   // Campo 'is_active' tipo TINYINT, por defecto 1
+      $table->boolean('is_active')->default(true);
       $table->timestamps();
-    });
+  });
 
     Schema::create('password_reset_tokens', function (Blueprint $table) {
       $table->string('email')->primary();

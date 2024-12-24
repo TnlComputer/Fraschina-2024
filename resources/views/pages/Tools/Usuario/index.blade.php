@@ -28,21 +28,39 @@
                   </div>
                 </div>
                 <table class="table table-sm table-striped table-bordered w-100 text-md">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Email</th>
-                      <th>Permiso</th>
-                      <th>Estado</th>
-                      <th></th>
-                    </tr>
                   </thead>
                   @forelse($usuarios as $usuario)
                   <tr>
                     <td>{{ $usuario->name }}</td>
                     <td>{{ $usuario->email }}</td>
-                    <td>{{ $usuario->permiso }}</td>
+                    <td>
+                      @if ($usuario->roles->isNotEmpty())
+                      @foreach ($usuario->roles as $role)
+                      <span class="text-capitalize">{{ $role->name }}</span>
+                      @endforeach
+                      @else
+                      Sin roles asignados
+                      @endif
+                    </td>
+                    {{-- <td>
+                      @if ($usuario->roles->isNotEmpty())
+                      <ul>
+                        @foreach ($usuario->roles as $role)
+                        @if ($role->permissions->isNotEmpty())
+                        @foreach ($role->permissions as $permission)
+                        <li>{{ $permission->name }}</li>
+                        @endforeach
+                        @else
+                        <li>Sin permisos asignados</li>
+                        @endif
+                        @endforeach
+                      </ul>
+                      @else
+                      Sin permisos
+                      @endif
+                    </td> --}}
                     <td>{{ $usuario->status }}</td>
+                    {{-- <td>{{ $user->status }}</td> --}}
                     <td class=" d-flex justify-content-between">
                       {{-- <a href="{{ route('usuario.show', $usuario->id) }}" class="btn-xs btn-info" title="Ver">
                         <i class="fa-regular fa-eye fa-xs align-middle"></i>
