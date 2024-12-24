@@ -11,37 +11,70 @@ class RolesAndPermissionsSeeder extends Seeder
 {
   public function run()
   {
-    // Deshabilitar las restricciones de clave foránea para evitar problemas de referencia
+    // Deshabilitar restricciones de claves foráneas temporalmente
     DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-    // Eliminar los registros de la tabla 'model_has_permissions', 'role_has_permissions', 'permissions' y 'roles'
-    DB::table('model_has_permissions')->delete();
-    DB::table('role_has_permissions')->delete();
-    DB::table('permissions')->delete();
-    DB::table('roles')->delete();
+    // Limpiar tablas relacionadas con permisos y roles
+    DB::table('model_has_permissions')->truncate();
+    DB::table('role_has_permissions')->truncate();
+    DB::table('permissions')->truncate();
+    DB::table('roles')->truncate();
 
     // Crear permisos
-    $permiso99 = Permission::firstOrCreate(['name' => 'permiso_99']);
-    $permiso9 = Permission::firstOrCreate(['name' => 'permiso_9']);
-    $permiso7 = Permission::firstOrCreate(['name' => 'permiso_7']);
-    $permiso5 = Permission::firstOrCreate(['name' => 'permiso_5']);
-    $permiso3 = Permission::firstOrCreate(['name' => 'permiso_3']);
+    $permissions = [
+      'permiso_1',  // Representación
+      'permiso_2',  // Distribución
+      'permiso_3',  // Molino
+      'permiso_4',  // Agro
+      'permiso_5',  // Proveedores
+      'permiso_6',  // Transportes
+      'permiso_7',  // Expedición
+      'permiso_8',  // Agenda General
+      'permiso_9',  // Tools
+      'permiso_11', // Alta
+      'permiso_12', // Editar
+      'permiso_13', // Eliminar
+      'permiso_99', // Super permiso
+    ];
+
+    // Crear todos los permisos en un solo paso
+    foreach ($permissions as $permissionName) {
+      Permission::firstOrCreate(['name' => $permissionName]);
+    }
 
     // Crear roles
-    $adminRole = Role::firstOrCreate(['name' => 'admin']);
-    $supervisorRole = Role::firstOrCreate(['name' => 'supervisor']);
-    $distribucionRole = Role::firstOrCreate(['name' => 'distrib']);
-    $oficinaRole = Role::firstOrCreate(['name' => 'oficina']);
-    $userRole = Role::firstOrCreate(['name' => 'user']);
+    $roles = [
+      'admin' => $permissions, // Admin tiene todos los permisos
+      'supervisor' => [
+        'permiso_1',
+        'permiso_2',
+        'permiso_3',
+        'permiso_4',
+        'permiso_5',
+        'permiso_6',
+        'permiso_7',
+        'permiso_8',
+        'permiso_9',
+        'permiso_11',
+        'permiso_12',
+        'permiso_13'
+      ],
+      'gerencia' => ['permiso_1', 'permiso_2', 'permiso_3', 'permiso_4', 'permiso_5', 'permiso_6', 'permiso_7', 'permiso_8', 'permiso_9', 'permiso_11', 'permiso_12', 'permiso_13'],
+      'distribucion' => ['permiso_2', 'permiso_3', 'permiso_5', 'permiso_8', 'permiso_11', 'permiso_12', 'permiso_13'],
+      'administracion' => ['permiso_1', 'permiso_11', 'permiso_12', 'permiso_13'],
+      'administrativo' => ['permiso_1', 'permiso_11', 'permiso_13'],
+      'expedicion' => ['permiso_7', 'permiso_11', 'permiso_13'],
+      'externo' => ['permiso_3', 'permiso_13'],
+      'admindistrib' => ['permiso_1', 'permiso_2', 'permiso_3', 'permiso_5', 'permiso_8', 'permiso_11', 'permiso_12', 'permiso_13']
+    ];
 
-    // Asignar permisos a roles
-    $adminRole->givePermissionTo($permiso99, $permiso9, $permiso7, $permiso5, $permiso3);
-    $supervisorRole->givePermissionTo($permiso9, $permiso7, $permiso5, $permiso3);
-    $distribucionRole->givePermissionTo($permiso7);
-    $oficinaRole->givePermissionTo($permiso5);
-    $userRole->givePermissionTo($permiso3);
+    // Crear roles y asignarles permisos
+    foreach ($roles as $roleName => $rolePermissions) {
+      $role = Role::firstOrCreate(['name' => $roleName]);
+      $role->syncPermissions($rolePermissions);
+    }
 
-    // Habilitar las restricciones de clave foránea nuevamente
+    // Habilitar restricciones de claves foráneas nuevamente
     DB::statement('SET FOREIGN_KEY_CHECKS=1;');
   }
 }

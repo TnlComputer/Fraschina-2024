@@ -25,6 +25,9 @@ class User extends Authenticatable
     'permiso',      // Nuevo campo
     'is_active',    // Nuevo campo
   ];
+
+  protected $guard_name = 'web';
+
   /**
    * The attributes that should be hidden for serialization.
    *

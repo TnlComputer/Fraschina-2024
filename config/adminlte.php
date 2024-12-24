@@ -315,57 +315,73 @@ return [
       'text' => 'Representación',
       'url' => 'representacion',
       'icon' => 'fas fa-fw fa-briefcase',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_1'],
 
     ],
     [
       'text' => 'Distribución',
       'url' => 'distribucion',
       'icon' => 'fas fa-fw fa-truck',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_2'],
     ],
     [
       'text' => 'Molino',
       'url' => 'molino',
       'icon' => 'fas fa-fw fa-industry',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_3'],
 
     ],
     [
       'text' => 'Agro/AgroInd',
       'url' => 'agro',
       'icon' => 'fas fa-fw fa-leaf',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_4'],
     ],
     [
       'text' => 'Proveedor',
       'url' => 'proveedor',
       'icon' => 'fas fa-fw fa-cogs',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_5'],
     ],
     [
       'text' => 'Transporte',
       'url' => 'transporte',
       'icon' => 'fas fa-fw fa-bus',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_6'],
     ],
     [
       'text' => 'Expedición',
       'icon' => 'fas fa-fw fa-map-marked-alt',
-      'can' => ['permiso_99', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
+      'can' => ['permiso_99', 'permiso_7'],
       'submenu' => [
+        [
+          'text' => 'Expedición Pedidos',
+          'url' => 'expedicion_pedidos',
+          'icon' => 'fas fa-fw fa-map-marked-alt',
+        ],
         [
           'text' => 'Expedición Molinos',
           'url' => 'expedicion_molinos',
           'icon' => 'fas fa-fw fa-map-marked-alt',
         ],
+        [
+          'text' => 'Expedición Clientes',
+          'url' => 'expedicion_clientes',
+          'icon' => 'fas fa-fw fa-map-marked-alt',
+        ],
+        [
+          'text' => 'Expedición General',
+          'url' => 'expedicion_general',
+          'icon' => 'fas fa-fw fa-map-marked-alt',
+        ],
+
       ],
     ],
     [
       'text' => 'Agenda General',
       'url' => 'AgendaGral',
       'icon' => 'fas fa-fw fa-calendar',
-      'can' => ['permiso_99', 'permiso_9'],
+      'can' => ['permiso_99', 'permiso_8'],
 
     ],
     [
@@ -486,42 +502,8 @@ return [
           'icon' => 'fas fa-fw fa-file-export',
           'url' => 'tools/export',
         ],
-
-        // [
-        //   'text' => 'Productos',
-        //   'url' => '#',
-        //   'submenu' => [
-        //     [
-        //       'text' => 'level_two',
-        //       'url' => '#',
-        //     ],
-        //     [
-        //       'text' => 'level_two',
-        //       'url' => '#',
-        //       'submenu' => [
-        //         [
-        //           'text' => 'level_three',
-        //           'url' => '#',
-        //         ],
-        //         [
-        //           'text' => 'level_three',
-        //           'url' => '#',
-        //         ],
-        //       ],
-        //     ],
-        //   ],
-        // ],
-        // [
-        //   'text' => 'level_one',
-        //   'url' => '#',
-        // ],
       ],
     ],
-
-
-
-
-
     ['header' => 'account_settings'],
     [
       'text' => 'profile',
