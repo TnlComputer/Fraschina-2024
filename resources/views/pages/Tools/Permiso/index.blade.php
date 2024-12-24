@@ -7,6 +7,7 @@
   <thead>
     <tr>
       <th>Nombre</th>
+      <th>Descripción</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -14,6 +15,7 @@
     @foreach($permissions as $permission)
     <tr>
       <td>{{ $permission->name }}</td>
+      <td>{{ $permission->description }}</td>
       <td>
         <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-warning">Editar</a>
         <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST" style="display:inline-block;">
