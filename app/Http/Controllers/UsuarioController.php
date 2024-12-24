@@ -23,8 +23,9 @@ class UsuarioController extends Controller
     $sortField = $request->get('sort', 'name'); // Campo por defecto
 
     // Comienza la consulta con los usuarios activos
-    $query = User::where('is_active', '=', '1')
-      ->where('permiso', '!=', 99)  // Filtra solo usuarios activos y no con permiso 99
+    $query = User::where('permiso', '!=', 99)
+      // ->where('is_active', '=', '1')
+      // Filtra solo usuarios activos y no con permiso 99
       ->with('roles.permissions'); // Cargar roles y permisos
 
     // Si hay un filtro de nombre o correo, se agregan las condiciones de búsqueda
@@ -101,20 +102,43 @@ class UsuarioController extends Controller
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit(User $user)
+  public function edit($id)
   {
-    $roles = Role::all();
-    $permissions = Permission::all();
+    $usuario = User::findOrFail($id); // Encuentra el usuario por ID
+    $roles = Role::all(); // Obtiene todos los roles disponibles
 
-    return view('Pages.Tools.Usuario.edit', compact('usuarios', 'roles', 'permissions'));
+    return view('Pages.Tools.Usuario.edit', compact('usuario', 'roles'));
   }
 
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, string $id)
+  public function update(Request $request, $id)
   {
-    //
+    $request->validate([
+      'name' => 'required|string|max:255',
+      'email' => 'required|email|unique:users,email,' . $id,
+      'password' => 'nullable|string|min:8|confirmed',
+      'role' => 'required|exists:roles,id', // Validación del rol
+    ]);
+
+    $usuario = User::findOrFail($id);
+
+    // Actualiza los datos del usuario
+    $usuario->update([
+      'name' => $request->name,
+      'email' => $request->email,
+      'password' => $request->password ? Hash::make($request->password) : $usuario->password,
+    ]);
+
+    // Actualiza el rol del usuario
+    $role = Role::find($request->role);
+    if ($role) {
+      $usuario->syncRoles([$role->name]); // Sincroniza los roles del usuario
+    }
+
+    // Actualiza el estado activo del usuario
+    $usuario->is_active = $request->has('is_active') ? true : false;
+    $usuario->save();
+
+    return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente.');
   }
 
   /**
@@ -122,8 +146,12 @@ class UsuarioController extends Controller
    */
   public function destroy(string $id)
   {
-    //
+    $user = User::findOrFail($id);
+    $user->update(['is_active' => 0]);
+
+    return redirect()->route('usuarios.index')->with('success', 'Usuario desactivado correctamente');
   }
+
   public function deactivate($id)
   {
     $user = User::findOrFail($id);

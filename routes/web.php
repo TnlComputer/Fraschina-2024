@@ -19,10 +19,12 @@ use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\ModoController;
 use App\Http\Controllers\MolinoController;
 use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrioridadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RepresentacionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RubroController;
 use App\Http\Controllers\TamanioController;
 use App\Http\Controllers\TareaController;
@@ -61,6 +63,8 @@ Route::middleware('auth')->resource('/transporte', TransporteController::class);
 
 // TOOLS
 Route::middleware('auth')->resource('/tools/usuarios', UsuarioController::class);
+Route::middleware('auth')->put('/tools/usuarios/{id}/activate', [UsuarioController::class, 'activate'])->name('usuarios.activate');
+
 Route::middleware('auth')->resource('/tools/calles', CalleController::class);
 Route::middleware('auth')->resource('/tools/barrios', BarrioController::class);
 Route::middleware('auth')->resource('/tools/ciudades_municipios', MunicipioController::class);
@@ -80,7 +84,11 @@ Route::middleware('auth')->resource('/tools/tipo_persona', Tipo_PersonaControlle
 Route::middleware('auth')->resource('/tools/acciones', AccionController::class);
 Route::middleware('auth')->resource('/tools/veraz', VerazController::class);
 Route::middleware('auth')->resource('/tools/tareas', TareaController::class);
+// Roles
+Route::middleware('auth')->resource('/tools/roles', RoleController::class);
 
+// Permisos
+Route::middleware('auth')->resource('/tools/permissions', PermissionController::class);
 // EXPORTAR TABLAS
 Route::middleware('auth')->get('/tools/export', [ExportarController::class, 'selectTables'])->name('export.selectTables');
 Route::middleware('auth')->post('/export/generate', [ExportarController::class, 'generate'])->name('export.generate');
