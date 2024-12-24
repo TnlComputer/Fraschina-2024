@@ -405,7 +405,7 @@ return [
               'url' => 'tools/usuarios',
             ],
             [
-              'text' => 'Role',
+              'text' => 'Rol',
               'icon' => 'fas fa-fw fa-user-shield',
               'url' => 'tools/roles',
             ],
