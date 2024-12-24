@@ -11,7 +11,8 @@ class RoleController extends Controller
 {
   public function index()
   {
-    $roles = Role::with('permissions')->paginate(10);
+    $roles = Role::where('name', '!=', 'Admin')->with('permissions')->paginate(10);
+    // $roles = Role::with('permissions')->paginate(10);
     return view('Pages.Tools.Role.index', compact('roles'));
 
     //   $roles = Role::with('permissions')->paginate(10);
@@ -65,6 +66,7 @@ class RoleController extends Controller
   {
     // $permissions = Permission::all();
     $permissions = Permission::where('name', '!=', 'permiso_99')->get();
+    // dd($permissions);
     return view('Pages.Tools.Role.edit', compact('role', 'permissions'));
   }
 
@@ -107,8 +109,23 @@ class RoleController extends Controller
 
 
 
+  // public function destroy(Role $role)
+  // {
+  //   $role->delete();
+  //   return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
+  // }
+
   public function destroy(Role $role)
   {
+    // Verificar si el ID es 1 y evitar su eliminación
+    if ($role->id === 1) {
+      return redirect()->route('roles.index')->with('error', 'No se puede eliminar el rol predeterminado.');
+    }
+    if ($role->id === 1) {
+      return redirect()->route('roles.index')->with('error', 'No se puede eliminar el rol predeterminado.');
+    }
+
+    // Eliminar el rol si no es el ID 1
     $role->delete();
     return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
   }
