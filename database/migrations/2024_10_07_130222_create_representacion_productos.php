@@ -27,11 +27,17 @@ return new class extends Migration
       $table->string('estabilidad', 50)->nullable();
       $table->string('absorcion', 50)->nullable();
       $table->string('puntuaciones', 50)->nullable();
-      $table->longText('particularidades', 255)->nullable();
-      $table->string('status', 1)->nullable();
+      $table->longText('particularidades')->nullable();  // No es necesario limitar a 255 si se puede extender
+      $table->string('status', 1)->nullable();  // Asegúrate de que sea nullable o tenga valor por defecto
       $table->timestamps();
+
+      // Relación con representacion_id
+      $table->foreign('representacion_id')->references('id')->on('representacions')->onDelete('cascade');
+      // Relación con aux_producto_id
+      $table->foreign('producto_id')->references('id')->on('representacion_aux_productos')->onDelete('cascade');
     });
   }
+
 
   /**
    * Reverse the migrations.

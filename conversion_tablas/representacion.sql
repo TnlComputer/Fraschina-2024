@@ -1,63 +1,16 @@
-INSERT INTO fraschina_2024.representacions (
-    id,
-    razonsocial,
-    dire_calle,
-    dire_nro,
-    piso,
-    codpost,
-    dire_obs,
-    barrio_id,
-    localidad_id,
-    municipio_id,
-    zona_id,
-    telefono,
-    fax,
-    cuit,
-    excenciones,
-    iva_id,
-    marcas,
-    info,
-    contacto,
-    horario,
-    objetivos,
-    comentarios,
-    fechagira,
-    correo,
-    dpto,
-    status,
-    created_at,
-    updated_at
+INSERT INTO representacion__aux_productos (
+    id,           -- ID del producto
+    nombre,       -- Nombre del producto
+    is_active,    -- Estado activo (por defecto TRUE)
+    created_at,   -- Fecha y hora de creación
+    updated_at    -- Fecha y hora de última actualización
 )
 SELECT
-    Idcliente AS id,
-    RazonSocial AS razonsocial,
-    dire_calle,
-    dire_nro,
-    piso,
-    codpos AS codpost,
-    dire_obs,
-    Idbarrio AS barrio_id,
-    Idlocalidad AS localidad_id,
-    IdMunicipio AS municipio_id,
-    Zona AS zona_id,
-    Telefono AS telefono,
-    Fax AS fax,
-    CUIT AS cuit,
-    Excenciones AS excenciones,
-    Idiva AS iva_id,
-    INFOenParticular AS marcas,
-    Info AS info,
-    Contacto AS contacto,
-    Horario AS horario,
-    Objetivos AS objetivos,
-    Comentarios AS comentarios,
-    FechaGira AS fechagira,
-    correo,
-    dpto,
-    'A' AS status,  -- Asignar un valor constante para el campo 'status' si es necesario (por ejemplo 'A' para activo)
-    CURRENT_TIMESTAMP AS created_at,  -- Fecha y hora actual para created_at
-    CURRENT_TIMESTAMP AS updated_at  -- Fecha y hora actual para updated_at
+    Id_Producto AS id,          -- ID del producto en la tabla original
+    Producto AS nombre,         -- Nombre del producto en la tabla original
+    TRUE AS is_active,          -- Asignar TRUE como valor constante para 'is_active'
+    CURRENT_TIMESTAMP AS created_at,  -- Fecha y hora actual para 'created_at'
+    CURRENT_TIMESTAMP AS updated_at   -- Fecha y hora actual para 'updated_at'
 FROM fraschin_backup.clientes
 WHERE 
-    Idcliente IS NOT NULL;  -- Asegurarse de que 'Idcliente' no sea nulo
-
+    Id_Producto IS NOT NULL;    -- Asegurarse de que 'Id_Producto' no sea nulo

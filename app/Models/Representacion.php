@@ -57,4 +57,18 @@ class Representacion extends Model
   {
     return $this->belongsTo(AuxMunicipios::class);
   }
+  // public function iva()
+  // {
+  //   return $this->belongsTo(Iva::class);
+  // }
+
+  public function personal()
+  {
+    return $this->hasMany(representacion_personal::class);
+  }
+
+  public function productos()
+  {
+    return $this->hasMany(Representacion_Producto::class, 'representacion_id');
+  }
 }

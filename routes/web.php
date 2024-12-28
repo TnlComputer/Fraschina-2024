@@ -24,6 +24,8 @@ use App\Http\Controllers\PrioridadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RepresentacionController;
+use App\Http\Controllers\RepresentacionPersonalController;
+use App\Http\Controllers\RepresentacionProductoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RubroController;
 use App\Http\Controllers\TamanioController;
@@ -59,6 +61,16 @@ Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosCont
 Route::middleware('auth')->resource('/molino', MolinoController::class);
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
+
+Route::middleware('auth')->resource('/representacion/representacion_personal', RepresentacionPersonalController::class);
+
+Route::middleware('auth')->group(function () {
+  Route::get('/representacion/{representacion}/representacion_producto/create', [RepresentacionProductoController::class, 'create'])
+    ->name('representacion_producto.create');
+  Route::resource('/representacion/representacion_producto', RepresentacionProductoController::class)
+    ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+});
+
 Route::middleware('auth')->resource('/transporte', TransporteController::class);
 
 // TOOLS
@@ -92,7 +104,5 @@ Route::middleware('auth')->resource('/tools/permissions', PermissionController::
 // EXPORTAR TABLAS
 Route::middleware('auth')->get('/tools/export', [ExportarController::class, 'selectTables'])->name('export.selectTables');
 Route::middleware('auth')->post('/export/generate', [ExportarController::class, 'generate'])->name('export.generate');
-
-
 
 require __DIR__ . '/auth.php';

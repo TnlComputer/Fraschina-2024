@@ -65,32 +65,44 @@
                     <td class="" data-titulo="Email">{{ $representacion->correo }}</td>
                     <td data-titulo="Cuit">{{ $representacion->cuit }}</td>
                     <td data-titulo="Marcas">{{ $representacion->marcas }}</td>
-                    <td class=" d-flex justify-content-between">
+                    <td class="d-flex justify-content-between">
                       <a href="{{ route('representacion.show', $representacion->id) }}" class="btn-xs btn-info"
                         title="Ver">
                         <i class="fa-regular fa-eye fa-xs align-middle"></i>
                       </a>
+                      @can('permiso_12')
                       <a href="{{ route('representacion.edit', $representacion->id) }}" class="btn-xs btn-warning"
                         title="Editar">
-                        <i class="fa-solid fa-pen-to-square fa-xs "></i>
+                        <i class="fa-solid fa-pen-to-square fa-xs"></i>
                       </a>
-                      <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
+                      @endcan
+                      @can('permiso_13')
+                      {{-- <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-xs btn-danger" title="Eliminar">
                           <i class="fa-solid fa-trash fa-xs"></i>
                         </button>
+                      </form> --}}
+                      <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
+                        onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-xs btn-{{ $representacion->status ? 'danger' : 'success' }}"
+                          title="{{ $representacion->status ? 'Desactivar' : 'Activar' }}">
+                          <i class="fa-solid fa-{{ $representacion->status ? 'trash' : 'check' }} fa-xs"></i>
+                        </button>
                       </form>
+                      @endcan
                     </td>
-
                     @empty
                   <tr>
                     <td colspan="10" class="text-center text-red-600 text-2xl">
                       No hay registros para mostrar...
                     </td>
                   </tr>
-                  @endforelse </tr>
+                  @endforelse
                 </table>
                 {{ $representaciones->links() }}
               </div>
@@ -100,4 +112,5 @@
       </div>
     </div>
   </div>
-  @endsection
+</div>
+@endsection
