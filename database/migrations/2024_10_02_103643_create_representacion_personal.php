@@ -20,7 +20,7 @@ return new class extends Migration
       $table->unsignedBigInteger('cargo_id')->nullable();
       $table->unsignedBigInteger('categoriacargo_id')->nullable();
       $table->string('teldirecto', 50)->nullable();
-      $table->string('interno', 4)->nullable();
+      $table->string('interno', 50)->nullable();
       $table->string('telcelular', 50)->nullable();
       $table->unsignedBigInteger('profesion_id')->nullable();
       $table->string('telparticular', 50)->nullable();
@@ -30,7 +30,13 @@ return new class extends Migration
       $table->string('status', 1)->nullable();
       $table->timestamps();
 
-      // $table->foreign('representacion_id')->references('id')->on('representacions')->onDelete('cascade');
+      // Asegúrate de que el campo representacion_id sea la clave foránea
+      $table->foreign('representacion_id')->references('id')->on('representacions')->onDelete('set null');
+
+      // Verifica que los demás campos de relación estén definidos correctamente
+      $table->foreign('area_id')->references('id')->on('AuxAreas')->onDelete('set null');
+      $table->foreign('cargo_id')->references('id')->on('AuxCargos')->onDelete('set null');
+      $table->foreign('profesion_id')->references('id')->on('auxprofesiones')->onDelete('set null');
     });
   }
 

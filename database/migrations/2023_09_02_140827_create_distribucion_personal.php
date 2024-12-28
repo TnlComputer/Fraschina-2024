@@ -29,6 +29,11 @@ return new class extends Migration
       $table->boolean('fuera', 1)->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      $table->foreign('area_id')->references('id')->on('areas')->onDelete('set null');
+      $table->foreign('cargo_id')->references('id')->on('cargos')->onDelete('set null');
+      $table->foreign('profesion_id')->references('id')->on('profesiones')->onDelete('set null');
+
     });
   }
 

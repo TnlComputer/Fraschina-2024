@@ -11,35 +11,6 @@ return new class extends Migration
    */
   public function up(): void
   {
-    // Schema::create('representacions', function (Blueprint $table) {
-    //   $table->id();
-    //   $table->string('razonsocial', 50)->nullable();
-    //   $table->string('dire_calle', 50)->nullable();
-    //   $table->string('dire_nro', 30)->nullable();
-    //   $table->string('piso', 4)->nullable();
-    //   $table->string('codpost', 30)->nullable();
-    //   $table->string('dire_obs', 100)->nullable();
-    //   $table->foreignId('barrio_id')->constrained()->onDelete('cascade');
-    //   $table->foreignId('localidad_id')->constrained()->onDelete('cascade');
-    //   $table->foreignId('zona_id')->constrained()->onDelete('cascade');
-    //   $table->foreignId('municipio_id')->constrained()->onDelete('cascade');
-    //   $table->string('telefono', 200)->nullable();
-    //   $table->string('fax', 50)->nullable();
-    //   $table->string('cuit', 50)->nullable();
-    //   $table->string('excenciones', 50)->nullable();
-    //   $table->unsignedBigInteger('iva_id')->nullable();
-    //   $table->string('marcas', 200)->nullable();
-    //   $table->longText('info')->nullable();
-    //   $table->string('contacto', 50)->nullable();
-    //   $table->string('horario', 50)->nullable();
-    //   $table->longText('objetivos')->nullable();
-    //   $table->longText('comentarios')->nullable();
-    //   $table->datetime('fechagira')->nullable();
-    //   $table->string('correo')->nullable();
-    //   $table->string('dpto', 4)->nullable();
-    //   $table->string('status', 1)->nullable();
-    //   $table->timestamps();
-    // });
     Schema::create('representacions', function (Blueprint $table) {
       $table->id();
       $table->string('razonsocial', 50)->nullable();

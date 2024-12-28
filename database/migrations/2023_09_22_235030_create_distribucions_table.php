@@ -59,6 +59,19 @@ return new class extends Migration
       $table->unsignedBigInteger('cobrar_id')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      $table->foreign('dire_calle_id')->references('id')->on('auxcalles')->onDelete('set null');
+      $table->foreign('barrio_id')->references('id')->on('auxbarrios')->onDelete('set null');
+      $table->foreign('municipio_id')->references('id')->on('auxmunicipios')->onDelete('set null');
+      $table->foreign('localidad_id')->references('id')->on('auxlocalidades')->onDelete('set null');
+      $table->foreign('contacto_id')->references('id')->on('auxcontacto')->onDelete('set null');
+      $table->foreign('rubro_id')->references('id')->on('auxrubros')->onDelete('set null');
+      $table->foreign('tamanio_id')->references('id')->on('auxtamanio')->onDelete('set null');
+      $table->foreign('modo_id')->references('id')->on('auxmodos')->onDelete('set null');
+      $table->foreign('zona_id')->references('id')->on('auxzonas')->onDelete('set null');
+      $table->foreign('area_id')->references('id')->on('areas')->onDelete('set null');
+      $table->foreign('contacto_id')->references('id')->on('auxcontacto')->onDelete('set null');
+      $table->foreign('veraz_id')->references('id')->on('auxveraz')->onDelete('set null');
     });
   }
 

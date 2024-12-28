@@ -21,6 +21,10 @@ return new class extends Migration
       $table->date('fechaUEnt')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      $table->foreign('distribucion_id')->references('id')->on('distribucions')->onDelete('cascade');
+      $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
+
     });
   }
 
