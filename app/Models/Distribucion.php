@@ -9,7 +9,46 @@ class Distribucion extends Model
 {
   use HasFactory;
 
-  protected $table = 'distribucion';
+  protected $table = 'distribucions';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'clisg_id',
+    'razonsocial',
+    'nomfantasia',
+    'dire_calle_id',
+    'dire_nro',
+    'piso',
+    'dpto',
+    'codpost',
+    'dire_obs',
+    'barrio_id',
+    'municipio_id',
+    'localidad_id',
+    'zona_id',
+    'telefono',
+    'cuit',
+    'correo',
+    'marcas',
+    'info',
+    'rubro_id',
+    'tamanio_id',
+    'modo_id',
+    'contacto_id',
+    'auto',
+    'veraz_id',
+    'estado_id',
+    'productoCDA',
+    'desde',
+    'hasta',
+    'desde1',
+    'hasta1',
+    'lunes',
+    'sabado',
+    'fac_imp',
+    'obsrecep',
+    'cobrar_id',
+    'cobro_id',
+    'tcobro_id',
+    'status'
+  ];
 }

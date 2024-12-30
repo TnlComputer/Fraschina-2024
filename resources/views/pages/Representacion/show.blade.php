@@ -3,15 +3,14 @@
 @section('title', 'Detalle de Representación')
 
 @section('content_header')
-<h1>Detalle de Representación</h1>
+<div class="d-flex justify-content-between align-items-center">
+  <h1>Detalle de Representación</h1>
+  <a href="{{ route('representacion.index') }}" class="btn btn-secondary btn-sm">Volver</a>
+</div>
 @endsection
 
 @section('content')
 <div class="card">
-  <div class="card-header">
-    <h3 class="card-title">Información de la Representación</h3>
-    <a href="{{ route('representacion.index') }}" class="btn btn-secondary btn-sm float-right">Volver</a>
-  </div>
   <div class="card-body">
     {{-- Información General --}}
     <div class="row text-sm">
@@ -38,9 +37,6 @@
 
           <dt class="col-sm-4">CUIT:</dt>
           <dd class="col-sm-8">{{ $representacion->cuit }}</dd>
-
-          {{-- <dt class="col-sm-4">Exenciones:</dt>
-          <dd class="col-sm-8">{{ $representacion->excenciones }}</dd> --}}
         </dl>
       </div>
       <div class="col-md-6">
@@ -48,18 +44,8 @@
           <dt class="col-sm-4">Marcas:</dt>
           <dd class="col-sm-8">{{ $representacion->marcas }}</dd>
 
-          {{-- <dt class="col-sm-4">Contacto:</dt>
-          <dd class="col-sm-8">{{ $representacion->contacto }}</dd> --}}
-
-          {{-- <dt class="col-sm-4">Horario:</dt>
-          <dd class="col-sm-8">{{ $representacion->horario }}</dd> --}}
-
           <dt class="col-sm-4">Correo:</dt>
           <dd class="col-sm-8">{{ $representacion->correo }}</dd>
-          {{-- <dt class="col-sm-4">Fecha de Gira:</dt>
-          <dd class="col-sm-8">{{ $representacion->fechagira ? $representacion->fechagira->format('d/m/Y') : 'Sin fecha'
-            }}</dd> --}}
-
 
           <dt class="col-sm-4">Zona:</dt>
           <dd class="col-sm-8">{{ optional($representacion->zona)->nombre }}</dd>
@@ -72,9 +58,6 @@
 
           <dt class="col-sm-4">Barrio:</dt>
           <dd class="col-sm-8">{{ optional($representacion->barrio)->nombrebarrio }}</dd>
-
-          {{-- <dt class="col-sm-4">Estado:</dt>
-          <dd class="col-sm-8">{{ $representacion->status === 'A' ? 'Activo' : 'Inactivo' }}</dd> --}}
         </dl>
       </div>
     </div>
@@ -85,18 +68,7 @@
         <h5>Información:</h5>
         <p>{{ $representacion->info }}</p>
       </div>
-      {{-- <div class="col-md-6">
-        <h5>Objetivos:</h5>
-        <p>{{ $representacion->objetivos }}</p>
-      </div> --}}
     </div>
-
-    {{-- <div class="row mt-4">
-      <div class="col-12">
-        <h5>Comentarios:</h5>
-        <p>{{ $representacion->comentarios }}</p>
-      </div>
-    </div> --}}
   </div>
 </div>
 
@@ -138,26 +110,26 @@
           <td>{{ optional($persona->area)->area }}</td>
           <td>{{ optional($persona->cargo)->cargo }}</td>
           <td>{{ $persona->observaciones }}</td>
-          <td>
-            @if($persona->fuera === 0)
-            <i class="fas fa-check-circle text-success" title="Activo"></i>
-            @else
-            <i class="fas fa-times-circle text-danger" title="Desactivado"></i>
-            @endif
-          </td>
           <td class="d-flex justify-content-between">
+            @if($persona->fuera === 0)
+            <i class="fas fa-check-circle text-success my-2" title="Activo"></i>
+            @else
+            <i class="fas fa-times-circle text-danger my-2" title="Desactivado"></i>
+            @endif
+
             @can('permiso_12')
-            <a href="{{ route('representacion_personal.edit', $persona->id) }}" class="btn-xs btn-warning"
+            <a href="{{ route('representacion_personal.edit', $persona->id) }}" class="btn-xs btn-warning m-1"
               title="Editar">
-              <i class="fa-solid fa-pen-to-square fa-xs"></i>
+              <i class="fa-solid fa-pen-to-square fa-sm"></i>
             </a>
             @endcan
+
             @can('permiso_13')
             <form method="POST" action="{{ route('representacion_personal.destroy', $persona->id) }}"
               onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
               @csrf
               @method('DELETE')
-              <button type="submit" class="btn-xs btn-danger" title="Eliminar">
+              <button type="submit" class="btn-2xs btn-danger m-1" title="Eliminar">
                 <i class="fa-solid fa-trash fa-xs"></i>
               </button>
             </form>
@@ -217,12 +189,11 @@
           <td>{{ $producto->absorcion }}</td>
           <td>{{ $producto->puntuaciones }}</td>
           <td>{{ $producto->particularidades }}</td>
-          <td>
           <td class="d-flex justify-content-between">
             @can('permiso_12')
-            <a href="{{ route('representacion_producto.edit', $producto->id) }}" class="btn-xs btn-warning"
+            <a href="{{ route('representacion_producto.edit', $producto->id) }}" class="btn-xs btn-warning m-1"
               title="Editar">
-              <i class="fa-solid fa-pen-to-square fa-xs"></i>
+              <i class="fa-solid fa-pen-to-square fa-sm"></i>
             </a>
             @endcan
             @can('permiso_13')
@@ -230,12 +201,11 @@
               onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
               @csrf
               @method('DELETE')
-              <button type="submit" class="btn-xs btn-danger" title="Eliminar">
+              <button type="submit" class="btn-2xs btn-danger m-1" title="Eliminar">
                 <i class="fa-solid fa-trash fa-xs"></i>
               </button>
             </form>
             @endcan
-          </td>
           </td>
         </tr>
         @endforeach

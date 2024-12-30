@@ -66,30 +66,23 @@
                     <td data-titulo="Cuit">{{ $representacion->cuit }}</td>
                     <td data-titulo="Marcas">{{ $representacion->marcas }}</td>
                     <td class="d-flex justify-content-between">
-                      <a href="{{ route('representacion.show', $representacion->id) }}" class="btn-xs btn-info"
+                      <a href="{{ route('representacion.show', $representacion->id) }}" class="btn-xs btn-info m-1"
                         title="Ver">
-                        <i class="fa-regular fa-eye fa-xs align-middle"></i>
+                        <i class="fa-regular fa-eye fa-sm align-middle"></i>
                       </a>
                       @can('permiso_12')
-                      <a href="{{ route('representacion.edit', $representacion->id) }}" class="btn-xs btn-warning"
+                      <a href="{{ route('representacion.edit', $representacion->id) }}" class="btn-xs btn-warning m-1"
                         title="Editar">
-                        <i class="fa-solid fa-pen-to-square fa-xs"></i>
+                        <i class="fa-solid fa-pen-to-square fa-sm"></i>
                       </a>
                       @endcan
                       @can('permiso_13')
-                      {{-- <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
-                        onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-xs btn-danger" title="Eliminar">
-                          <i class="fa-solid fa-trash fa-xs"></i>
-                        </button>
-                      </form> --}}
                       <form method="POST" action="{{ route('representacion.destroy', $representacion->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn-xs btn-{{ $representacion->status ? 'danger' : 'success' }}"
+                        <button type="submit"
+                          class="btn-2xs btn-{{ $representacion->status ? 'danger' : 'success' }} m-1"
                           title="{{ $representacion->status ? 'Desactivar' : 'Activar' }}">
                           <i class="fa-solid fa-{{ $representacion->status ? 'trash' : 'check' }} fa-xs"></i>
                         </button>

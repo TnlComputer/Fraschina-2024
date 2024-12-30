@@ -43,7 +43,7 @@ class RepresentacionPersonalController extends Controller
     $areas = AuxAreas::all();
     $cargos = AuxCargos::all();
 
-    dd($representacion, $profesiones, $areas, $cargos);
+    // dd($representacion, $profesiones, $areas, $cargos);
     return view('pages.Representacion.Personal.create', compact('representacion', 'profesiones', 'areas', 'cargos'));
   }
 

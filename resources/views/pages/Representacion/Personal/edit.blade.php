@@ -84,8 +84,8 @@
               <!-- Fuera (checkbox) -->
               <div class="col-md-6 mb-3">
                 <label for="fuera" class="form-label">¿Está fuera?</label>
-                <input type="checkbox" name="fuera" id="fuera" class="form-check-input" {{ old('fuera',
-                  $personal->fuera) == 1 ? 'checked' : '' }}>
+                <input type="checkbox" name="fuera" id="fuera" class="" {{ old('fuera', $personal->fuera) == 1 ?
+                'checked' : '' }}>
                 @error('fuera')
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -107,7 +107,8 @@
 
             <div class="d-flex justify-content-between">
               <button type="submit" class="btn btn-success">Guardar Cambios</button>
-              <a href="{{ route('representacion_personal.index') }}" class="btn btn-secondary">Cancelar</a>
+              <a href="{{ route('representacion.show', $personal->representacion_id ) }}"
+                class="btn btn-secondary">Cancelar</a>
             </div>
           </form>
         </div>
