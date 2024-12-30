@@ -69,9 +69,10 @@ return new class extends Migration
       $table->foreign('tamanio_id')->references('id')->on('auxtamanio')->onDelete('set null');
       $table->foreign('modo_id')->references('id')->on('auxmodos')->onDelete('set null');
       $table->foreign('zona_id')->references('id')->on('auxzonas')->onDelete('set null');
-      $table->foreign('area_id')->references('id')->on('areas')->onDelete('set null');
-      $table->foreign('contacto_id')->references('id')->on('auxcontacto')->onDelete('set null');
+      // $table->foreign('area_id')->references('id')->on('areas')->onDelete('set null');
+      // $table->foreign('contacto_id')->references('id')->on('auxcontacto')->onDelete('set null');
       $table->foreign('veraz_id')->references('id')->on('auxveraz')->onDelete('set null');
+      $table->foreign('estado_id')->references('id')->on('auxestados')->onDelete('set null');
     });
   }
 

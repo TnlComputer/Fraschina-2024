@@ -41,7 +41,7 @@
                       <th>Zona</th>
                       <th>Teléfono</th>
                       <th>Email</th>
-                      <th>Acciones</th>
+                      <th class=" text-center">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -65,11 +65,11 @@
                       {{-- <td class="d-flex justify-content-around"> --}}
 
                       <td class=" d-flex justify-content-between">
-                        <a href="{{ route('distribucion.show', $distribucion->id) }}" class="btn-xs btn-info"
+                        <a href="{{ route('distribucion.show', $distribucion->id) }}" class="btn-xs btn-info m-1"
                           title="Ver">
                           <i class="fa-regular fa-eye fa-xs align-middle"></i>
                         </a>
-                        <a href="{{ route('distribucion.edit', $distribucion->id) }}" class="btn-xs btn-warning"
+                        <a href="{{ route('distribucion.edit', $distribucion->id) }}" class="btn-xs btn-warning m-1"
                           title="Editar">
                           <i class="fa-solid fa-pen-to-square fa-xs "></i>
                         </a>
@@ -77,7 +77,7 @@
                           onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                           @csrf
                           @method('DELETE')
-                          <button type="submit" class="btn-xs btn-danger" title="Eliminar">
+                          <button type="submit" class="btn-2xs btn-danger m-1" title="Eliminar">
                             <i class="fa-solid fa-trash fa-xs"></i>
                           </button>
                         </form>

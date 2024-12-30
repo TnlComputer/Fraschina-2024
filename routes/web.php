@@ -10,6 +10,8 @@ use App\Http\Controllers\CalleController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\Contacto_inicialController;
 use App\Http\Controllers\DistribucionController;
+use App\Http\Controllers\DistribucionPersonalController;
+use App\Http\Controllers\DistribucionProductoController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\ExpedicionMolinosController;
 use App\Http\Controllers\ExportarController;
@@ -57,16 +59,33 @@ Route::middleware('auth')->patch('/profile/password', [ProfileController::class,
 Route::middleware('auth')->resource('/AgendaGral', AgendaGralController::class);
 Route::middleware('auth')->resource('/agro', AgroController::class);
 Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
+Route::middleware('auth')->resource('/distribucion/distribucion_personal', DistribucionPersonalController::class);
+Route::middleware('auth')->group(function () {
+  Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
+    ->name('representacion_producto.create');
+
+  Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)->except(['create']); // Excluir la acción `create` del recurso predeterminado
+});
+
+
 Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
 Route::middleware('auth')->resource('/molino', MolinoController::class);
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
 
-Route::middleware('auth')->resource('/representacion/representacion_personal', RepresentacionPersonalController::class);
+// Route::middleware('auth')->resource('/representacion/representacion_personal', RepresentacionPersonalController::class);
+Route::middleware('auth')->group(function () {
+  Route::get('/representacion/{representacion}/representacion_personal/create', [RepresentacionPersonalController::class, 'create'])
+    ->name('representacion_personal.create');
+
+  Route::resource('/representacion/representacion_personal', RepresentacionPersonalController::class)
+    ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+});
 
 Route::middleware('auth')->group(function () {
   Route::get('/representacion/{representacion}/representacion_producto/create', [RepresentacionProductoController::class, 'create'])
     ->name('representacion_producto.create');
+
   Route::resource('/representacion/representacion_producto', RepresentacionProductoController::class)
     ->except(['create']); // Excluir la acción `create` del recurso predeterminado
 });

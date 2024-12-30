@@ -21,8 +21,8 @@ return new class extends Migration
       $table->decimal('stockcda')->nullable();
       $table->decimal('stockreservacda')->nullable();
       $table->decimal('stockdisponiblecda')->nullable();
-      $table->decimal('stockfecentcda')->nullable();
-      $table->date('cantultent')->nullable();
+      $table->date('stockfecentcda')->nullable();
+      $table->decimal('cantultent')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
     });
