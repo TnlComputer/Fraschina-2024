@@ -24,13 +24,23 @@ class DistribucionPersonalController extends Controller
    */
   public function create(Distribucion $distribucion)
   {
-    $distribucion = Distribucion::findOrFail($distribucion->id);
+
+    $modeloDistribucion = Distribucion::findOrFail($distribucion->id); // Obtén el registro completo
+
+    $personal = (object)[
+      'distribucion_id' => $modeloDistribucion->id, // Usas el ID del modelo
+      'fuera' => 0,
+    ];
+
+    $distribuciones = Distribucion::all(); // Dropdown para representaciones
 
     $areas = AuxAreas::orderBy('area', 'asc')->get();
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get();
-    $profesiones = AuxProfesion::orderBy('nombreprofesion', 'asc')->get();
+    $profesiones = AuxProfesion::where('distribuciones', 'SI') // Filtrar donde distribuciones sea igual a "SI"
+      ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
+      ->get();
 
-    return view('distribucion_personal.create', compact('distribucion', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Distribucion.Personal.create', compact('personal', 'distribuciones', 'areas', 'cargos', 'profesiones'));
   }
 
   /**
@@ -39,28 +49,41 @@ class DistribucionPersonalController extends Controller
 
   public function store(Request $request)
   {
+
     $validated = $request->validate([
       'nombre' => 'required|string|max:150',
-      'apellido' => 'string|max:150',
-      'distribucion_id' => 'required|integer',
-      'area_id' => 'required|integer',
-      'cargo_id' => 'required|integer',
-      'categoriacargo_id' => 'required|integer',
-      'teldirecto' => 'nullable|string|max:50',
-      'interno' => 'nullable|string|max:50',
-      'telcelular' => 'nullable|string|max:50',
-      'profesion_id' => 'required|integer',
-      'telparticular' => 'nullable|string|max:50',
+      'apellido' => 'required|string|max:150',
+      'distribucion_id' => 'required|exists:distribucions,id',
+      'area_id' => 'nullable|exists:auxareas,id',
+      'cargo_id' => 'nullable|exists:auxcargos,id',
+      'teldirecto' => 'nullable|max:50',
+      'interno' => 'nullable|max:50',
+      'telcelular' => 'nullable|max:50',
+      'profesion_id' => 'nullable|exists:auxprofesiones,id',
+      'telparticular' => 'nullable|max:50',
       'email' => 'nullable|email|max:150',
-      'observaciones' => 'nullable|string',
+      'observaciones' => 'nullable',
+      // 'fuera' => 'nullable|boolean',
+    ], [
+      'nombre.required' => 'El nombre es obligatorio.',
+      'apellido.required' => 'El apellido es obligatorio.',
+      'distribucion_id.required' => 'Debe seleccionar una distribución.',
+      'distribucion_id.exists' => 'La distribución seleccionada no es válida.',
+      'email.email' => 'El correo electrónico no tiene un formato válido.',
+      'fuera.in' => 'El campo "Fuera" debe ser 0, 1, o -1.',
     ]);
 
-    $validated['fuera'] = 0;
+    // Override 'fuera' with the correct value
+    $validated['fuera'] = $request->has('fuera') ? true : false;
     $validated['status'] = 'A';
 
     Distribucion_Personal::create($validated);
 
-    return redirect()->route('distribucion.show, $request->distribucion_id')->with('success', 'Distribución personal creada exitosamente.');
+    // dd($request->distribucion_id);
+
+    return redirect()
+      ->route('distribucion.show', $request->distribucion_id)
+      ->with('success', 'Distribución personal creada exitosamente.');
   }
 
   /**
@@ -80,7 +103,9 @@ class DistribucionPersonalController extends Controller
     $distribuciones = Distribucion::all(); // Dropdown para representaciones
     $areas = AuxAreas::orderBy('area', 'asc')->get(); // Ordenar áreas por nombre
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get(); // Ordenar cargos por nombre
-    $profesiones = AuxProfesion::orderBy('nombreprofesion', 'asc')->get(); // Ordenar profesiones por nombre
+    $profesiones = AuxProfesion::where('distribuciones', 'SI') // Filtrar donde distribuciones sea igual a "SI"
+      ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
+      ->get();
 
     return view('Pages.Distribucion.Personal.edit', compact('personal', 'distribuciones', 'areas', 'cargos', 'profesiones'));
   }
@@ -93,6 +118,9 @@ class DistribucionPersonalController extends Controller
   {
     $distribucionPersonal = Distribucion_Personal::findOrFail($id);
 
+    // Check if 'fuera' checkbox is checked
+    // If checked, set to 1; if not, set to 0 or -1 based on your requirements
+    // $fuera = $request->has('fuera') ? 1 : 0; // or you could use -1 if needed for unchecked
 
     $validated = $request->validate([
       'nombre' => 'required|string|max:150',
@@ -107,28 +135,48 @@ class DistribucionPersonalController extends Controller
       'telparticular' => 'nullable|max:50',
       'email' => 'nullable|email|max:150',
       'observaciones' => 'nullable',
-      'fuera' => 'nullable|boolean', // No es obligatorio ya que tiene valor por defecto
-      'status' => 'nullable|in:A,D', // No es obligatorio ya que tiene valor por defecto
+      // 'fuera' => 'nullable|in:0,1,-1', // Allow 0, 1, or -1
     ], [
       'nombre.required' => 'El nombre es obligatorio.',
       'apellido.required' => 'El apellido es obligatorio.',
-      'representacion_id.required' => 'Debe seleccionar una representación.',
-      'representacion_id.exists' => 'La representación seleccionada no es válida.',
+      'distribucion_id.required' => 'Debe seleccionar una distribución.',
+      'distribucion_id.exists' => 'La distribución seleccionada no es válida.',
       'email.email' => 'El correo electrónico no tiene un formato válido.',
-      'status.in' => 'El estado debe ser "A" (Activo) o "D" (Desactivado).',
+      'fuera.in' => 'El campo "Fuera" debe ser 0, 1, o -1.', // Custom error message for "fuera"
     ]);
-    // dd($request->all(), $validated);
 
+    // Override 'fuera' with the correct value
+    // $validated['fuera'] = $fuera;
+    $validated['fuera'] = $request->has('fuera') ? true : false;
+
+
+    // Update the record
     $distribucionPersonal->update($validated);
 
-    return redirect()->route('distribucion.show', $request->distribucion_id)->with('success', 'Distribución personal actualizada exitosamente.');
+    return redirect()
+      ->route('distribucion.show', $request->distribucion_id)
+      ->with('success', 'Los datos del personal fueron actualizados exitosamente.');
   }
+
+
+
 
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy($id)
   {
-    //
+    // Buscar el registro
+    $persona = Distribucion_Personal::findOrFail($id);
+
+    // dd($id, $persona);
+
+    // Cambiar el status a 'D'
+    $persona->update(['status' => 'D']);
+
+    // Redirigir al detalle de la distribución
+    return redirect()
+      ->route('distribucion.show', ['distribucion' => $persona->distribucion_id])
+      ->with('success', 'El personal ha sido desactivado con éxito.');
   }
 }

@@ -157,7 +157,13 @@
       </div>
 
       <!-- Personal Asociado -->
-      <h4>Personal Asociado</h4>
+      <h4 class="d-flex justify-content-between align-items-center">
+        <span>Personal Asociado</span>
+        <a href="{{ route('distribucion_personal.create', ['distribucion' => $distribucion->id]) }}"
+          class="btn btn-primary btn-sm">
+          <i class="fas fa-user-plus"></i> Nuevo Personal
+        </a>
+      </h4>
       <div class="table-responsive">
         <table class="table table-sm table-bordered">
           <thead class="text-xs">
@@ -165,9 +171,14 @@
               <th>Nombre</th>
               <th>Cargo</th>
               <th>Área</th>
-              <th>Teléfono</th>
+              <th>Profesión</th>
+              <th>Tel Directo</th>
+              <th>Interno</th>
+              <th>Tel Celular</th>
+              <th>Tel Particular</th>
               <th>Email</th>
-              <th></th>
+              <th>Observaciones</th>
+              <th class=" text-center">Acción</th>
             </tr>
           </thead>
           <tbody class="text-xs">
@@ -176,25 +187,35 @@
               <td>{{ $persona->nombre }} {{ $persona->apellido }}</td>
               <td>{{ $persona->cargo }}</td>
               <td>{{ $persona->area }}</td>
+              <td>{{ $persona->profesion }}</td>
+              <td>{{ $persona->teldirecto }}</td>
+              <td>{{ $persona->interno }}</td>
               <td>{{ $persona->telcelular }}</td>
+              <td>{{ $persona->telparticular }}</td>
               <td>{{ $persona->email }}</td>
+              <td>{{ $persona->observaciones }}</td>
               <td class="d-flex justify-content-center">
+                @if($persona->fuera === 0)
+                <i class="fas fa-check-circle text-success my-2" title="Activo"></i>
+                @else
+                <i class="fas fa-times-circle text-danger my-2" title="Desactivado"></i>
+                @endif
                 @can('permiso_12')
                 <a href="{{ route('distribucion_personal.edit', $persona->id) }}" class="btn-xs btn-warning mx-1"
                   title="Editar">
-                  <i class="fa-solid fa-pen-to-square fa-sm"></i>
+                  <i class="fa-solid fa-pen-to-square fa-sm""></i>
                 </a>
                 @endcan
-                @can('permiso_13')
-                <form method="POST" action="{{ route('distribucion_personal.destroy', $persona->id) }}"
-                  onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn-2xs btn-danger mx-1" title="Eliminar">
-                    <i class="fa-solid fa-trash fa-xs"></i>
-                  </button>
-                </form>
-                @endcan
+              @can('permiso_13')
+              <form method=" POST" action="{{ route('distribucion_personal.destroy', $persona->id) }}"
+                    onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-2xs btn-danger mx-1" title="Eliminar">
+                      <i class="fa-solid fa-trash fa-xs"></i>
+                    </button>
+                    </form>
+                    @endcan
               </td>
             </tr>
             @endforeach
@@ -203,7 +224,13 @@
       </div>
 
       <!-- Productos Asociados -->
-      <h4>Productos Asociados</h4>
+      <h4 class="d-flex justify-content-between align-items-center">
+        <span>Productos Asociados</span>
+        <a href="{{ route('distribucion_producto.create', ['distribucion' => $distribucion->id]) }}"
+          class="btn btn-primary btn-sm">
+          <i class="fas fa-box"></i> Nuevo Producto
+        </a>
+      </h4>
       <div class="table-responsive">
         <table class="table table-sm table-bordered">
           <thead class="text-xs">
@@ -212,7 +239,7 @@
               <th class=" text-center">Precio</th>
               <th class=" text-center">Fecha Última Cotización</th>
               <th class=" text-center">Fecha Última Entrega</th>
-              <th></th>
+              <th class=" text-center">Acción</th>
             </tr>
           </thead>
           <tbody class="text-xs">

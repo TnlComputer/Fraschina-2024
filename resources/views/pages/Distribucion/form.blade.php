@@ -321,7 +321,7 @@
   </div>
 
   <div class="col-md-1">
-    <label for="lunes" class="form-label">Lunes {{ $distribucion->lunes }}<i class="fa-solid fa-lock"></i></label>
+    <label for="lunes" class="form-label">Lunes <i class="fa-solid fa-lock"></i></label>
     <div class="form-check">
       <input type="checkbox" name="lunes" id="lunes" class="form-check-input @error('lunes') is-invalid @enderror" {{
         old('lunes', $distribucion->lunes ?? 'off') == 'on' ? 'checked' : '' }}>

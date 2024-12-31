@@ -11,5 +11,40 @@ class Distribucion_Personal extends Model
 
   protected $table = 'distribucion_personal';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'nombre',
+    'apellido',
+    'distribucion_id',
+    'area_id',
+    'cargo_id',
+    'profesion_id',
+    'teldirecto',
+    'interno',
+    'telcelular',
+    'telparticular',
+    'email',
+    'observaciones',
+    'fuera',
+    'status',
+  ];
+
+  public function distribucion()
+  {
+    return $this->belongsTo(Distribucion::class, 'distribucion_id');
+  }
+
+  public function area()
+  {
+    return $this->belongsTo(AuxAreas::class, 'area_id');
+  }
+
+  public function cargo()
+  {
+    return $this->belongsTo(AuxCargos::class, 'cargo_id');
+  }
+
+  public function profesion()
+  {
+    return $this->belongsTo(AuxProfesion::class, 'profesion_id');
+  }
 }

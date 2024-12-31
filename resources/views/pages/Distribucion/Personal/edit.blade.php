@@ -11,11 +11,12 @@
   <form action="{{ route('distribucion_personal.update', $personal->id) }}" method="POST">
     @csrf
     @method('PUT')
-    @include('pages.Distribucion.Personal.form', ['distribucionPersonal' => $personal])
+    @include('pages.Distribucion.Personal.form', ['Personal' => $personal->id])
 
     <div class="d-flex justify-content-between">
       <button type="submit" class="btn btn-primary">Actualizar</button>
-      <a href="{{ route('distribucion_personal.index') }}" class="btn btn-secondary">Cancelar</a>
+      <a href="{{ route('distribucion.show', $personal->distribucion_id) }}" class="btn btn-secondary">
+        Cancelar </a>
     </div>
   </form>
 </div>
