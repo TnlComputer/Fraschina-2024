@@ -10,8 +10,13 @@
 <div class="container">
   <form action="{{ route('distribucion_personal.store') }}" method="POST">
     @csrf
-    @include('distribucion_personal.form')
-    <button type="submit" class="btn btn-primary">Guardar</button>
+    @include('pages.Distribucion.Personal.form')
+
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{{ route('distribucion.show', ['distribucion' => $personal->distribucion_id]) }}"
+        class="btn btn-secondary">Cancelar</a>
+    </div>
   </form>
 </div>
 

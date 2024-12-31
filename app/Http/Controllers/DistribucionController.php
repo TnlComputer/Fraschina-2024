@@ -81,30 +81,23 @@ class DistribucionController extends Controller
         ->leftJoin('auxtipopagos as auxTPg', 'd.tcobro_id', '=', 'auxTPg.id')
         ->leftJoin('auxveraz as auxVer', 'd.veraz_id', '=', 'auxVer.id')
         ->select(
-          // si
           'd.clisg_id',
           'd.razonsocial',
           'd.nomfantasia',
-          // si
           'auxCalle.calle as dire_calle',
           'd.dire_nro',
           'd.piso',
           'd.codpost',
-
           'd.dire_obs',
-          // si
           'd.telefono',
           'd.fax',
           'd.cuit',
           'd.correo',
-
           'd.dpto',
           'd.auto',
           'd.marcas',
-          // si
           'd.info',
           'd.id',
-
           'd.lunes',
           'd.sabado',
           'd.fac_imp',
@@ -114,18 +107,13 @@ class DistribucionController extends Controller
           'd.hasta',
           'd.hasta1',
           'd.productoCDA',
-
-          // si
           'auxB.nombrebarrio as barrio',
           'auxLoc.localidad as localidad',
           'auxMun.ciudadmunicipio as municipio',
           'auxZon.nombre as zona',
-
-          // si
           'auxRub.nombre as rubro',
           'auxTam.nombre as tamanio',
           'auxMod.nombre as modo',
-
           'auxCon.contacto as contacto',
           'auxEst.nomEstado as estado',
           'auxVer.estado as veraz',
@@ -147,17 +135,21 @@ class DistribucionController extends Controller
       $personal = DB::table('distribucion_personal as dp')
         ->leftJoin('auxareas as a', 'dp.area_id', '=', 'a.id')
         ->leftJoin('auxcargos as c', 'dp.cargo_id', '=', 'c.id')
+        ->leftJoin('auxprofesiones as pf', 'dp.profesion_id', '=', 'pf.id')
         ->select(
           'dp.nombre',
           'dp.apellido',
           'dp.teldirecto',
           'dp.interno',
           'dp.telcelular',
+          'dp.telparticular',
           'dp.email',
           'dp.observaciones',
           'dp.id',
+          'dp.fuera',
           'a.area as area',
-          'c.cargo as cargo'
+          'c.cargo as cargo',
+          'pf.nombreprofesion as profesion',
         )
         ->where('dp.distribucion_id', '=', $id)
         ->where('dp.status', '=', 'A')

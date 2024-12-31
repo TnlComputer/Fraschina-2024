@@ -11,5 +11,13 @@ class Distribucion_Producto extends Model
 
   protected $table = 'distribucion_productos';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'distribucion_id',
+    'producto_id',
+    'precio',
+    'fecha',
+    'nomproducto',
+    'fechaUEnt',
+    'status',
+  ];
 }
