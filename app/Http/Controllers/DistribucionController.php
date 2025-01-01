@@ -158,7 +158,7 @@ class DistribucionController extends Controller
       // Consulta para los productos
       $productos = DB::table('distribucion_productos as dp')
         ->leftJoin('productos_c_d_a as p', 'dp.producto_id', '=', 'p.id')
-        ->select('p.productoCDA as nomproducto', 'dp.precio', 'dp.fecha', 'dp.fechaUEnt')
+        ->select('p.productoCDA as nomproducto', 'dp.precio', 'dp.fecha', 'dp.fechaUEnt', 'dp.id')
         ->where('dp.distribucion_id', '=', $id)
         ->where('dp.status', '=', 'A')
         ->get();

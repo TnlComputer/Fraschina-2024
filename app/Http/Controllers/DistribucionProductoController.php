@@ -22,48 +22,58 @@ class DistribucionProductoController extends Controller
 
   public function create($distribucion_id)
   {
-    $productos = ProductoCDA::all(); // Obtener productos
-    return view('distribucion_productos.create', compact('productos', 'distribucion_id'));
+    // $productos = ProductoCDA::orderBy('productoCDA', 'ASC')->get(); // Obtener productos
+
+    $productos = productoCDA::where('status', '=', 'A')->orderBy('productoCDA', 'asc')->get();
+
+    return view('pages.Distribucion.Producto.create', compact('productos', 'distribucion_id'));
   }
 
   public function store(Request $request)
   {
     $validated = $request->validate([
-      'distribucion_id' => 'required|integer',
-      'producto_id'     => 'required|integer',
+      'producto_id'     => 'required|exists:productos_c_d_a,id', // Asegura que existe en la tabla
       'precio'          => 'required|numeric',
       'fecha'           => 'required|date',
-      'nomproducto'     => 'required|string|max:150',
       'fechaUEnt'       => 'nullable|date',
-      'status'          => 'required|string|max:1',
+      'distribucion_id' => 'required|exists:distribucions,id', // Valida que la distribución exista
     ]);
+
+    // Agregar status predeterminado
+    $validated['status'] = 'A';
 
     Distribucion_Producto::create($validated);
 
-    return redirect()->route('distribucion_productos.index')->with('success', 'Producto agregado a la distribución.');
+    return redirect()->route('distribucion.show', ['distribucion' => $validated['distribucion_id']])
+      ->with('success', 'Producto agregado a la distribución.');
   }
+
+
 
   public function edit(Distribucion_Producto $distribucionProducto)
   {
-    $productos = productoCDA::all();
-    return view('distribucion_productos.edit', compact('distribucionProducto', 'productos'));
+    $distribucion_producto = Distribucion_Producto::findOrFail($distribucionProducto->id);
+
+    $productos = productoCDA::where('status', '=', 'A')->orderBy('productoCDA', 'asc')->get();
+
+    return view('pages.Distribucion.Producto.edit', compact('distribucion_producto', 'productos'));
   }
 
-  public function update(Request $request, Distribucion_Producto $distribucionProducto)
+  public function update(Request $request, $id)
   {
     $validated = $request->validate([
-      'distribucion_id' => 'required|integer',
-      'producto_id'     => 'required|integer',
-      'precio'          => 'required|numeric',
-      'fecha'           => 'required|date',
-      'nomproducto'     => 'required|string|max:150',
-      'fechaUEnt'       => 'nullable|date',
-      'status'          => 'required|string|max:1',
+      'producto_id' => 'required|exists:productos_c_d_a,id', // Asegura que existe en la tabla
+      'precio'      => 'required|numeric',
+      'fecha'       => 'required|date',
+      'fechaUEnt'   => 'nullable|date',
+      'status'      => 'required|in:A,D', // Validar que el estado sea 'A' o 'D'
     ]);
 
-    $distribucionProducto->update($validated);
+    $distribucion_producto = Distribucion_Producto::findOrFail($id);
+    $distribucion_producto->update($validated);
 
-    return redirect()->route('distribucion_productos.index')->with('success', 'Producto de distribución actualizado.');
+    return redirect()->route('distribucion.show', ['distribucion' => $distribucion_producto->distribucion_id])
+      ->with('success', 'Producto actualizado en la distribución.');
   }
 
   /**
@@ -77,8 +87,18 @@ class DistribucionProductoController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy($id)
   {
-    //
+    // dd($id);
+
+    // Buscar el producto en la distribución
+    $producto = Distribucion_Producto::findOrFail($id);
+
+    // Cambiar el estado a 'D' (desactivado)
+    $producto->update(['status' => 'D']);
+
+    // Redirigir con un mensaje de éxito
+    return redirect()->route('distribucion.show', ['distribucion' => $producto->distribucion_id])
+      ->with('success', 'Producto desactivado de la distribución.');
   }
 }

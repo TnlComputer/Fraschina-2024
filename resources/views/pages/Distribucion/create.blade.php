@@ -1,6 +1,8 @@
 @extends('adminlte::page')
 
 @section('content')
-@include('Pages.Distribucion.form', ['action' => route('distribucion.store'), 'method' => 'POST', 'buttonText' => 'Crear
+@include('pages.Distribucion.Producto.form', ['action' => route('distribucion_producto.store'), 'method' => 'POST',
+'buttonText'
+=> 'Crear
 Distribución'])
 @endsection
