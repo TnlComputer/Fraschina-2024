@@ -11,5 +11,23 @@ class Molino extends Model
 
   protected $table = 'molinos';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'razonsocial',
+    'dire_calle',
+    'dire_nro',
+    'piso',
+    'dpto',
+    'dire_obs',
+    'codpost',
+    'localidad_id',
+    'telefono',
+    'municipio_id',
+    'fax',
+    'cuit',
+    'info',
+    'correo',
+    'marcas',
+    'barrio_id',
+    'status'
+  ];
 }
