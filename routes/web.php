@@ -20,6 +20,7 @@ use App\Http\Controllers\HoraController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\ModoController;
 use App\Http\Controllers\MolinoController;
+use App\Http\Controllers\MolinoPersonalController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrioridadController;
@@ -58,24 +59,57 @@ Route::middleware('auth')->patch('/profile/password', [ProfileController::class,
 // PRINCIPAL
 Route::middleware('auth')->resource('/AgendaGral', AgendaGralController::class);
 Route::middleware('auth')->resource('/agro', AgroController::class);
-Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
+
+// Route::middleware('auth')->resource('/distribucion', DistribucionController::class);
+
+// Route::middleware('auth')->group(function () {
+//   // Rutas para Distribución Personal
+//   Route::get('/distribucion/{distribucion}/distribucion_personal/create', [DistribucionPersonalController::class, 'create'])
+//     ->name('distribucion_personal.create'); // Cambiado el nombre de la ruta
+//   Route::resource('/distribucion/distribucion_personal', DistribucionPersonalController::class)
+//     ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+
+//   // Rutas para Distribución Producto
+//   Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
+//     ->name('distribucion_producto.create');
+
+//   Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)
+//     ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+// });
 
 Route::middleware('auth')->group(function () {
+  // Rutas para Distribución
+  Route::resource('/distribucion', DistribucionController::class); // Maneja todas las rutas RESTful para Distribución
+
   // Rutas para Distribución Personal
   Route::get('/distribucion/{distribucion}/distribucion_personal/create', [DistribucionPersonalController::class, 'create'])
-    ->name('distribucion_personal.create'); // Cambiado el nombre de la ruta
+    ->name('distribucion_personal.create'); // Ruta personalizada para crear Distribución Personal
+
   Route::resource('/distribucion/distribucion_personal', DistribucionPersonalController::class)
-    ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+    ->except(['create']); // Excluir `create` porque ya está definida por separado
 
   // Rutas para Distribución Producto
   Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
-    ->name('distribucion_producto.create');
+    ->name('distribucion_producto.create'); // Ruta personalizada para crear Distribución Producto
+
   Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)
-    ->except(['create']); // Excluir la acción `create` del recurso predeterminado
+    ->except(['create']); // Excluir `create` porque ya está definida por separado
 });
+
 
 Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
 Route::middleware('auth')->resource('/molino', MolinoController::class);
+
+Route::middleware('auth')->group(function () {
+  // Rutas para Molino Personal
+  Route::get('/molino/{molino}/molino_personal/create', [MolinoPersonalController::class, 'create'])
+    ->name('molino_personal.create'); // Ruta personalizada para crear Molino Personal
+
+  // Recurso para Molino Personal (excluyendo `create` porque ya tienes una ruta personalizada para ello)
+  Route::resource('/molino/molino_personal', MolinoPersonalController::class)
+    ->except(['create']); // Excluir `create` porque ya está definida fuera del recurso
+});
+
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
 

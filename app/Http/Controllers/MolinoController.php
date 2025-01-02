@@ -1,136 +1,268 @@
 <?php
 
+// namespace App\Http\Controllers;
+
+// use App\Models\AuxPagos;
+// use App\Models\AuxVeraz;
+// use App\Models\AuxZonas;
+// use App\Models\AuxCalles;
+// use App\Models\AuxCobrar;
+// use App\Models\AuxEstado;
+// use App\Models\AuxBarrios;
+// use App\Models\AuxContacto;
+// use App\Models\AuxTipoPagos;
+// use Illuminate\Http\Request;
+// use App\Models\AuxMunicipios;
+// use App\Models\AuxLocalidades;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Auth;
+
+// class MolinoController extends Controller
+// {
+//   /**
+//    * Display a listing of the resource.
+//    */
+//   public function index(Request $request)
+//   {
+//     $name = trim($request->get('name'));
+
+//     $molinos = DB::table('molinos as resp')
+//     ->join('auxbarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+//     ->join('auxlocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
+//     ->join('auxmunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
+//     ->select(
+//       'auxb.nombrebarrio as barrio',
+//       'auxLoc.localidad as localidad',
+//       'auxMun.ciudadmunicipio as municipio',
+//       'resp.razonsocial',
+//       'resp.dire_calle',
+//       'resp.dire_nro',
+//       'resp.piso',
+//       'resp.codpost',
+//       'resp.dire_obs',
+//       'resp.telefono',
+//       'resp.fax',
+//       'resp.cuit',
+//       'resp.correo',
+//       'resp.dpto',
+//       'resp.marcas',
+//       'resp.info',
+//       'resp.id'
+//     )
+//       ->where('resp.status', '=', 'A')
+//       ->when($name, function ($query, $name) {
+//         return $query->where('resp.razonsocial', 'like', '%' . $name . '%');
+//       })
+//       ->orderBy('resp.razonsocial', 'ASC')
+//       ->paginate(15);
+
+//     return view('Pages.Molino.index', compact('molinos', 'name'));
+//   }
+
+
+//   /**
+//    * Show the form for creating a new resource.
+//    */
+//   public function create()
+//   {
+//     //
+//   }
+
+//   /**
+//    * Store a newly created resource in storage.
+//    */
+//   public function store(Request $request)
+//   {
+//     //
+//   }
+
+//   /**
+//    * Display the specified resource.
+//    */
+//   public function show(string $id)
+//   {
+//     //
+//   }
+
+//   /**
+//    * Show the form for editing the specified resource.
+//    */
+//   public function edit(string $id)
+//   {
+//     //
+//   }
+
+//   /**
+//    * Update the specified resource in storage.
+//    */
+//   public function update(Request $request, string $id)
+//   {
+//     //
+//   }
+
+//   /**
+//    * Remove the specified resource from storage.
+//    */
+//   public function destroy(string $id)
+//   {
+//     //
+//   }
+// } 
+
+
+
 namespace App\Http\Controllers;
 
-use App\Models\AuxPagos;
-use App\Models\AuxVeraz;
-use App\Models\AuxZonas;
-use App\Models\AuxCalles;
-use App\Models\AuxCobrar;
-use App\Models\AuxEstado;
-use App\Models\AuxBarrios;
-use App\Models\AuxContacto;
-use App\Models\AuxTipoPagos;
 use Illuminate\Http\Request;
-use App\Models\AuxMunicipios;
-use App\Models\AuxLocalidades;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class MolinoController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
   public function index(Request $request)
   {
     $name = trim($request->get('name'));
-    if ($name) {
-      $molinos = DB::table('molinos as resp')
-        ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-        ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-        ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
-        ->select(
-          'resp.razonsocial',
-          'resp.dire_calle',
-          'resp.dire_nro',
-          'resp.piso',
-          'resp.codpost',
-          'resp.dire_obs',
-          'resp.telefono',
-          'resp.fax',
-          'resp.cuit',
-          'resp.correo',
-          'resp.dpto',
-          'resp.marcas',
-          'resp.info',
-          'resp.id',
-          'resp.correo',
-          'auxb.nombrebarrio as barrio',
-          'auxLoc.localidad as localidad',
-          'auxMun.ciudadmunicipio as municipio',
-        )
-        ->where('status', '=', 'A')
-        ->orWhere('razonsocial', 'like', '%' . $request->name . '%')
-        // ->orWhere('marcas', 'like', '%' . $request->name . '%')
-        ->paginate(15);
-    } else {
-      $molinos = DB::table('molinos as resp')
-        ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-        ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-        ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
-        ->select(
-          'auxb.nombrebarrio as barrio',
-          'auxLoc.localidad as localidad',
-          'auxMun.ciudadmunicipio as municipio',
-          'resp.razonsocial',
-          'resp.dire_calle',
-          'resp.dire_nro',
-          'resp.piso',
-          'resp.codpost',
-          'resp.dire_obs',
-          'resp.telefono',
-          'resp.fax',
-          'resp.cuit',
-          'resp.correo',
-          'resp.dpto',
-          'resp.marcas',
-          'resp.info',
-          'resp.id',
-          'resp.correo'
-        )
-        ->where('status', '=', 'A')
-        ->paginate(15);
-    }
-    // $molinos = Molino::orderBy('razonsocial', 'ASC')->paginate(15);
+
+    $molinos = DB::table('molinos as resp')
+      ->join('auxbarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+      ->join('auxlocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
+      ->join('auxmunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
+      ->select(
+        'auxb.nombrebarrio as barrio',
+        'auxLoc.localidad as localidad',
+        'auxMun.ciudadmunicipio as municipio',
+        'resp.*'
+      )
+      ->where('resp.status', '=', 'A')
+      ->when($name, function ($query, $name) {
+        return $query->where('resp.razonsocial', 'like', '%' . $name . '%');
+      })
+      ->orderBy('resp.razonsocial', 'ASC')
+      ->paginate(15);
+
     return view('Pages.Molino.index', compact('molinos', 'name'));
   }
 
-  /**
-   * Show the form for creating a new resource.
-   */
+
   public function create()
   {
-    //
+    $barrios = DB::table('auxbarrios')->orderBy('nombrebarrio', 'asc')->get();
+    $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
+    $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
+
+    return view('Pages.Molino.create', compact('barrios', 'localidades', 'municipios'));
   }
 
-  /**
-   * Store a newly created resource in storage.
-   */
   public function store(Request $request)
   {
-    //
+    $validated = $request->validate([
+      'razonsocial'   => 'required|string|max:50',
+      'dire_calle'    => 'nullable|string|max:50',
+      'dire_nro'      => 'nullable|string|max:30',
+      'piso'          => 'nullable|string|max:4',
+      'dpto'          => 'nullable|string|max:4',
+      'dire_obs'      => 'nullable|string|max:100',
+      'codpost'       => 'nullable|string|max:30',
+      'localidad_id'  => 'required|exists:auxlocalidades,id',
+      'municipio_id'  => 'required|exists:auxmunicipios,id',
+      'barrio_id'     => 'required|exists:auxbarrios,id',
+      'telefono'      => 'nullable|string|max:200',
+      'fax'           => 'nullable|string|max:50',
+      'cuit'          => 'nullable|string|max:50',
+      'info'          => 'nullable|string',
+      'correo'        => 'nullable|string|email|max:255',
+      'marcas'        => 'nullable|string|max:255',
+    ]);
+
+    $validated['status'] = 'A';
+
+    DB::table('molinos')->insert($validated);
+
+    return redirect()->route('molino.index')->with('success', 'Molino creado exitosamente.');
   }
 
-  /**
-   * Display the specified resource.
-   */
-  public function show(string $id)
+  public function edit($id)
   {
-    //
+    $molino = DB::table('molinos')->where('id', $id)->first();
+
+    $barrios = DB::table('auxbarrios')->orderBy('nombrebarrio', 'asc')->get();
+    $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
+    $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
+
+    return view('Pages.Molino.edit', compact('molino', 'barrios', 'localidades', 'municipios'));
   }
 
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
+  public function update(Request $request, $id)
   {
-    //
+    $validated = $request->validate([
+      'razonsocial'   => 'required|string|max:50',
+      'dire_calle'    => 'nullable|string|max:50',
+      'dire_nro'      => 'nullable|string|max:30',
+      'piso'          => 'nullable|string|max:4',
+      'dpto'          => 'nullable|string|max:4',
+      'dire_obs'      => 'nullable|string|max:100',
+      'codpost'       => 'nullable|string|max:30',
+      'localidad_id'  => 'required|exists:auxlocalidades,id',
+      'municipio_id'  => 'required|exists:auxmunicipios,id',
+      'barrio_id'     => 'required|exists:auxbarrios,id',
+      'telefono'      => 'nullable|string|max:200',
+      'fax'           => 'nullable|string|max:50',
+      'cuit'          => 'nullable|string|max:50',
+      'info'          => 'nullable|string',
+      'correo'        => 'nullable|string|email|max:255',
+      'marcas'        => 'nullable|string|max:255',
+    ]);
+
+    DB::table('molinos')->where('id', $id)->update($validated);
+
+    return redirect()->route('molino.index')->with('success', 'Molino actualizado exitosamente.');
   }
 
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, string $id)
+  public function show($id)
   {
-    //
+    try {
+
+      $molino = DB::table('molinos as mol')
+        ->join('auxbarrios as auxb', 'mol.barrio_id', '=', 'auxb.id')
+        ->join('auxlocalidades as auxloc', 'mol.localidad_id', '=', 'auxloc.id')
+        ->join('auxmunicipios as auxmun', 'mol.municipio_id', '=', 'auxmun.id')
+        ->select(
+          'mol.*',
+          'auxb.nombrebarrio as barrio',
+          'auxloc.localidad as localidad',
+          'auxmun.ciudadmunicipio as municipio',
+        )
+        ->where('mol.id', $id)
+        ->first();
+
+
+      $personal = DB::table('molino_personal as dp')
+        ->leftJoin('auxareas as a', 'dp.area_id', '=', 'a.id')
+        ->leftJoin('auxcargos as c', 'dp.cargo_id', '=', 'c.id')
+        ->leftJoin('auxprofesiones as pf', 'dp.profesion_id', '=', 'pf.id')
+        ->select(
+          'dp.*',
+          'a.area as area',
+          'c.cargo as cargo',
+          'pf.nombreprofesion as profesion',
+        )
+        ->where('dp.molino_id', '=', $id)
+        ->where('dp.status', '=', 'A')
+        ->get();
+
+      // dd($molino, $personal);
+
+      return view('pages.Molino.show', compact('molino', 'personal'));
+    } catch (\Exception $e) {
+      // Redirigir en caso de error
+      return redirect()->route('molino.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+    }
   }
 
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy(string $id)
+
+  public function destroy($id)
   {
-    //
+    DB::table('molinos')->where('id', $id)->update(['status' => 'D']);
+
+    return redirect()->route('molino.index')->with('success', 'Molino eliminado exitosamente.');
   }
 }
