@@ -35,7 +35,7 @@ class MolinoPersonalController extends Controller
 
     $areas = AuxAreas::orderBy('area', 'asc')->get();
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get();
-    $profesiones = AuxProfesion::where('distribuciones', 'SI') // Filtrar donde distribuciones sea igual a "SI"
+    $profesiones = AuxProfesion::where('molinos', 'SI') // Filtrar donde distribuciones sea igual a "SI"
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 

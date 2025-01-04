@@ -12,8 +12,7 @@
   </div>
 
   <!-- Calle -->
-  <div class="col-md-4
-   mb-3">
+  <div class="col-md-4 mb-3">
     <label for="dire_calle" class="form-label">Calle</label>
     <input type="text" class="form-control @error('dire_calle') is-invalid @enderror" id="dire_calle" name="dire_calle"
       value="{{ old('dire_calle', $molino->dire_calle ?? '') }}">
@@ -153,7 +152,7 @@
   </div>
 
   <!-- Fax -->
-  <div class="col-md-3 mb-3">
+  <div class="col-md-4 mb-3">
     <label for="fax" class="form-label">Fax</label>
     <input type="text" class="form-control @error('fax') is-invalid @enderror" id="fax" name="fax"
       value="{{ old('fax', $molino->fax ?? '') }}">
@@ -165,7 +164,7 @@
   </div>
 
   <!-- CUIT -->
-  <div class="col-md-3 mb-3">
+  <div class="col-md-4 mb-3">
     <label for="cuit" class="form-label">CUIT</label>
     <input type="text" class="form-control @error('cuit') is-invalid @enderror" id="cuit" name="cuit"
       value="{{ old('cuit', $molino->cuit ?? '') }}">
@@ -212,4 +211,3 @@
     @enderror
   </div>
 </div>
-
