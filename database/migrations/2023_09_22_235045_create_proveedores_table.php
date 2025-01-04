@@ -33,6 +33,13 @@ return new class extends Migration
       $table->string('dpto', 4)->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      // Definir claves foráneas
+      $table->foreign('barrio_id')->references('id')->on('auxbarrios')->onDelete('cascade');
+      $table->foreign('localidad_id')->references('id')->on('auxlocalidades')->onDelete('cascade');
+      $table->foreign('municipio_id')->references('id')->on('auxmunicipios')->onDelete('cascade');
+      $table->foreign('rubro_id')->references('id')->on('auxrubros')->onDelete('cascade');
+
     });
   }
 
