@@ -38,6 +38,7 @@ use App\Http\Controllers\TamanioController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\Tipo_PersonaController;
 use App\Http\Controllers\TransporteController;
+use App\Http\Controllers\TransportePersonalController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\VerazController;
 use App\Http\Controllers\ZonaController;
@@ -144,6 +145,16 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->resource('/transporte', TransporteController::class);
+Route::middleware('auth')->group(function () {
+  // Rutas para  Personal
+  Route::get('/transporte/{transporte}/transporte_personal/create', [TransportePersonalController::class, 'create'])
+    ->name('transporte_personal.create'); // Ruta personalizada para crear  Personal
+
+  // Recurso para transporte Personal (excluyendo `create` porque ya tienes una ruta personalizada para ello)
+  Route::resource('/transporte/transporte_personal', TransportePersonalController::class)
+    ->except(['create']); // Excluir `create` porque ya está definida fuera del recurso
+});
+
 
 // TOOLS
 Route::middleware('auth')->resource('/tools/usuarios', UsuarioController::class);

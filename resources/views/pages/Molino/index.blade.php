@@ -56,9 +56,12 @@
                       <a href="{{ route('molino.show', $molino->id) }}" class="btn-xs btn-info" title="Ver">
                         <i class="fa-regular fa-eye fa-xs align-middle"></i>
                       </a>
+                      @can('permiso_12')
                       <a href="{{ route('molino.edit', $molino->id) }}" class="btn-xs btn-warning" title="Editar">
                         <i class="fa-solid fa-pen-to-square fa-xs "></i>
                       </a>
+                      @endcan
+                      @can('permiso_13')
                       <form method="POST" action="{{ route('molino.destroy', $molino->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
@@ -67,6 +70,7 @@
                           <i class="fa-solid fa-trash fa-xs"></i>
                         </button>
                       </form>
+                      @endcan
                     </td>
                   </tr>
                   @empty
