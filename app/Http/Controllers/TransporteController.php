@@ -25,25 +25,46 @@ class TransporteController extends Controller
   public function index(Request $request)
   {
     $name = trim($request->get('name'));
-    if ($name) {
-      $transportes = DB::table('transportes as resp')
-        ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-        ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-        ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
-        ->select('auxb.nombrebarrio as barrio', 'auxLoc.localidad as localidad', 'auxMun.ciudadmunicipio as municipio', 'resp.razonsocial', 'resp.dire_calle', 'resp.dire_nro', 'resp.piso', 'resp.codpost', 'resp.dire_obs', 'resp.telefono', 'resp.fax', 'resp.cuit', 'resp.correo', 'resp.dpto', 'resp.marcas', 'resp.info', 'resp.id', 'resp.correo')
-        ->where('status', '=', 'A')
-        ->orWhere('razonsocial', 'like', '%' . $request->name . '%')
-        // ->orWhere('marcas', 'like', '%' . $request->name . '%')
-        ->paginate(15);
-    } else {
-      $transportes = DB::table('transportes as resp')
-        ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-        ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-        ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
-        ->select('auxb.nombrebarrio as barrio', 'auxLoc.localidad as localidad', 'auxMun.ciudadmunicipio as municipio', 'resp.razonsocial', 'resp.dire_calle', 'resp.dire_nro', 'resp.piso', 'resp.codpost', 'resp.dire_obs', 'resp.telefono', 'resp.fax', 'resp.cuit', 'resp.correo', 'resp.dpto', 'resp.marcas', 'resp.info', 'resp.id', 'resp.correo')
-        ->where('status', '=', 'A')
-        ->paginate(15);
+
+    // Construir la consulta base
+    $query = DB::table('transportes as resp')
+      ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+      ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
+      ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
+      ->select(
+        'auxb.nombrebarrio as barrio',
+        'auxLoc.localidad as localidad',
+        'auxMun.ciudadmunicipio as municipio',
+        'resp.razonsocial',
+        'resp.dire_calle',
+        'resp.dire_nro',
+        'resp.piso',
+        'resp.codpost',
+        'resp.dire_obs',
+        'resp.telefono',
+        'resp.fax',
+        'resp.cuit',
+        'resp.correo',
+        'resp.dpto',
+        'resp.marcas',
+        'resp.info',
+        'resp.id',
+        'resp.correo'
+      )
+      ->where('status', '=', 'A');
+
+    // Agregar filtro por nombre si está presente
+    if (!empty($name)) {
+      $query->where(function ($q) use ($name) {
+        $q->where('razonsocial', 'like', '%' . $name . '%')
+          ->orWhere('marcas', 'like', '%' . $name . '%');
+      });
     }
+
+    // Ejecutar la consulta con paginación
+    $transportes = $query->paginate(15);
+
+    // Retornar la vista con los datos
     return view('Pages.Transporte.index', compact('transportes', 'name'));
   }
 
@@ -52,46 +73,127 @@ class TransporteController extends Controller
    */
   public function create()
   {
-    //
+    $barrios = DB::table('auxbarrios')->orderBy('nombrebarrio', 'asc')->get();
+    $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
+    $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
+
+    return view('Pages.Transporte.create', compact('barrios', 'localidades', 'municipios'));
   }
 
-  /**
-   * Store a newly created resource in storage.
-   */
   public function store(Request $request)
   {
-    //
+    $validated = $request->validate([
+      'razonsocial'   => 'required|string|max:50',
+      'dire_calle'    => 'nullable|string|max:50',
+      'dire_nro'      => 'nullable|string|max:30',
+      'piso'          => 'nullable|string|max:4',
+      'dpto'          => 'nullable|string|max:4',
+      'dire_obs'      => 'nullable|string|max:100',
+      'codpost'       => 'nullable|string|max:30',
+      'localidad_id'  => 'required|exists:auxlocalidades,id',
+      'municipio_id'  => 'required|exists:auxmunicipios,id',
+      'barrio_id'     => 'required|exists:auxbarrios,id',
+      'telefono'      => 'nullable|string|max:200',
+      'fax'           => 'nullable|string|max:50',
+      'cuit'          => 'nullable|string|max:50',
+      'info'          => 'nullable|string',
+      'correo'        => 'nullable|string|email|max:255',
+      'marcas'        => 'nullable|string|max:255',
+    ]);
+
+    $validated['status'] = 'A';
+
+    DB::table('transportes')->insert($validated);
+
+    return redirect()->route('transporte.index')->with('success', 'Transporte creado exitosamente.');
   }
 
-  /**
-   * Display the specified resource.
-   */
-  public function show(string $id)
+  public function edit($id)
   {
-    //
+    $transporte = DB::table('transportes')->where('id', $id)->first();
+
+    $barrios = DB::table('auxbarrios')->orderBy('nombrebarrio', 'asc')->get();
+    $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
+    $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
+
+    return view('Pages.Transporte.edit', compact('transporte', 'barrios', 'localidades', 'municipios'));
   }
 
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
+  public function update(Request $request, $id)
   {
-    //
-  }
+    $validated = $request->validate([
+      'razonsocial'   => 'required|string|max:50',
+      'dire_calle'    => 'nullable|string|max:50',
+      'dire_nro'      => 'nullable|string|max:30',
+      'piso'          => 'nullable|string|max:4',
+      'dpto'          => 'nullable|string|max:4',
+      'dire_obs'      => 'nullable|string|max:100',
+      'codpost'       => 'nullable|string|max:30',
+      'localidad_id'  => 'required|exists:auxlocalidades,id',
+      'municipio_id'  => 'required|exists:auxmunicipios,id',
+      'barrio_id'     => 'required|exists:auxbarrios,id',
+      'telefono'      => 'nullable|string|max:200',
+      'fax'           => 'nullable|string|max:50',
+      'cuit'          => 'nullable|string|max:50',
+      'info'          => 'nullable|string',
+      'correo'        => 'nullable|string|email|max:255',
+      'marcas'        => 'nullable|string|max:255',
+    ]);
 
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, string $id)
-  {
-    //
+    DB::table('transportes')->where('id', $id)->update($validated);
+
+    return redirect()->route('transporte.index', ['name' => $request->razonsocial])->with('success', 'Transporte actualizado exitosamente.');
   }
 
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function show($id)
   {
-    //
+    try {
+
+      $transporte = DB::table('transportes as resp')
+        ->join('auxbarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+        ->join('auxlocalidades as auxloc', 'resp.localidad_id', '=', 'auxloc.id')
+        ->join('auxmunicipios as auxmun', 'resp.municipio_id', '=', 'auxmun.id')
+        ->select(
+          'resp.*',
+          'auxb.nombrebarrio as barrio',
+          'auxloc.localidad as localidad',
+          'auxmun.ciudadmunicipio as municipio',
+        )
+        ->where('resp.id', $id)
+        ->first();
+
+
+      $personal = DB::table('transporte_personal as dp')
+        ->leftJoin('auxareas as a', 'dp.area_id', '=', 'a.id')
+        ->leftJoin('auxcargos as c', 'dp.cargo_id', '=', 'c.id')
+        ->leftJoin('auxprofesiones as pf', 'dp.profesion_id', '=', 'pf.id')
+        ->select(
+          'dp.*',
+          'a.area as area',
+          'c.cargo as cargo',
+          'pf.nombreprofesion as profesion',
+        )
+        ->where('dp.transporte_id', '=', $id)
+        ->where('dp.status', '=', 'A')
+        ->get();
+
+      // dd($transporte, $personal);
+
+      return view('pages.Transporte.show', compact('transporte', 'personal'));
+    } catch (\Exception $e) {
+      // Redirigir en caso de error
+      return redirect()->route('transporte.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+    }
+  }
+
+
+  public function destroy($id)
+  {
+    DB::table('transportes')->where('id', $id)->update(['status' => 'D']);
+
+    return redirect()->route('transporte.index')->with('success', 'Transporte eliminado exitosamente.');
   }
 }
