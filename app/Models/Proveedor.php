@@ -12,4 +12,34 @@ class Proveedor extends Model
   protected $table = 'proveedores';
 
   protected $guarded = [];
+
+  public function barrio()
+  {
+    return $this->belongsTo(AuxBarrios::class, 'barrio_id');
+  }
+
+  public function localidad()
+  {
+    return $this->belongsTo(AuxLocalidades::class, 'localidad_id');
+  }
+
+  public function municipio()
+  {
+    return $this->belongsTo(AuxMunicipios::class, 'municipio_id');
+  }
+
+  public function rubro()
+  {
+    return $this->belongsTo(AuxRubros::class, 'rubro_id');
+  }
+
+  public function personal()
+  {
+    return $this->hasMany(Proveedor_Personal::class, 'proveedor_id')->where('status', 'A');
+  }
+
+  public function productos()
+  {
+    return $this->hasMany(Proveedor_Producto::class, 'proveedor_id')->where('status', 'A');
+  }
 }

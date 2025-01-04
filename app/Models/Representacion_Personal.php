@@ -28,11 +28,6 @@ class Representacion_Personal extends Model
     return $this->belongsTo(AuxCargos::class, 'cargo_id');
   }
 
-  // public function categoriaCargo()
-  // {
-  //   return $this->belongsTo(AuxCargos::class, 'categoria_id');
-  // }
-
   public function profesion()
   {
     return $this->belongsTo(AuxProfesion::class, 'profesion_id');

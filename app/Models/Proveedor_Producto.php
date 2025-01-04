@@ -12,4 +12,14 @@ class Proveedor_Producto extends Model
   protected $table = 'proveedor_productos';
 
   protected $guarded = [];
+
+  public function producto()
+  {
+    return $this->belongsTo(Proveedor_AuxProductos::class, 'producto_id');
+  }
+
+  public function proveedor()
+  {
+    return $this->belongsTo(Proveedor::class, 'proveedor_id');
+  }
 }

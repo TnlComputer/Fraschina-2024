@@ -27,6 +27,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrioridadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ProveedorPersonalController;
+use App\Http\Controllers\ProveedorProductoController;
 use App\Http\Controllers\RepresentacionController;
 use App\Http\Controllers\RepresentacionPersonalController;
 use App\Http\Controllers\RepresentacionProductoController;
@@ -106,6 +108,23 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
+
+Route::middleware('auth')->group(function () {
+  Route::get('/proveedor/{proveedor}/proveedor_personal/create', [ProveedorPersonalController::class, 'create'])
+    ->name('proveedor_personal.create');
+
+  Route::resource('/proveedor/proveedor_personal', ProveedorPersonalController::class)
+    ->except(['create']); 
+});
+
+Route::middleware('auth')->group(function () {
+  Route::get('/proveedor/{proveedor}/proveedor_producto/create', [ProveedorProductoController::class, 'create'])
+    ->name('proveedor_producto.create');
+
+  Route::resource('/proveedor/proveedor_producto', ProveedorProductoController::class)
+    ->except(['create']);
+});
+
 
 Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
 Route::middleware('auth')->group(function () {

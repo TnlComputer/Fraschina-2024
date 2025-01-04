@@ -57,10 +57,6 @@ class Representacion extends Model
   {
     return $this->belongsTo(AuxMunicipios::class);
   }
-  // public function iva()
-  // {
-  //   return $this->belongsTo(Iva::class);
-  // }
 
   public function personal()
   {

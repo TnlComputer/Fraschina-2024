@@ -17,6 +17,11 @@ return new class extends Migration
       $table->unsignedBigInteger('producto_id');
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      // Relación con representacion_id
+      $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('cascade');
+      // Relación con aux_producto_id
+      $table->foreign('producto_id')->references('id')->on('proveedor_aux_productos')->onDelete('cascade');
     });
   }
 
