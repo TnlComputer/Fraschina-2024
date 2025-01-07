@@ -13,75 +13,54 @@ return new class extends Migration
   {
     Schema::create('distribucion_agenda', function (Blueprint $table) {
       $table->id();
-      $table->date('fecha_ant')->nullable();
       $table->date('fecha')->nullable();
       $table->time('hs')->nullable();
       $table->unsignedBigInteger('prioridad_id')->nullable();
-      $table->string('prioridad')->nullable();
       $table->unsignedBigInteger('accion_id')->nullable();
-      $table->string('accion')->nullable();
       $table->longText('temas')->nullable();
       $table->string('cotizacion', 100)->nullable();
       $table->date('fecCotEnt')->nullable();
       $table->date('fecCot')->nullable();
       $table->unsignedBigInteger('producto_id')->nullable();
-      $table->string('productos')->nullable();
-      $table->time('desde')->nullable();
-      $table->time('hasta')->nullable();
-      $table->string('lunes', 2)->nullable();
-      $table->string('sabado', 2)->nullable();
-      $table->string('fac_imp', 2)->nullable();
-      $table->longText('obs')->nullable();
       $table->unsignedBigInteger('distribucion_id')->nullable();
-      $table->string('razonsocial')->nullable();
-      $table->string('nombrefantasia')->nullable();
       $table->unsignedBigInteger('persona_id')->nullable();
-      $table->string('nombre_per')->nullable();
-      $table->string('apellido_per')->nullable();
       $table->unsignedBigInteger('tipoper_id')->nullable();
-      $table->string('tipopersona')->nullable();
       $table->unsignedBigInteger('veraz_id')->nullable();
-      $table->string('veraz')->nullable();
       $table->unsignedBigInteger('estado_id')->nullable();
-      $table->string('Estado')->nullable();
       $table->unsignedBigInteger('contacto_id')->nullable();
-      $table->string('contacto_inicial')->nullable();
       $table->unsignedBigInteger('cargo_id')->nullable();
-      $table->string('cargo')->nullable();
-      $table->longText('info')->nullable();
-      $table->unsignedBigInteger('calle_id')->nullable();
-      $table->string('calle')->nullable();
-      $table->string('altura')->nullable();
-      $table->string('dpto')->nullable();
-      $table->string('piso')->nullable();
       $table->unsignedBigInteger('barrio_id')->nullable();
-      $table->string('barrio')->nullable();
       $table->unsignedBigInteger('municipio_id')->nullable();
-      $table->string('municipio')->nullable();
       $table->unsignedBigInteger('localidad_id')->nullable();
-      $table->string('localidad')->nullable();
       $table->unsignedBigInteger('zona_id')->nullable();
-      $table->string('zona')->nullable();
       $table->unsignedBigInteger('rubro_id')->nullable();
-      $table->string('rubro')->nullable();
       $table->unsignedBigInteger('tamanio_id')->nullable();
-      $table->string('tamanio')->nullable();
       $table->unsignedBigInteger('modo_id')->nullable();
-      $table->string('modo')->nullable();
-      $table->string('telefono')->nullable();
-      $table->time('desde1')->nullable();
-      $table->time('hasta2')->nullable();
-      $table->string('auto')->nullable();
       $table->unsignedBigInteger('pedido_id')->nullable();
-      $table->longText('obsEntrega')->nullable();
-      $table->string('chofer')->nullable();
-      $table->decimal('orden')->nullable();
-      $table->string('pago')->nullable();
-      $table->string('tpago')->nullable();
-      $table->string('cobrar')->nullable();
-      $table->decimal('estadoPedido', 10, 0)->nullable();
+      $table->integer('estadoPedido')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+      
+
+      // Relaciones
+      $table->foreign('prioridad_id')->references('id')->on('auxprioridades')->onDelete('set null');
+      $table->foreign('accion_id')->references('id')->on('auxacciones')->onDelete('set null');
+      $table->foreign('producto_id')->references('id')->on('productos_c_d_a')->onDelete('set null');
+      $table->foreign('distribucion_id')->references('id')->on('distribucions')->onDelete('set null');
+      $table->foreign('persona_id')->references('id')->on('distribucion_personal')->onDelete('set null');
+      $table->foreign('tipoper_id')->references('id')->on('auxtipopersonal')->onDelete('set null');
+      $table->foreign('veraz_id')->references('id')->on('auxveraz')->onDelete('set null');
+      $table->foreign('estado_id')->references('id')->on('auxestados')->onDelete('set null');
+      $table->foreign('contacto_id')->references('id')->on('auxcontacto')->onDelete('set null');
+      $table->foreign('cargo_id')->references('id')->on('auxcargos')->onDelete('set null');
+      $table->foreign('barrio_id')->references('id')->on('auxbarrios')->onDelete('set null');
+      $table->foreign('municipio_id')->references('id')->on('auxmunicipios')->onDelete('set null');
+      $table->foreign('localidad_id')->references('id')->on('auxlocalidades')->onDelete('set null');
+      $table->foreign('zona_id')->references('id')->on('auxzonas')->onDelete('set null');
+      $table->foreign('rubro_id')->references('id')->on('auxrubros')->onDelete('set null');
+      $table->foreign('tamanio_id')->references('id')->on('auxtamanio')->onDelete('set null');
+      $table->foreign('modo_id')->references('id')->on('auxmodos')->onDelete('set null');
+      $table->foreign('pedido_id')->references('id')->on('distribucion_nropedidos')->onDelete('set null');
     });
   }
 
@@ -90,6 +69,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('distribucionagenda');
+    Schema::dropIfExists('distribucion_agenda');
   }
 };

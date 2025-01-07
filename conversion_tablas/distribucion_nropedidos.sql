@@ -22,7 +22,4 @@ SELECT
     CURRENT_TIMESTAMP AS created_at,  -- Fecha y hora actual para created_at
     CURRENT_TIMESTAMP AS updated_at  -- Fecha y hora actual para updated_at
 FROM fraschin_backup.nropedidos
-WHERE 
-    nroped IS NOT NULL AND nroped != '';  -- Asegurar que 'nroped' no sea nulo ni vacío
-    -- AND fechaPed IS NOT NULL AND fechaEnt IS NOT NULL;
 

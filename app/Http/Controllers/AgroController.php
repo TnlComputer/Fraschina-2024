@@ -23,7 +23,7 @@ class AgroController extends Controller
       ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
       ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
       ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
-      ->join('auxrubros as auxrub', 'agr.rubro_id', '=', 'auxrub.id')
+      ->join('auxrubros as auxrub', 'resp.rubro_id', '=', 'auxrub.id')
       ->select(
         'auxb.nombrebarrio as barrio',
         'auxLoc.localidad as localidad',
