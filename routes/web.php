@@ -10,6 +10,7 @@ use App\Http\Controllers\BarrioController;
 use App\Http\Controllers\CalleController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\Contacto_inicialController;
+use App\Http\Controllers\DistribucionAgendaController;
 use App\Http\Controllers\DistribucionController;
 use App\Http\Controllers\DistribucionPersonalController;
 use App\Http\Controllers\DistribucionProductoController;
@@ -78,8 +79,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
   // Rutas para Distribución
   Route::resource('/distribucion', DistribucionController::class); // Maneja todas las rutas RESTful para Distribución
-
   // Rutas para Distribución Personal
+
   Route::get('/distribucion/{distribucion}/distribucion_personal/create', [DistribucionPersonalController::class, 'create'])
     ->name('distribucion_personal.create'); // Ruta personalizada para crear Distribución Personal
 
@@ -89,12 +90,24 @@ Route::middleware('auth')->group(function () {
   // Rutas para Distribución Producto
   Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
     ->name('distribucion_producto.create'); // Ruta personalizada para crear Distribución Producto
-
   Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)
     ->except(['create']); // Excluir `create` porque ya está definida por separado
+
+});
+
+// Rutas para Distribución Agenda
+Route::middleware(['auth'])->group(function () {
+  // Ruta personalizada para el formulario de creación
+  Route::get('distribucion_agenda/create', [DistribucionAgendaController::class, 'create'])
+    ->name('distribucion_agenda.create');
+
+  // Rutas de recursos, excluyendo create ya que ya está definida
+  Route::resource('distribucion_agenda', DistribucionAgendaController::class)
+  ->except(['create']);
 });
 
 
+// Rutas para Molinos
 Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
 
 Route::middleware('auth')->resource('/molino', MolinoController::class);
@@ -108,6 +121,7 @@ Route::middleware('auth')->group(function () {
     ->except(['create']); // Excluir `create` porque ya está definida fuera del recurso
 });
 
+// Rutas para Proveedores
 Route::middleware('auth')->resource('/proveedor', ProveedorController::class);
 
 Route::middleware('auth')->group(function () {
@@ -115,7 +129,7 @@ Route::middleware('auth')->group(function () {
     ->name('proveedor_personal.create');
 
   Route::resource('/proveedor/proveedor_personal', ProveedorPersonalController::class)
-    ->except(['create']); 
+    ->except(['create']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -126,7 +140,7 @@ Route::middleware('auth')->group(function () {
     ->except(['create']);
 });
 
-
+// Rutas para Representaciones
 Route::middleware('auth')->resource('/representacion', RepresentacionController::class);
 Route::middleware('auth')->group(function () {
   Route::get('/representacion/{representacion}/representacion_personal/create', [RepresentacionPersonalController::class, 'create'])
@@ -144,6 +158,8 @@ Route::middleware('auth')->group(function () {
     ->except(['create']); // Excluir la acción `create` del recurso predeterminado
 });
 
+
+// Rutas para Transportes
 Route::middleware('auth')->resource('/transporte', TransporteController::class);
 Route::middleware('auth')->group(function () {
   // Rutas para  Personal
@@ -179,11 +195,13 @@ Route::middleware('auth')->resource('/tools/tipo_persona', Tipo_PersonaControlle
 Route::middleware('auth')->resource('/tools/acciones', AccionController::class);
 Route::middleware('auth')->resource('/tools/veraz', VerazController::class);
 Route::middleware('auth')->resource('/tools/tareas', TareaController::class);
+
 // Roles
 Route::middleware('auth')->resource('/tools/roles', RoleController::class);
 
 // Permisos
 Route::middleware('auth')->resource('/tools/permissions', PermissionController::class);
+
 // EXPORTAR TABLAS
 Route::middleware('auth')->get('/tools/export', [ExportarController::class, 'selectTables'])->name('export.selectTables');
 Route::middleware('auth')->post('/export/generate', [ExportarController::class, 'generate'])->name('export.generate');

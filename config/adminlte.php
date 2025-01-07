@@ -319,17 +319,42 @@ return [
 
     ],
     [
-      'text' => 'Distribución',
-      'url' => 'distribucion',
+      'text' => 'Distribuciónes',
       'icon' => 'fas fa-fw fa-truck',
       'can' => ['permiso_99', 'permiso_2'],
+      'submenu' => [
+        [
+          'text' => 'Distribución',
+          'url' => 'distribucion',
+          'icon' => 'fas fa-fw fa-truck',
+          'can' => ['permiso_99', 'permiso_2'],
+        ],
+        [
+          'text' => 'Agenda',
+          'url' => 'distribucion_agenda',
+          // 'icon' => 'fas fa-fw fa-truck',
+          'icon' => 'nav-icon fas fa-calendar-alt',
+          'can' => ['permiso_99', 'permiso_2'],
+        ],
+        [
+          'text' => 'Reparto',
+          'url' => 'distribucion/distribucion_reparto',
+          'icon' => 'fas fa-fw fa-truck',
+          'can' => ['permiso_99', 'permiso_2'],
+        ],
+        [
+          'text' => 'Stock',
+          'url' => 'distribucion/distribucion_stock',
+          'icon' => 'fas fa-fw fa-truck',
+          'can' => ['permiso_99', 'permiso_2'],
+        ],
+      ],
     ],
     [
       'text' => 'Molino',
       'url' => 'molino',
       'icon' => 'fas fa-fw fa-industry',
       'can' => ['permiso_99', 'permiso_3'],
-
     ],
     [
       'text' => 'Agro/AgroInd',

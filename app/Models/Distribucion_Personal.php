@@ -47,4 +47,5 @@ class Distribucion_Personal extends Model
   {
     return $this->belongsTo(AuxProfesion::class, 'profesion_id');
   }
+
 }
