@@ -27,12 +27,12 @@
     <table class="table table-bordered text-sm w-100">
       <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Auto</th>
+          <th class=" text-center">Fecha</th>
+          <th class=" text-center">Hora</th>
+          <th class=" text-center">Auto</th>
           <th>Nombre Fantasía</th>
-          <th>Estado</th>
-          <th>Acción</th>
+          <th class=" text-center">Estado</th>
+          <th class=" text-center">Acción</th>
           <th>Temas</th>
           <th></th>
         </tr>
@@ -40,14 +40,21 @@
       <tbody>
         @foreach($agendas as $agenda)
         <tr>
-          <td>{{ $agenda->fecha }}</td>
-          <td>{{ $agenda->hs }}</td>
-          <td>{{ $agenda->distribucion->auto }}</td>
-          <td>{{ $agenda->distribucion->nomfantasia ?? '' }}</td>
-          <td>{{ $agenda->distribucion->auxestados->nomEstado ?? '' }}</td>
-          <td style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">{{
+          <td class=" text-center">{{ $agenda->fecha }}</td>
+          <td class="text-center">
+            {{ $agenda->hs ? \Carbon\Carbon::createFromFormat('H:i:s', $agenda->hs)->format('H:i') : '' }}
+          </td>
+          <td class=" text-center">{{ $agenda->distribucion->auto }}</td>
+          <td>
+            <span class=" text-capitalize">
+              {{ $agenda->distribucion->nomfantasia ?? '' }}
+            </span>
+          </td>
+          <td class=" text-center">{{ $agenda->distribucion->auxestado->nomEstado ?? '' }}</td>
+          <td class=" text-center text-capitalize"
+            style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">{{
             $agenda->auxacciones->accion ?? '' }}</td>
-          <td>{{ Str::limit($agenda->temas, 120) }}</td>
+          <td>{{ Str::limit($agenda->temas, 80) }}</td>
           {{-- <td>
             <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal{{ $agenda->id }}">
               <i class="fas fa-eye"></i>
@@ -106,14 +113,14 @@
           <strong>Hora:</strong> {{ \Carbon\Carbon::parse($agenda->hs)->format('H:i') }} <br>
           <strong>Auto:</strong> {{ $agenda->distribucion->auto }} <br>
           <strong>Veráz:</strong> {{ $agenda->distribucion->auxveraz->estado ?? 'No disponible' }} <br>
-          <strong>Estado:</strong> {{ $agenda->distribucion->auxestados->nomEstado ?? 'No disponible' }} <br>
+          <strong>Estado:</strong> {{ $agenda->distribucion->auxestado->nomEstado ?? 'No disponible' }} <br>
           <strong>Acción:</strong> <span style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">
             {{
             $agenda->auxacciones->accion }} </span><br>
           <strong>Prioridad:</strong><span
             style="background-color: {{ $agenda->auxprioridades?->color ?? '#FFFFFF' }};">
             {{ $agenda->auxprioridades?->nombre ?? 'No disponible' }} </span> <br>
-          <strong>Cargo:</strong>{{ $agenda->distribucionPersonal?->cargo?->cargo ?? 'No disponible' }} <br>
+          <strong>Cargo:</strong>{{ $agenda->distribucionPersonal->cargo->cargo }} <br>
           <strong>Persona:</strong> {{
           $agenda->distribucionPersonal->nombre ?? '' }} {{ $agenda->distribucionPersonal->apellido ?? '' }} <br>
           <strong>Teléfono:</strong> {{ $agenda->distribucion->telefono }} <br>
@@ -151,7 +158,12 @@
           <br>
           <strong>Lunes Cerrado:</strong> {{ $agenda->distribucion->lunes }} <br>
           <strong>Sabado Recibe:</strong> {{ $agenda->distribucion->sabado }} <br>
-          <strong>Factura Impresa:</strong> {{ $agenda->distribucion->fac_imp }} <br>
+          <strong>Factura Impresa:</strong>
+          <span
+            style="background-color: {{ $agenda->distribucion->fac_imp === 'SI' ? 'red' : 'transparent' }}; padding: 2px 5px;">
+            {{ $agenda->distribucion->fac_imp }}
+          </span>
+          <br>
           <strong>Obs.Recepción:</strong> {{ $agenda->distribucion->obsrecep }} <br>
           <hr class="bg-blue-900">
           {{-- @endforeach --}}
@@ -159,10 +171,10 @@
           <table class="table table-bordered table-sm text-xs">
             <thead>
               <tr>
-                <th>Pedido</th>
-                <th>Fec.Ped.</th>
-                <th>Fec Ent.</th>
-                <th>Cantidad</th>
+                <th class=" text-center">Pedido</th>
+                <th class=" text-center">Fecha Pedido</th>
+                <th class=" text-center">Fecha Entrega</th>
+                <th class=" text-center">Cantidad</th>
                 <th>Producto</th>
                 <th>Precio Unit</th>
               </tr>
@@ -170,10 +182,10 @@
             <tbody>
               @foreach($agenda->distribucion->distribucionLineaPedidos->sortByDesc('fecha')->take(3) as $pedido)
               <tr>
-                <td>{{ $pedido->pedido_nro }}</td>
-                <td>{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
-                <td>{{ $pedido->cantidad }}</td>
+                <td class=" text-center">{{ $pedido->pedido_nro }}</td>
+                <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
+                <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
+                <td class=" text-center">{{ $pedido->cantidad }}</td>
                 <td>{{ $pedido->nombre_producto }}</td>
                 <td>${{ $pedido->precio_unitario }}</td>
               </tr>

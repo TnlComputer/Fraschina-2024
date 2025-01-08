@@ -47,9 +47,8 @@ class Distribucion_Personal extends Model
   {
     return $this->belongsTo(AuxProfesion::class, 'profesion_id');
   }
-
-  public function auxtipoPersonal()
+  public function tipoPersonal()
   {
-    return $this->belongsTo(AuxTipoPersonal::class, 'tipo_personal_id');
+    return $this->belongsTo(AuxTipoPersonal::class, 'tipo_personal_id');  // Cambia 'tipo_personal_id' por el nombre correcto de la clave foránea
   }
 }

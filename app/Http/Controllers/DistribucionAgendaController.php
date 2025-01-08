@@ -3,18 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuxAcciones;
-use App\Models\AuxBarrios;
-use App\Models\AuxCargos;
-use App\Models\AuxContacto;
-use App\Models\AuxEstados;
-use App\Models\AuxLocalidades;
-use App\Models\AuxModos;
-use App\Models\AuxMunicipios;
 use App\Models\AuxPrioridades;
-use App\Models\AuxRubros;
-use App\Models\AuxTamanios;
-use App\Models\AuxVeraz;
-use App\Models\AuxZonas;
 use App\Models\Distribucion;
 use App\Models\Distribucion_Personal;
 use App\Models\DistribucionAgenda;
@@ -35,36 +24,17 @@ class DistribucionAgendaController extends Controller
     $search = $request->input('search');
 
     // Consulta los registros con las relaciones necesarias, ordenados por fecha descendente
-
     $agendas = DistribucionAgenda::with([
-      // 'distribucion.auxcontacto',
-      // 'distribucion.auxveraz',
-      // 'distribucion.auxestado',
-      // 'distribucion.auxrubro',
-      // 'distribucion.auxtamanio',
-      // 'distribucion.auxlocalidad',
-      // 'distribucion.auxmunicipio',
-      // 'distribucion.auxbarrio',
-      // 'distribucion.auxzona',
-      // 'distribucion.auxcobro',
-      // 'distribucion.auxtcobro',
       'auxprioridades:id,nombre,color',
       'auxacciones:id,accion,colorAcc',
-      'distribucion:id,razonsocial,nomfantasia,telefono,auto,info,productoCDA,desde,hasta,desde1,hasta1,lunes,sabado,obsrecep,fac_imp,dire_calle_id,piso,dpto,dire_nro,barrio_id,municipio_id,localidad_id,zona_id,rubro_id,tamanio_id,modo_id,contacto_id',
-      'distribucionPersonal:id,nombre,apellido',
-      'distribucionPersonal.auxtipoPersonal:id,tipo',
-      // 'auxveraz:id,estado,color',
-      // 'auxestados:id,nomEstado',
-      // 'auxcontacto:id,contacto',
+      'distribucion:id,razonsocial,nomfantasia,telefono,auto,info,productoCDA,desde,hasta,desde1,hasta1,lunes,sabado,obsrecep,fac_imp,dire_calle_id,piso,dpto,dire_nro,barrio_id,municipio_id,localidad_id,zona_id,rubro_id,tamanio_id,modo_id,contacto_id,estado_id,veraz_id',
+      'distribucion.auxcontacto:id,contacto',
+      'distribucion.auxveraz:id,estado', // Relación con Veraz desde Distribucion
+      'distribucion.auxestado:id,nomEstado', // Relación con Estado desde Distribucion
+      'distribucionPersonal:id,nombre,apellido,cargo_id',
+      // 'distribucionPersonal.tipoPersonal:id,tipo',
       'distribucionPersonal.cargo',
-      // 'auxbarrios:id,nombrebarrio',
-      // 'auxmunicipios:id,ciudadmunicipio',
-      // 'auxlocalidades:id,localidad',
-      // 'auxzonas:id,nombre',
-      // 'auxrubros:id,nombre',
-      // 'auxtamanios:id,nombre',
-      // 'auxmodos:id,nombre',
-      'distribucionNropedidos:id,id'
+      'distribucionNropedidos:id',
     ])
       ->select([
         'id',
@@ -74,23 +44,8 @@ class DistribucionAgendaController extends Controller
         'accion_id',
         'temas',
         'cotizacion',
-        'fecCot',
-        'fecCotEnt',
-        'producto_id',
         'distribucion_id',
         'persona_id',
-        'tipoper_id',
-        'veraz_id',
-        'estado_id',
-        'contacto_id',
-        'cargo_id',
-        'barrio_id',
-        'municipio_id',
-        'localidad_id',
-        'zona_id',
-        'rubro_id',
-        'tamanio_id',
-        'modo_id',
         'pedido_id',
         'estadoPedido',
         'status',
@@ -101,24 +56,27 @@ class DistribucionAgendaController extends Controller
         return $query->where(function ($q) use ($search) {
           $q->whereHas('distribucion', function ($q) use ($search) {
             $q->where('razonsocial', 'like', "%$search%")
-              ->orWhere('nomfantasia', 'like', "%$search%");
+              ->orWhere('nomfantasia', 'like', "%$search%")
+              ->orWhereHas('auxveraz', function ($q) use ($search) {
+                $q->where('estado', 'like', "%$search%");
+              })
+              ->orWhereHas('auxestado', function ($q) use ($search) {
+                $q->where('nomEstado', 'like', "%$search%");
+              })
+              ->orWhereHas('auxcontacto', function ($q) use ($search) {
+                $q->where('contacto', 'like', "%$search%");
+              });
           })
             ->orWhere('distribucion_id', 'like', "%$search%")
             ->orWhereHas('auxacciones', function ($q) use ($search) {
               $q->where('accion', 'like', "%$search%");
             })
-            ->orWhereHas('auxveraz', function ($q) use ($search) {
-              $q->where('estado', 'like', "%$search%");
-            })
-            ->orWhereHas('auxestados', function ($q) use ($search) {
-              $q->where('nomEstado', 'like', "%$search%");
-            })
             ->orWhereHas('distribucionPersonal', function ($q) use ($search) {
               $q->where('nombre', 'like', "%$search%")
-                ->orWhere('apellido', 'like', "%$search%");
-            })
-            ->orWhereHas('auxcontacto', function ($q) use ($search) {
-              $q->where('contacto', 'like', "%$search%");
+                ->orWhere('apellido', 'like', "%$search%")
+                ->orWhereHas('cargo', function ($q) use ($search) {
+                  $q->where('cargo', 'like', "%$search%");
+                });
             })
             ->orWhere('temas', 'like', "%$search%")
             ->orWhere('fecha', 'like', "%$search%")
@@ -131,6 +89,8 @@ class DistribucionAgendaController extends Controller
     // Retorna la vista con los datos
     return view('pages.Distribucion.Agenda.index', compact('agendas'));
   }
+
+
 
   /**
    * Show the form for creating a new resource.
