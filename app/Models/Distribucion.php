@@ -51,4 +51,79 @@ class Distribucion extends Model
     'tcobro_id',
     'status'
   ];
+
+  public function auxCalles()
+  {
+    return $this->belongsTo(Auxcalles::class, 'dire_calle_id', 'id');
+  }
+
+  public function distribucionLineaPedidos()
+  {
+    return $this->hasMany(DistribucionLineaPedidos::class, 'distribucion_id');
+  }
+
+  public function personal()
+  {
+    return $this->hasMany(Distribucion_Personal::class, 'distribucion_id');
+  }
+
+  public function auxcontacto()
+  {
+    return $this->belongsTo(AuxContacto::class, 'contacto_id');
+  }
+
+  public function auxveraz()
+  {
+    return $this->belongsTo(AuxVeraz::class, 'veraz_id');
+  }
+
+  public function auxrubro()
+  {
+    return $this->belongsTo(AuxRubros::class, 'rubro_id');
+  }
+
+  public function auxestado()
+  {
+    return $this->belongsTo(AuxEstados::class, 'estado_id');
+  }
+
+
+  public function auxtamanio()
+  {
+    return $this->belongsTo(AuxTamanios::class, 'tamanio_id');
+  }
+  public function auxmodo()
+  {
+    return $this->belongsTo(AuxModos::class, 'modo_id');
+  }
+
+  public function auxlocalidad()
+  {
+    return $this->belongsTo(AuxLocalidades::class, 'localidad_id');
+  }
+
+  public function auxmunicipio()
+  {
+    return $this->belongsTo(AuxMunicipios::class, 'municipio_id');
+  }
+
+  public function auxbarrio()
+  {
+    return $this->belongsTo(AuxBarrios::class, 'barrio_id');
+  }
+
+  public function auxzona()
+  {
+    return $this->belongsTo(AuxZonas::class, 'zona_id');
+  }
+
+  public function auxcobro()
+  {
+    return $this->belongsTo(AuxPagos::class, 'cobro_id');
+  }
+
+  public function auxtcobro()
+  {
+    return $this->belongsTo(AuxTipoPagos::class, 'tcobro_id');
+  }
 }

@@ -21,10 +21,10 @@
 @stop
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
   <!-- Tabla con paginación -->
   <div class="table-responsive">
-    <table class="table table-bordered table-sm text-xs">
+    <table class="table table-bordered text-sm w-100">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -34,14 +34,7 @@
           <th>Estado</th>
           <th>Acción</th>
           <th>Temas</th>
-          <th>Ver más</th>
-
-          {{-- * <th>Prioridad</th>
-          * <th>Razón Social</th>
-          * <th>Persona</th>
-          * <th>Cargo</th>
-          * <th>Teléfono</th>
-          * <th>Veráz</th> --}}
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -51,20 +44,37 @@
           <td>{{ $agenda->hs }}</td>
           <td>{{ $agenda->distribucion->auto }}</td>
           <td>{{ $agenda->distribucion->nomfantasia ?? '' }}</td>
-          <td>{{ $agenda->auxestados->nomEstado ?? '' }}</td>
+          <td>{{ $agenda->distribucion->auxestados->nomEstado ?? '' }}</td>
           <td>{{ $agenda->auxacciones->accion ?? '' }}</td>
           <td>{{ Str::limit($agenda->temas, 120) }}</td>
-          {{-- <td>{{ $agenda->auxveraz->estado ?? '' }}</td> --}}
-          {{-- <td>{{ $agenda->auxprioridades->nombre ?? '' }}</td>
-          <td>{{ $agenda->distribucion->razonsocial ?? '' }}</td>
-          <td>{{ $agenda->distribucionPersonal->nombre ?? '' }} {{ $agenda->distribucionPersonal->apellido ?? '' }}</td>
-          <td>{{ $agenda->auxcargos->cargo }}</td>
-          <td>{{ $agenda->distribucion->telefono }}</td> --}}
-          <td>
-            <button class="btn btn-info" data-toggle="modal" data-target="#modal{{ $agenda->id }}">
-              Ver más
+          {{-- <td>
+            <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal{{ $agenda->id }}">
+              <i class="fas fa-eye"></i>
             </button>
+          </td> --}}
+          <td class="d-flex justify-content-center">
+            <!-- Botón de Ver Más -->
+            <button class="btn btn-info btn-xs d-inline mr-2" data-toggle="modal" data-target="#modal{{ $agenda->id }}">
+              <i class="fas fa-eye fs-sm"></i>
+            </button>
+            @can('permiso_12')
+            <!-- Botón de Editar -->
+            <a href="{{ route('distribucion_agenda.edit', $agenda->id) }}" class="btn btn-warning btn-xs d-inline mr-2">
+              <i class="fas fa-edit fa-sm"></i>
+            </a>
+            @endcan
+            @can('permiso_13')
+            <!-- Formulario de eliminación (cambio de estado a D) -->
+            <form action="{{ route('distribucion_agenda.destroy', $agenda->id) }}" method="POST" class="d-inline">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-danger btn-xs"
+                onclick="return confirm('¿Estás seguro de que quieres desactivar este registro?')">
+                <i class="fas fa-trash-alt fa-sm"></i>
+              </button>
+            </form>
           </td>
+          @endcan
         </tr>
         @endforeach
       </tbody>
@@ -80,7 +90,7 @@
   @foreach($agendas as $agenda)
   <div class="modal fade" id="modal{{ $agenda->id }}" tabindex="-1" role="dialog"
     aria-labelledby="modalLabel{{ $agenda->id }}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-md modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="modalLabel{{ $agenda->id }}"><strong>Nombre Fantasia:</strong> {{
@@ -94,11 +104,11 @@
           <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($agenda->fecha)->format('d-m-Y') }} <br>
           <strong>Hora:</strong> {{ \Carbon\Carbon::parse($agenda->hs)->format('H:i') }} <br>
           <strong>Auto:</strong> {{ $agenda->distribucion->auto }} <br>
-          <strong>Veráz:</strong> {{ $agenda->auxveraz->estado }} <br>
-          <strong>Estado:</strong> {{ $agenda->auxestados->nomEstado }} <br>
+          <strong>Veráz:</strong> {{ $agenda->distribucion->auxveraz->estado ?? 'No disponible' }} <br>
+          <strong>Estado:</strong> {{ $agenda->distribucion->auxestados->nomEstado ?? 'No disponible' }} <br>
           <strong>Acción:</strong> {{ $agenda->auxacciones->accion }} <br>
           <strong>Prioridad:</strong> {{ $agenda->auxprioridades->nombre }} <br>
-          <strong>Cargo:</strong> {{ $agenda->auxcargos->cargo }} <br>
+          <strong>Cargo:</strong>{{ $agenda->distribucionPersonal?->cargo?->cargo ?? 'No disponible' }} <br>
           <strong>Persona:</strong> {{
           $agenda->distribucionPersonal->nombre ?? '' }} {{ $agenda->distribucionPersonal->apellido ?? '' }} <br>
           <strong>Teléfono:</strong> {{ $agenda->distribucion->telefono }} <br>
@@ -112,19 +122,20 @@
           <strong>Información:</strong> {{ $agenda->distribucion->info }} <br>
 
           <hr class=" bg-green-600">
-          <strong>Calle</strong> {{ $agenda->distribucion->dire_calle_id }} <br>
-          <strong>Altura</strong> {{ $agenda->distribucion->dire_nro }} <br>
-          <strong>Barrio</strong> {{ $agenda->auxbarrios->nombrebarrio }} <br>
-          <strong>Ciudad/Municipio</strong> {{ $agenda->auxmunicipios->ciudadmunicipio }} <br>
-          <strong>Localidad</strong> {{ $agenda->auxlocalidades->localidad }} <br>
-          <strong>Zona</strong> {{ $agenda->auxzonas->zona }} <br>
+          <strong>Calle</strong> {{ $agenda->distribucion->auxcalles->calle ?? 'Sin información' }} <br>
+          <strong>Altura</strong> {{ $agenda->distribucion->dire_nro }} {{ $agenda->distribucion->piso }} {{
+          $agenda->distribucion->dpto }}<br>
+          <strong>Barrio</strong> {{ $agenda->distribucion->auxbarrio->nombrebarrio }} <br>
+          <strong>Ciudad/Municipio</strong> {{ $agenda->distribucion->auxmunicipio->ciudadmunicipio }} <br>
+          <strong>Localidad</strong> {{ $agenda->distribucion->auxlocalidad->localidad }} <br>
+          <strong>Zona</strong> {{ $agenda->distribucion->auxzona->nombre }} <br>
 
           <hr class=" bg-blue-600">
-          <strong>Rubro</strong> {{ $agenda->auxrubros->nombre }} <br>
-          <strong>Tamaño</strong> {{ $agenda->auxtamanios->nombre }} <br>
-          <strong>Modo</strong> {{ $agenda->auxmodos->nombre }} <br>
+          <strong>Rubro</strong> {{ $agenda->distribucion->auxrubro->nombre }} <br>
+          <strong>Tamaño</strong> {{ $agenda->distribucion->auxtamanio->nombre }} <br>
+          <strong>Modo</strong> {{ $agenda->distribucion->auxmodo->nombre }} <br>
           <strong>Productos</strong> {{ $agenda->distribucion->productosCDA}} <br>
-          <strong>Contacto Inicial</strong> {{ $agenda->auxcontacto->contacto }} <br>
+          <strong>Contacto Inicial</strong> {{ $agenda->distribucion->auxcontacto->contacto }} <br>
 
           <hr class="bg-blue-900">
           <strong>Horario Entrega Mañana:</strong> {{ $agenda->distribucion->desde }} - {{ $agenda->distribucion->hasta
@@ -137,6 +148,33 @@
           <strong>Sabado Recibe:</strong> {{ $agenda->distribucion->sabado }} <br>
           <strong>Factura Impresa:</strong> {{ $agenda->distribucion->fac_imp }} <br>
           <strong>Obs.Recepción:</strong> {{ $agenda->distribucion->obsrecep }} <br>
+          <hr class="bg-blue-900">
+          {{-- @endforeach --}}
+          <strong>Últimos Pedidos:</strong><br>
+          <table class="table table-bordered table-sm text-xs">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Fec.Ped.</th>
+                <th>Fec Ent.</th>
+                <th>Cantidad</th>
+                <th>Producto</th>
+                <th>Precio Unit</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($agenda->distribucion->distribucionLineaPedidos->sortByDesc('fecha')->take(3) as $pedido)
+              <tr>
+                <td>{{ $pedido->pedido_nro }}</td>
+                <td>{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
+                <td>{{ $pedido->cantidad }}</td>
+                <td>{{ $pedido->nombre_producto }}</td>
+                <td>${{ $pedido->precio_unitario }}</td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

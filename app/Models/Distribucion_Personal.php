@@ -48,4 +48,8 @@ class Distribucion_Personal extends Model
     return $this->belongsTo(AuxProfesion::class, 'profesion_id');
   }
 
+  public function auxtipoPersonal()
+  {
+    return $this->belongsTo(AuxTipoPersonal::class, 'tipo_personal_id');
+  }
 }
