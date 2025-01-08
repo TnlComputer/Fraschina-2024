@@ -45,7 +45,8 @@
           <td>{{ $agenda->distribucion->auto }}</td>
           <td>{{ $agenda->distribucion->nomfantasia ?? '' }}</td>
           <td>{{ $agenda->distribucion->auxestados->nomEstado ?? '' }}</td>
-          <td>{{ $agenda->auxacciones->accion ?? '' }}</td>
+          <td style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">{{
+            $agenda->auxacciones->accion ?? '' }}</td>
           <td>{{ Str::limit($agenda->temas, 120) }}</td>
           {{-- <td>
             <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal{{ $agenda->id }}">
@@ -106,8 +107,12 @@
           <strong>Auto:</strong> {{ $agenda->distribucion->auto }} <br>
           <strong>Veráz:</strong> {{ $agenda->distribucion->auxveraz->estado ?? 'No disponible' }} <br>
           <strong>Estado:</strong> {{ $agenda->distribucion->auxestados->nomEstado ?? 'No disponible' }} <br>
-          <strong>Acción:</strong> {{ $agenda->auxacciones->accion }} <br>
-          <strong>Prioridad:</strong> {{ $agenda->auxprioridades->nombre }} <br>
+          <strong>Acción:</strong> <span style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">
+            {{
+            $agenda->auxacciones->accion }} </span><br>
+          <strong>Prioridad:</strong><span
+            style="background-color: {{ $agenda->auxprioridades?->color ?? '#FFFFFF' }};">
+            {{ $agenda->auxprioridades?->nombre ?? 'No disponible' }} </span> <br>
           <strong>Cargo:</strong>{{ $agenda->distribucionPersonal?->cargo?->cargo ?? 'No disponible' }} <br>
           <strong>Persona:</strong> {{
           $agenda->distribucionPersonal->nombre ?? '' }} {{ $agenda->distribucionPersonal->apellido ?? '' }} <br>
