@@ -97,13 +97,12 @@ Route::middleware('auth')->group(function () {
 
 // Rutas para Distribución Agenda
 Route::middleware(['auth'])->group(function () {
-  // Ruta personalizada para el formulario de creación
   Route::get('distribucion_agenda/create', [DistribucionAgendaController::class, 'create'])
     ->name('distribucion_agenda.create');
 
-  // Rutas de recursos, excluyendo create ya que ya está definida
-  Route::resource('distribucion_agenda', DistribucionAgendaController::class)
-  ->except(['create']);
+  Route::resource('distribucion_agenda', DistribucionAgendaController::class)->except(['create']);
+
+  Route::get('distribucion/{id}/personal', [DistribucionAgendaController::class, 'getPersonal'])->name('distribucion.getPersonal');
 });
 
 

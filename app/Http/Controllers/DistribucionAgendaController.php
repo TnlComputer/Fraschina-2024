@@ -2,54 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuxAcciones;
+use App\Models\AuxBarrios;
+use App\Models\AuxCargos;
+use App\Models\AuxContacto;
+use App\Models\AuxEstados;
+use App\Models\AuxLocalidades;
+use App\Models\AuxModos;
+use App\Models\AuxMunicipios;
+use App\Models\AuxPrioridades;
+use App\Models\AuxRubros;
+use App\Models\AuxTamanios;
+use App\Models\AuxVeraz;
+use App\Models\AuxZonas;
+use App\Models\Distribucion;
+use App\Models\Distribucion_Personal;
 use App\Models\DistribucionAgenda;
+use App\Models\DistribucionLineaPedidos;
+use App\Models\productoCDA;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DistribucionAgendaController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
-  // public function index(Request $request)
-  // {
-  //   // Obtener el término de búsqueda, si existe
-  //   $search = $request->get('search');
-
-  //   // Construir la consulta base
-  //   $distribuciones = DB::table('distribucion_agenda as disag')
-  //     ->join('AuxBarrios as auxb', 'disag.barrio_id', '=', 'auxb.id')
-  //     ->join('AuxLocalidades as auxLoc', 'disag.localidad_id', '=', 'auxLoc.id')
-  //     ->join('AuxMunicipios as auxMun', 'disag.municipio_id', '=', 'auxMun.id')
-  //     ->join('AuxEstados as auxEst', 'disag.estado_id', '=', 'auxEst.id')
-  //     ->select(
-  //       'disag.*',
-  //       'auxb.nombrebarrio as barrio',
-  //       'auxLoc.localidad as localidad',
-  //       'auxMun.ciudadmunicipio as municipio',
-  //       'auxEst.nomEstado as estado',
-  //     )
-  //     ->where('disag.status', 'A'); // Solo registros activos
-
-  //   // Aplicar el filtro de búsqueda
-  //   if ($search) {
-  //     $distribuciones->where(function ($query) use ($search) {
-  //       $query->where('disag.razonsocial', 'like', '%' . $search . '%')
-  //         ->orWhere('disag.productos', 'like', '%' . $search . '%')
-  //         ->orWhere('disag.accion', 'like', '%' . $search . '%')
-  //         ->orWhere('auxb.nombrebarrio', 'like', '%' . $search . '%')
-  //         ->orWhere('auxLoc.localidad', 'like', '%' . $search . '%')
-  //         ->orWhere('auxMun.ciudadmunicipio', 'like', '%' . $search . '%');
-  //     });
-  //   }
-
-  //   // Ordenar por fecha descendente y paginar los resultados
-  //   $distribuciones = $distribuciones->orderBy('disag.fecha', 'desc')->paginate(12);
-
-  //   // Retornar los datos a la vista
-  //   return view('pages.Distribucion.Agenda.index', compact('distribuciones', 'search'));
-  // }
-
   /**
    * Muestra un listado de todos los registros de distribucion_agenda.
    */
@@ -59,24 +35,35 @@ class DistribucionAgendaController extends Controller
     $search = $request->input('search');
 
     // Consulta los registros con las relaciones necesarias, ordenados por fecha descendente
+
     $agendas = DistribucionAgenda::with([
+      // 'distribucion.auxcontacto',
+      // 'distribucion.auxveraz',
+      // 'distribucion.auxestado',
+      // 'distribucion.auxrubro',
+      // 'distribucion.auxtamanio',
+      // 'distribucion.auxlocalidad',
+      // 'distribucion.auxmunicipio',
+      // 'distribucion.auxbarrio',
+      // 'distribucion.auxzona',
+      // 'distribucion.auxcobro',
+      // 'distribucion.auxtcobro',
       'auxprioridades:id,nombre',
       'auxacciones:id,accion',
-      'distribucion:id,razonsocial,nomfantasia,telefono,auto,info,productoCDA,desde,hasta,desde1,hasta1,lunes,sabado,obsrecep,fac_imp',
-      'productocda:id,productoCDA',
+      'distribucion:id,razonsocial,nomfantasia,telefono,auto,info,productoCDA,desde,hasta,desde1,hasta1,lunes,sabado,obsrecep,fac_imp,dire_calle_id,piso,dpto,dire_nro,barrio_id,municipio_id,localidad_id,zona_id,rubro_id,tamanio_id,modo_id,contacto_id',
       'distribucionPersonal:id,nombre,apellido',
-      'auxtipoPersonal:id,tipo',
-      'auxveraz:id,estado,color',
-      'auxestados:id,nomEstado',
-      'auxcontacto:id,contacto',
-      'auxcargos:id,cargo',
-      'auxbarrios:id,nombrebarrio',
-      'auxmunicipios:id,ciudadmunicipio',
-      'auxlocalidades:id,localidad',
-      'auxzonas:id,nombre',
-      'auxrubros:id,nombre',
-      'auxtamanios:id,nombre',
-      'auxmodos:id,nombre',
+      'distribucionPersonal.auxtipoPersonal:id,tipo',
+      // 'auxveraz:id,estado,color',
+      // 'auxestados:id,nomEstado',
+      // 'auxcontacto:id,contacto',
+      'distribucionPersonal.cargo',
+      // 'auxbarrios:id,nombrebarrio',
+      // 'auxmunicipios:id,ciudadmunicipio',
+      // 'auxlocalidades:id,localidad',
+      // 'auxzonas:id,nombre',
+      // 'auxrubros:id,nombre',
+      // 'auxtamanios:id,nombre',
+      // 'auxmodos:id,nombre',
       'distribucionNropedidos:id,id'
     ])
       ->select([
@@ -108,6 +95,7 @@ class DistribucionAgendaController extends Controller
         'estadoPedido',
         'status',
       ])
+      ->where('status', 'A') // Solo registros con status 'A'
       ->when($search, function ($query, $search) {
         // Filtra los registros por los campos de búsqueda
         return $query->where(function ($q) use ($search) {
@@ -121,7 +109,6 @@ class DistribucionAgendaController extends Controller
             })
             ->orWhereHas('auxveraz', function ($q) use ($search) {
               $q->where('estado', 'like', "%$search%");
-              // ->orWhere('color', 'like', "%$search%");
             })
             ->orWhereHas('auxestados', function ($q) use ($search) {
               $q->where('nomEstado', 'like', "%$search%");
@@ -141,20 +128,41 @@ class DistribucionAgendaController extends Controller
       ->orderBy('fecha', 'desc') // Ordena por la columna 'fecha' en orden descendente
       ->paginate(12); // Paginación con 12 registros por página
 
-    // dd($agendas);
-
     // Retorna la vista con los datos
     return view('pages.Distribucion.Agenda.index', compact('agendas'));
   }
-
-
 
   /**
    * Show the form for creating a new resource.
    */
   public function create()
   {
-    //
+    // Datos auxiliares para las listas desplegables ordenados alfabéticamente por nombre
+    $prioridades = AuxPrioridades::orderBy('nombre', 'asc')
+      ->get();
+
+    $acciones = AuxAcciones::where('status', 'A')
+      ->orderBy('accion', 'asc')
+      ->get();
+
+    // Último pedido asociado al distribucion_id
+    $ultimoPedido = DistribucionLineaPedidos::where('status', 'A')
+      ->latest('id')
+      ->first();
+
+    // Distribuciones con status 'A'
+    $distribuciones = Distribucion::select('id', 'nomfantasia', 'razonsocial')
+      ->where('status', 'A')
+      ->orderBy('nomfantasia', 'asc')
+      ->orderBy('razonsocial', 'asc')
+      ->get();
+
+    return view('pages.Distribucion.Agenda.create', compact(
+      'prioridades',
+      'acciones',
+      'ultimoPedido',
+      'distribuciones'
+    ));
   }
 
   /**
@@ -162,7 +170,27 @@ class DistribucionAgendaController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    // dd($request);
+
+    // Validación de los datos
+    $validated = $request->validate([
+      'distribucion_id' => 'required|exists:distribucions,id',
+      'fecha' => 'required|date',
+      'hs' => 'required|date_format:H:i',
+      'prioridad_id' => 'required|exists:auxprioridades,id',
+      'accion_id' => 'required|exists:auxacciones,id',
+      'persona_id' => 'required|exists:distribucion_personal,id',
+      'cotizacion' => 'nullable|string|max:255',
+      'temas' => 'nullable|string',
+    ]);
+
+    $validated['status'] = 'A';
+
+    // Insertar los datos en la tabla `distribucion_agenda`
+    $agenda = DistribucionAgenda::create($validated);
+
+    return redirect()->route('distribucion_agenda.index')
+      ->with('success', 'Agenda creada exitosamente.');
   }
 
   /**
@@ -176,24 +204,105 @@ class DistribucionAgendaController extends Controller
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit(string $id)
+  public function edit($id)
   {
-    //
+
+    $agenda = DistribucionAgenda::findOrFail($id);
+
+    $prioridades = AuxPrioridades::orderBy('nombre', 'asc')
+      ->get();
+
+    $acciones = AuxAcciones::where('status', 'A')
+      ->orderBy('accion', 'asc')
+      ->get();
+
+    // Último pedido asociado al distribucion_id
+    $ultimoPedido = DistribucionLineaPedidos::where('status', 'A')
+      ->latest('id')
+      ->first();
+
+    // Distribuciones con status 'A'
+    $distribuciones = Distribucion::select('id', 'nomfantasia', 'razonsocial')
+      ->where('status', 'A')
+      ->orderBy('nomfantasia', 'asc')
+      ->get();
+
+    $personal = Distribucion_Personal::where('distribucion_id', $agenda->distribucion_id)->get();
+
+    $agenda->hs = Carbon::parse($agenda->hs)->format('H:i');
+
+    return view('pages.Distribucion.Agenda.edit', compact(
+      'prioridades',
+      'acciones',
+      'personal',
+      'ultimoPedido',
+      'distribuciones',
+      'agenda'
+    ));
+  }
+
+
+  public function getPersonal($id)
+  {
+    // Lista de personal relacionada con la distribución filtrada por status = 'A'
+    $personal = Distribucion_Personal::where('distribucion_id', $id)
+      ->where('status', 'A')
+      ->orderBy('nombre', 'asc')
+      ->orderBy('apellido', 'asc')
+      ->get();
+
+    // Devuelve los datos como JSON para ser usados en AJAX
+    return response()->json($personal);
   }
 
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(Request $request, DistribucionAgenda $distribucion_agenda)
   {
-    //
+    // Validar los datos del formulario
+    $request->validate([
+      'distribucion_id' => 'required|exists:distribucions,id',
+      'fecha' => 'required|date',
+      'hs' => 'required|date_format:H:i',
+      'prioridad_id' => 'required|exists:auxprioridades,id',
+      'accion_id' => 'required|exists:auxacciones,id',
+      'temas' => 'nullable|string',
+      'cotizacion' => 'nullable|string',
+      'persona_id' => 'nullable|exists:distribucion_personal,id',
+    ]);
+
+    // Buscar la agenda y actualizar los datos
+    $agenda = DistribucionAgenda::findOrFail($distribucion_agenda->id);
+    $agenda->update([
+      'distribucion_id' => $request->distribucion_id,
+      'fecha' => $request->fecha,
+      'hs' => $request->hs,
+      'prioridad_id' => $request->prioridad_id,
+      'accion_id' => $request->accion_id,
+      'temas' => $request->temas,
+      'cotizacion' => $request->cotizacion,
+      'persona_id' => $request->persona_id,
+    ]);
+
+    // Redirigir con un mensaje de éxito
+    return redirect()->route('distribucion_agenda.index')->with('success', 'Agenda actualizada correctamente.');
   }
+
 
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy($distribucion_agenda)
   {
-    //
+    // Encuentra el registro de la agenda por su id
+    $agenda = DistribucionAgenda::findOrFail($distribucion_agenda);
+
+    // Cambia el estado a "D" (desactivado)
+    $agenda->status = 'D';
+    $agenda->save();
+
+    // Redirige a la vista de índice con un mensaje de éxito
+    return redirect()->route('distribucion_agenda.index')->with('success', 'Agenda desactivada correctamente.');
   }
 }
