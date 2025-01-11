@@ -12,4 +12,9 @@ class DistribucionLineaTareas extends Model
   protected $table = 'distribucion_linea_tareas';
 
   protected $guarded = [];
+
+  public function distribucionNropedido()
+  {
+    return $this->belongsTo(DistribucionNroPedidos::class, 'id');
+  }
 }

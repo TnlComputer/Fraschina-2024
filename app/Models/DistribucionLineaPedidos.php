@@ -12,7 +12,7 @@ class DistribucionLineaPedidos extends Model
   protected $table = 'distribucion_linea_pedidos';
 
   protected $fillable = [
-    'pedido_nro',
+    'pedido_id',
     'id_linea',
     'fecha',
     'producto_id',
@@ -38,4 +38,9 @@ class DistribucionLineaPedidos extends Model
     'estado_stock',
     'status',
   ];
+
+  public function distribucion()
+  {
+    return $this->belongsTo(DistribucionNroPedidos::class, 'id');
+  }
 }

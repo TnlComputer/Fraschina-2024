@@ -13,14 +13,19 @@ return new class extends Migration
   {
     Schema::create('distribucion_nropedidos', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('nropedido')->unique();
       $table->unsignedBigInteger('distribucion_id');
       $table->date('fecha')->nullable();
       $table->string('reservado', 2)->nullable();
-      $table->date('fechaEntreg')->nullable();
+      $table->date('fechaEntrega')->nullable();
       $table->longText('observaciones')->nullable();
-      $table->string('status')->nullable();
+      $table->string('status')->default('A')->nullable();
       $table->timestamps();
+
+      // Clave foránea para distribucion_id
+      $table->foreign('distribucion_id')
+        ->references('id')
+        ->on('distribucions')  // Tabla que contiene las distribuciones
+        ->onDelete('cascade');
     });
   }
 

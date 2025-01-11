@@ -1,41 +1,47 @@
-INSERT INTO fraschina_2024.distribucion_linea_tareas (
-    id,
-    fecha,
-    tadea_id,
-    cantidad,
-    linea,
-    bandera,
-    distribucion_id,
-    fechaEntrega,
-    prePed,
-    estado_pedido,
-    distribucion_tarea_id,
-    detalles,
-    pedido_id,
-    status,
-    created_at,
-    updated_at
-)
+INSERT INTO
+    fraschina_2024.distribucion_linea_tareas (
+        fecha,
+        tarea_id,
+        cantidad,
+        linea,
+        bandera,
+        distribucion_id,
+        fechaEntrega,
+        prePed,
+        estado_pedido,
+        detalles,
+        pedido_id,
+        status,
+        created_at,
+        updated_at
+    )
 SELECT
-    id_linea AS id,
-    fechaPed AS fecha,
-    tarea_id AS tadea_id,
-    CASE 
-        WHEN NULLIF(cantidad, '') IS NULL THEN 0 -- Si cantidad está vacía, asignar 0
-        ELSE CAST(cantidad AS DECIMAL(8,2))     -- Convertir cantidad a decimal
+    lt.fechaPed AS fecha,
+    lt.tarea_id AS tarea_id,
+    CASE
+        WHEN NULLIF(lt.cantidad, '') IS NULL THEN 0
+        ELSE CAST(lt.cantidad AS DECIMAL(8, 2))
     END AS cantidad,
-    linea,
-    bandera,
-    idCliente AS distribucion_id,
-    fecEntrega AS fechaEntrega,
-    prePed,
-    CAST(estado_Ped AS DECIMAL(10,2)) AS estado_pedido, -- Convertir estado_Ped a decimal
-    NULL AS distribucion_tarea_id,  -- Si no hay equivalencia directa
-    detalles,
-    NULL AS pedido_id,  -- Si no hay equivalencia directa
-    'A' AS status,  -- Asignar un valor constante para el campo status
+    lt.linea,
+    lt.bandera,
+    lt.idCliente AS distribucion_id,
+    lt.fecEntrega AS fechaEntrega,
+    lt.prePed,
+    CAST(
+        lt.estado_Ped AS DECIMAL(10, 2)
+    ) AS estado_pedido,
+    lt.detalles,
+    lt.nroPed AS pedido_id, -- Relación con el número de pedido
+    'A' AS status, -- Valor constante 'A' para el estado
     CURRENT_TIMESTAMP AS created_at,
     CURRENT_TIMESTAMP AS updated_at
-FROM fraschin_backup.lineatareas
-WHERE 
-    id_linea IS NOT NULL;  -- Evitar registros nulos en id_linea
+FROM fraschin_backup.lineatareas AS lt
+WHERE
+    lt.id_linea IS NOT NULL
+    AND EXISTS (
+        SELECT 1
+        FROM fraschina_2024.distribucion_nropedidos AS np
+        WHERE
+            np.distribucion_id = lt.idCliente
+            AND np.fechaEntrega = lt.fecEntrega
+    );

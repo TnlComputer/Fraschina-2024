@@ -338,13 +338,13 @@ return [
         ],
         [
           'text' => 'Reparto',
-          'url' => 'distribucion/distribucion_reparto',
+          'url' => 'distribucion_reparto',
           'icon' => 'fas fa-fw fa-truck',
           'can' => ['permiso_99', 'permiso_2'],
         ],
         [
           'text' => 'Stock',
-          'url' => 'distribucion/distribucion_stock',
+          'url' => 'distribucion_stock',
           'icon' => 'fas fa-fw fa-truck',
           'can' => ['permiso_99', 'permiso_2'],
         ],

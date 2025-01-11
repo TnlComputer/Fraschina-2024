@@ -12,8 +12,17 @@ class DistribucionNroPedidos extends Model
 
   protected $guarded = [];
 
-  // public function distribucionLineaPedido()
-  // {
-  //   return $this->belongsTo(DistribucionLineaPedidos::class, 'pedido_nro', 'id');
-  // }
+  public function lineasPedidos()
+  {
+    return $this->hasMany(DistribucionLineaPedidos::class, 'pedido_id');
+  }
+
+  public function lineasTareas()
+  {
+    return $this->hasMany(DistribucionLineaTareas::class, 'pedido_id');
+  }
+  public function distribucion()
+  {
+    return $this->belongsTo(Distribucion::class, 'distribucion_id');  // Relación con la tabla distribucions
+  }
 }
