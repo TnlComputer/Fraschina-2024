@@ -14,6 +14,8 @@ use App\Http\Controllers\DistribucionAgendaController;
 use App\Http\Controllers\DistribucionController;
 use App\Http\Controllers\DistribucionPersonalController;
 use App\Http\Controllers\DistribucionProductoController;
+use App\Http\Controllers\DistribucionRepartoController;
+use App\Http\Controllers\DistribucionStockController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\ExpedicionMolinosController;
 use App\Http\Controllers\ExportarController;
@@ -102,8 +104,13 @@ Route::middleware(['auth'])->group(function () {
 
   Route::resource('distribucion_agenda', DistribucionAgendaController::class)->except(['create']);
 
-  Route::get('distribucion/{id}/personal', [DistribucionAgendaController::class, 'getPersonal'])->name('distribucion.getPersonal');
+  Route::get('distribucion_agenda/{id}/personal', [DistribucionAgendaController::class, 'getPersonal'])->name('distribucion.getPersonal');
 });
+
+// Rutas para Distribucion Reparto
+Route::middleware('auth')->resource('distribucion_reparto', DistribucionRepartoController::class);
+// Rutas para Distribucion Rstock
+Route::middleware('auth')->resource('distribucion_stock', DistribucionStockController::class);
 
 
 // Rutas para Molinos
@@ -156,7 +163,6 @@ Route::middleware('auth')->group(function () {
   Route::resource('/representacion/representacion_producto', RepresentacionProductoController::class)
     ->except(['create']); // Excluir la acción `create` del recurso predeterminado
 });
-
 
 // Rutas para Transportes
 Route::middleware('auth')->resource('/transporte', TransporteController::class);

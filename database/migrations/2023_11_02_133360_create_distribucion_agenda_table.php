@@ -40,7 +40,6 @@ return new class extends Migration
       $table->integer('estadoPedido')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
-      
 
       // Relaciones
       $table->foreign('prioridad_id')->references('id')->on('auxprioridades')->onDelete('set null');

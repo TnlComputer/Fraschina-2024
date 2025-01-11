@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('distribucion_linea_tareas', function (Blueprint $table) {
       $table->id();
       $table->date('fecha')->nullable();
-      $table->unsignedBigInteger('tadea_id')->nullable();
+      $table->unsignedBigInteger('tarea_id')->nullable();
       $table->integer('cantidad')->nullable();
       $table->string('linea', 2)->nullable();
       $table->string('bandera', 2)->nullable();
@@ -22,11 +22,16 @@ return new class extends Migration
       $table->date('fechaEntrega')->nullable();
       $table->string('prePed', 1)->nullable();
       $table->decimal('estado_pedido', 1, 0)->nullable();
-      $table->unsignedBigInteger('distribucion_tarea_id')->nullable();
       $table->longText('detalles')->nullable();
       $table->unsignedBigInteger('pedido_id')->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
+
+      // Claves foráneas
+      $table->foreign('pedido_id')
+        ->references('id')
+        ->on('distribucion_nropedidos')
+        ->onDelete('cascade');
     });
   }
 
