@@ -9,35 +9,9 @@ class DistribucionLineaPedidos extends Model
 {
   use HasFactory;
 
-  protected $table = 'distribucion_linea_pedidos';
+  protected $table = 'distribucion_linea_pedidon';
 
-  protected $fillable = [
-    'pedido_id',
-    'id_linea',
-    'fecha',
-    'producto_id',
-    'cantidad',
-    'precio_unitario',
-    'totalPedido',
-    'totalPedidoN',
-    'total_factura',
-    'nombre_producto',
-    'linea',
-    'bandera',
-    'distribucion_id',
-    'fechaEntrega',
-    'prePed',
-    'cambiar',
-    'retirar',
-    'estado_pedido',
-    'estado_tarea',
-    'chofer',
-    'orden',
-    'fechaFactura',
-    'nroFactura',
-    'estado_stock',
-    'status',
-  ];
+  protected $guarded = [];
 
   public function distribucion()
   {
