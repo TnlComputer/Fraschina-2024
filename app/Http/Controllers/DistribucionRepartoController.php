@@ -12,22 +12,29 @@ class DistribucionRepartoController extends Controller
   /**
    * Display a listing of the resource.
    */
-
   public function index(Request $request)
   {
     $fecha = $request->get('fecha', now()->toDateString());
 
-    // Recupera distribuciones con las relaciones usando pedido_id
+    // Obtener datos principales sin ordenar por la relación
     $distribuciones = DistribucionNroPedidos::with(['lineasPedidos', 'lineasTareas', 'distribucion'])
       ->where('status', 'A')
       ->whereDate('fechaEntrega', '=', $fecha)
+      ->orderBy('orden', 'asc')
       ->orderBy('fechaEntrega', 'desc')
-      ->paginate(10);
+      ->orderBy('id', 'asc')
+      ->paginate(20);
 
-    // dd($distribuciones, $fecha);
+    // Ordenar las relaciones 'lineasPedidos' en memoria
+    $distribuciones->getCollection()->transform(function ($distribucion) {
+      $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
+      return $distribucion;
+    });
 
     return view('pages.Distribucion.Reparto.index', compact('distribuciones', 'fecha'));
   }
+
+
 
 
   /**
@@ -65,10 +72,28 @@ class DistribucionRepartoController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(Request $request, $id)
   {
-    //
+    // Buscar el recurso (distribución)
+    $distribucion = DistribucionNroPedidos::findOrFail($id);
+    // dd($distribucion);
+    // Actualizar los campos del recurso
+    $distribucion->fechaFactura = $request->input('fechaFactura');
+    $distribucion->nroFactura = $request->input('nroFactura');
+    $distribucion->totalFactura = $request->input('totalFactura');
+    $distribucion->chofer = $request->input('chofer');
+    $distribucion->orden = $request->input('orden');
+
+    // Guardar los cambios
+    $distribucion->save();
+
+    // dd($request->fecha);
+
+    // Redirigir con un mensaje de éxito
+    return redirect()->route('distribucion_reparto.index', ['fecha' => $request->fecha])
+      ->with('success', 'Distribución actualizada correctamente');
   }
+
 
   /**
    * Remove the specified resource from storage.
