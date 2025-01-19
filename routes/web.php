@@ -109,6 +109,9 @@ Route::middleware(['auth'])->group(function () {
 
 // Rutas para Distribucion Reparto
 Route::middleware('auth')->resource('distribucion_reparto', DistribucionRepartoController::class);
+Route::get('/distribucion/pedidos/{id}/imprimirRecibo', [DistribucionRepartoController::class, 'imprimirRecibo'])->name('distribucion_reparto.imprimirRecibo');
+Route::get('/convertir-letras/{numero}/{moneda}', [DistribucionRepartoController::class, 'convertirNumeroALetras']);
+
 // Rutas para Distribucion Rstock
 Route::middleware('auth')->resource('distribucion_stock', DistribucionStockController::class);
 

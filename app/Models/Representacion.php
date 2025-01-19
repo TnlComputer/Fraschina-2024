@@ -60,11 +60,11 @@ class Representacion extends Model
 
   public function personal()
   {
-    return $this->hasMany(representacion_personal::class);
+    return $this->hasMany(RepresentacionPersonal::class);
   }
 
   public function productos()
   {
-    return $this->hasMany(Representacion_Producto::class, 'representacion_id');
+    return $this->hasMany(RepresentacionProducto::class, 'representacion_id');
   }
 }

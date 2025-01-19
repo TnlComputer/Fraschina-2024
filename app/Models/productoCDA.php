@@ -28,6 +28,6 @@ class productoCDA extends Model
   // Relación inversa con Distribucion_Producto
   public function distribuciones()
   {
-    return $this->hasMany(Distribucion_Producto::class, 'producto_id');
+    return $this->hasMany(DistribucionProducto::class, 'producto_id');
   }
 }

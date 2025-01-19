@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-  <h1>Distribución</h1>
+  <h1>Distribución Reparto</h1>
 
   <!-- Botones para filtrar por fechas -->
   <div class="mb-3 d-flex justify-content-between align-items-center">
@@ -34,9 +34,9 @@
   <table class="table table-sm text-xs table-bordered w-100">
     <thead>
       <tr>
-        <th>Fec.Reparto</th>
-        <th></th>
-        <th class="text-center">Fec.Fac</th>
+        <th class="text-center">Reparto</th>
+        <th colspan="4"></th>
+        <th class="text-center">Fecha Fac</th>
         <th class="text-center">Nro.Fac</th>
         <th class="text-center">Imp.Fac</th>
         <th><i class="fas fa-print"></i></th>
@@ -44,8 +44,8 @@
         <th class="text-center">Orden</th>
         {{-- <th>Linea</th> --}}
         <th>Pedido</th>
-        <th>NomFantasia</th>
-        <th>RazonSocial</th>
+        <th>Nombre Fantasia</th>
+        <th>Razón Social</th>
       </tr>
     </thead>
     <tbody class="text-xs bold">
@@ -59,8 +59,22 @@
         <tr>
           @if ($lineaPedido->linea == 1)
           <td class=" text-center">{{ $distribucion->fechaEntrega }}</td>
-          <td><button type="submit" id="actualizar-btn" class="btn btn-success btn-xs mx-1">
-              <i class="fas fa-sync-alt fs-xs"></i>
+          <td>
+            <a href="{{ route('distribucion_reparto.imprimirRecibo', ['id' => $distribucion->id]) }}"
+              class="btn btn-xs mx-1" title="Impresi´on Recibo" target="_blank">
+              <i class="fas fa-print fs-xs text-info"></i>
+            </a>
+          </td>
+          <td><button type="#" id="ver-btn" class="btn btn-xs" title="Ver Pedido">
+              <i class="fas fa-eye fs-xs text-success"></i>
+            </button>
+          </td>
+          <td><a href="#" id="edit-btn" class="btn btn-xs" title="Editar Pedido">
+              <i class="fas fa-pen fs-xs text-blue"></i>
+            </a>
+          </td>
+          <td><button type="submit" id="actualizar-btn" class="btn btn-xs" title="Actualizar">
+              <i class="fas fa-sync-alt fs-xs text-orange"></i>
             </button>
           </td>
           <td class="text-center">
@@ -97,14 +111,7 @@
               style="width: 40px;" />
           </td>
           @else
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td colspan="11"></td>
           @endif
           {{-- <td>{{ $lineaPedido->linea }}</td> --}}
           <td>{{ $distribucion->id }}</td>
@@ -116,14 +123,12 @@
         @foreach ($distribucion->lineasTareas as $lineaTarea)
         <tr>
           <td class="text-center text-xs">{{ $distribucion->fechaEntrega }}</td>
-          <td><button type="submit" id="actualizar-btn" class="btn btn-success btn-xs mx-1">
+          <td colspan="3"></td>
+          <td><button type="submit" id="actualizar-btn" class="btn btn-xs text-orange">
               <i class="fas fa-sync-alt"></i>
             </button>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td colspan="4"></td>
           <td class="text-center">
             <input type="text" name="chofer" value="{{ $distribucion->chofer }}" class="text-center text-xs"
               style="width: 30px;" />

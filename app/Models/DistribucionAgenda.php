@@ -46,7 +46,7 @@ class DistribucionAgenda extends Model
   // Relación con el personal de distribución
   public function distribucionPersonal()
   {
-    return $this->belongsTo(Distribucion_Personal::class, 'persona_id', 'id');
+    return $this->belongsTo(DistribucionPersonal::class, 'persona_id', 'id');
   }
   public function distribucionNropedidos()
   {

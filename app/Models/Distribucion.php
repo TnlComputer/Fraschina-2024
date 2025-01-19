@@ -64,7 +64,7 @@ class Distribucion extends Model
 
   public function personal()
   {
-    return $this->hasMany(Distribucion_Personal::class, 'distribucion_id');
+    return $this->hasMany(DistribucionPersonal::class, 'distribucion_id');
   }
 
   public function auxcontacto()
