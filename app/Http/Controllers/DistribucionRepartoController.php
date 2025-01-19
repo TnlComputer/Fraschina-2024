@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\DistribucionNroPedidos;
+use App\Services\EnLetrasService;
 use Carbon\Carbon;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use NumberToWords\NumberToWords;
 
 class DistribucionRepartoController extends Controller
 {
@@ -101,5 +105,65 @@ class DistribucionRepartoController extends Controller
   public function destroy(string $id)
   {
     //
+  }
+
+  public function convertirNumeroALetras($numero, $moneda = 'Pesos')
+  {
+    // Separamos la parte entera y fraccionaria (centavos)
+    $entero = floor($numero);
+    $centavos = round(($numero - $entero) * 100);
+
+    // Convertimos la parte entera a letras
+    $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('es');
+    $numeroEnLetras = $numberTransformer->toWords($entero);
+
+    // Si hay centavos, los agregamos a la cadena
+    $centavosEnLetras = '';
+    if ($centavos > 0) {
+      $centavosEnLetras = ' con ' . $numberTransformer->toWords($centavos) . ' centavos';
+    }
+
+    // Agregamos la moneda al texto
+    return 'La suma de ' . $moneda . ': ' . ucfirst($numeroEnLetras) . $centavosEnLetras;
+  }
+
+  public function imprimirRecibo($id)
+  {
+    // Obtener el pedido principal con datos relacionados
+    $pedido = DB::table('distribucion_nropedidon as dn')
+      ->join('distribucions as d', 'dn.distribucion_id', '=', 'd.id')
+      ->join('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
+      ->select(
+        'dn.*',
+        'd.nomfantasia',
+        'd.razonsocial',
+        'ac.calle as direccion',
+        'd.telefono',
+        'dn.totalFactura'
+      )
+      ->where('dn.id', $id)
+      ->first();
+
+    // Verificar si el pedido existe
+    if (!$pedido) {
+      return response()->json(['error' => 'Pedido no encontrado'], 404);
+    }
+
+    // Convertimos el total de la factura a letras
+    $importeTexto = $this->convertirNumeroALetras($pedido->totalFactura);
+
+    // Configuración de Dompdf y generación del recibo en PDF
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+
+    $dompdf = new Dompdf($options);
+    $html = view('pages.Distribucion.Printer.recibo', ['pedido' => $pedido, 'importeTexto' => $importeTexto])->render();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Descargar el PDF
+    return $dompdf->stream('recibo.pdf', ['Attachment' => false]);
   }
 }

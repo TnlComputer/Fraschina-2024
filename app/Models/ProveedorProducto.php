@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Proveedor_Producto extends Model
+class ProveedorProducto extends Model
 {
   use HasFactory;
 
@@ -15,7 +15,7 @@ class Proveedor_Producto extends Model
 
   public function producto()
   {
-    return $this->belongsTo(Proveedor_AuxProductos::class, 'producto_id');
+    return $this->belongsTo(ProveedorAuxProductos::class, 'producto_id');
   }
 
   public function proveedor()

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class distribucion_PDF extends Model
+class DistribucionPDF extends Model
 {
-    use HasFactory;
+  use HasFactory;
 }

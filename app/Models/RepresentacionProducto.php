@@ -6,7 +6,7 @@ use App\Http\Controllers\RepresentacionAuxProductosController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Representacion_Producto extends Model
+class RepresentacionProducto extends Model
 {
   use HasFactory;
 
@@ -16,6 +16,6 @@ class Representacion_Producto extends Model
 
   public function producto()
   {
-    return $this->belongsTo(Representacion_AuxProductos::class);
+    return $this->belongsTo(RepresentacionAuxProductos::class);
   }
 }

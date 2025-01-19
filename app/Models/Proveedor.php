@@ -35,11 +35,11 @@ class Proveedor extends Model
 
   public function personal()
   {
-    return $this->hasMany(Proveedor_Personal::class, 'proveedor_id')->where('status', 'A');
+    return $this->hasMany(ProveedorPersonal::class, 'proveedor_id')->where('status', 'A');
   }
 
   public function productos()
   {
-    return $this->hasMany(Proveedor_Producto::class, 'proveedor_id')->where('status', 'A');
+    return $this->hasMany(ProveedorProducto::class, 'proveedor_id')->where('status', 'A');
   }
 }
