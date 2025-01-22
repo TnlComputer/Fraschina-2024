@@ -116,66 +116,14 @@
           @else
           <td colspan="11"></td>
           @endif
+          {{-- <td>{{ $lineaPedido->linea }}</td> --}}
           <td>{{ $distribucion->id }}</td>
-          {{-- <td>
-            <a href="#" class="btn btn-xs" id="openModal" data-id="{{ $distribucion->id }}"
-              data-calle="{{ $distribucion->distribucion->auxCalles->calle }}"
-              data-direccion="{{ $distribucion->distribucion->dire_nro }}"
-              data-piso="{{ $distribucion->distribucion->piso }}" data-dpto="{{ $distribucion->distribucion->dpto }}"
-              data-barrio="{{ $distribucion->distribucion->auxbarrio->nombrebarrio }}"
-              data-localidad="{{ $distribucion->distribucion->auxlocalidad->localidad }}"
-              data-desde="{{ $distribucion->distribucion->desde }}"
-              data-hasta="{{ $distribucion->distribucion->hasta }}"
-              data-desde1="{{ $distribucion->distribucion->desde1 }}"
-              data-hasta1="{{ $distribucion->distribucion->hasta1 }}"
-              data-nomfantasia="{{ $distribucion->distribucion->nomfantasia }}">
-              {{ $distribucion->distribucion->nomfantasia }}
-            </a>
-          </td> --}}
-          <!-- En la vista donde quieres mostrar el modal -->
-          <td>
-            <button type="button" class="btn btn-xs" data-toggle="modal"
-              data-target="#infoModal_{{ $distribucion->id }}">
-              {{ $distribucion->distribucion->nomfantasia }}
-            </button>
+          <td data-toggle="popover" data-placement="top" data-html="true" title="Información" data-content="
+                <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles->calle }} {{ $distribucion->distribucion->dire_nro }} {{ $distribucion->distribucion->piso }} {{ $distribucion->distribucion->dpto }} {{ $distribucion->distribucion->auxbarrio->nombrebarrio }} - {{ $distribucion->distribucion->auxlocalidad->localidad }}<br>
+                <strong>Horarios:</strong> Mañana: {{ $distribucion->distribucion->desde }} - {{ $distribucion->distribucion->hasta }} | Tarde: {{ $distribucion->distribucion->desde1 }} - {{ $distribucion->distribucion->hasta1 }}
+                  ">
+            {{ $distribucion->distribucion->razonsocial }}
           </td>
-
-          <!-- Modal para mostrar la información del pedido -->
-          <div class="modal fade" id="infoModal_{{ $distribucion->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="infoModalLabel_{{ $distribucion->id }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <!-- Encabezado del Modal -->
-                <div class="modal-header">
-                  <h5 class="modal-title" id="infoModalLabel_{{ $distribucion->id }}">Información del Pedido</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <!-- Cuerpo del Modal -->
-                <div class="modal-body">
-                  <strong>Razón Social:</strong> {{ $distribucion->distribucion->nomfantasia }}<br>
-                  <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles->calle }} {{
-                  $distribucion->distribucion->dire_nro }}
-                  {{ $distribucion->distribucion->piso }}
-                  {{ $distribucion->distribucion->dpto }} <br>
-                  {{ $distribucion->distribucion->auxbarrio->nombrebarrio }} -
-                  {{ $distribucion->distribucion->auxlocalidad->localidad }} - {{
-                  $distribucion->distribucion->auxmunicipio->ciudadmunicipio }} <br>
-                  <strong>Horarios:</strong><br> Mañana: {{ $distribucion->distribucion->desde }} - {{
-                  $distribucion->distribucion->hasta }}<br>
-                  Tarde: {{ $distribucion->distribucion->desde1 }} -{{ $distribucion->distribucion->hasta1 }}<br>
-                  <strong>Observaciones:</strong><br>
-                  {{$distribucion->distribucion->obsrecep }}<br>
-                </div>
-                <!-- Pie del Modal -->
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <td>{{ $distribucion->distribucion->razonsocial }}</td>
         </tr>
         @endforeach
@@ -214,24 +162,6 @@
   {{ $distribuciones->appends(['fecha' => $fecha])->links() }}
 </div>
 
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="modalInfo" tabindex="-1" aria-labelledby="modalInfoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalInfoLabel">Información del Pedido</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="modal-content-body"></div> <!-- Aquí se insertará el contenido dinámico -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Scripts -->
@@ -279,40 +209,13 @@
   event.preventDefault(); // Evita el envío del formulario
   }
   });
-</script>
 
-<script>
   $(document).ready(function(){
-    // Al hacer clic en el nombre de fantasía, abrir el modal y cargar contenido
-    $('#openModal').on('click', function(e) {
-      e.preventDefault();
-
-      var id = $(this).data('id');
-      var calle = $(this).data('calle');
-      var direccion = $(this).data('direccion');
-      var piso = $(this).data('piso');
-      var dpto = $(this).data('dpto');
-      var barrio = $(this).data('barrio');
-      var localidad = $(this).data('localidad');
-      var desde = $(this).data('desde');
-      var hasta = $(this).data('hasta');
-      var desde1 = $(this).data('desde1');
-      var hasta1 = $(this).data('hasta1');
-      var nomfantasia = $(this).data('nomfantasia');
-
-      // Crear el contenido del modal
-      var modalContent = `
-        <p><strong>Dirección:</strong> ${calle} ${direccion} ${piso} ${dpto} ${barrio} - ${localidad}</p>
-        <p><strong>Horarios:</strong> Mañana: ${desde} - ${hasta} | Tarde: ${desde1} - ${hasta1}</p>
-        <p><strong>Nombre de Fantasía:</strong> ${nomfantasia}</p>
-      `;
-
-      // Insertar el contenido en el cuerpo del modal
-      $('#modal-content-body').html(modalContent);
-
-      // Mostrar el modal
-      $('#modalInfo').modal('show');
-    });
+  $('[data-toggle="popover"]').popover({
+  trigger: 'hover', // Activa al pasar el mouse
+  container: 'body'
   });
+  });
+  
 </script>
 @endsection

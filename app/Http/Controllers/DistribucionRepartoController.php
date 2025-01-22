@@ -21,14 +21,28 @@ class DistribucionRepartoController extends Controller
     $fecha = $request->get('fecha', now()->toDateString());
 
     // Obtener datos principales sin ordenar por la relación
-    $distribuciones = DistribucionNroPedidos::with(['lineasPedidos', 'lineasTareas', 'distribucion'])
-      ->where('status', 'A')
-      ->whereDate('fechaEntrega', '=', $fecha)
-      ->orderBy('orden', 'asc')
-      ->orderBy('fechaEntrega', 'desc')
-      ->orderBy('id', 'asc')
-      ->paginate(20);
-
+    // $distribuciones = DistribucionNroPedidos::with(['lineasPedidos', 'lineasTareas', 'distribucion'])
+    //   ->where('status', 'A')
+    //   // ->where('linea', '1')
+    //   ->whereDate('fechaEntrega', '=', $fecha)
+    //   ->orderBy('orden', 'asc')
+    //   ->orderBy('fechaEntrega', 'desc')
+    //   ->orderBy('id', 'asc')
+    //   ->paginate(20);
+    $distribuciones = DistribucionNroPedidos::with([
+      'lineasPedidos' => function ($query) {
+        $query->where('linea', 1);
+      },
+      'lineasTareas',
+      'distribucion'
+    ])
+    ->where('status', 'A')
+    ->whereDate('fechaEntrega', '=', $fecha)
+    ->orderBy('orden', 'asc')
+    ->orderBy('fechaEntrega', 'desc')
+    ->orderBy('id', 'asc')
+    ->paginate(20);
+    
     // Ordenar las relaciones 'lineasPedidos' en memoria
     $distribuciones->getCollection()->transform(function ($distribucion) {
       $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
@@ -60,9 +74,20 @@ class DistribucionRepartoController extends Controller
   /**
    * Display the specified resource.
    */
-  public function show(string $id)
+  public function show($id)
   {
-    //
+    // Obtener el pedido con sus relaciones necesarias
+    $pedido = DistribucionNroPedidos::with(['lineasPedidos', 'lineasTareas'])->find($id);
+
+    // Verificar si el pedido existe
+    if (!$pedido) {
+      return redirect()->route('distribucion_reparto.index')->with('error', 'Pedido no encontrado.');
+    }
+
+    // dd($pedido);
+
+    // Pasar datos a la vista
+    return view('pages.Distribucion.Reparto.pedido', compact('pedido'));
   }
 
   /**
