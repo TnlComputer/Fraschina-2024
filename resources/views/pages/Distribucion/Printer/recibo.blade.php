@@ -114,6 +114,8 @@
 
     .letra-cliente {
       font-size: 8pt;
+      text-transform: uppercase;
+      font-weight: bold;
     }
 
     .tabla-derecha {
@@ -513,7 +515,7 @@
         </tbody>
       </table>
       {{-- <div class="amount-in-words"> --}}
-        <span class="letra-cliente"> {{ $importeTexto }} </span>
+        <span class="letra-cliente"><strong> {{ $importeTexto }} </strong></span>
         {{--
       </div> --}}
     </div>

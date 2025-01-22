@@ -17,4 +17,9 @@ class DistribucionLineaPedidos extends Model
   {
     return $this->belongsTo(DistribucionNroPedidos::class, 'id');
   }
+
+  public function producto()
+  {
+    return $this->belongsTo(productoCDA::class, 'producto_id');  // Ajusta 'producto_id' si es necesario
+  }
 }
