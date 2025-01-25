@@ -33,6 +33,10 @@ return new class extends Migration
         ->on('distribucion_nropedidos')
         ->onDelete('cascade');
     });
+
+    Schema::table('distribucion_linea_tareas', function (Blueprint $table) {
+      $table->foreign('tarea_id')->references('id')->on('distribucion_tareas')->onDelete('cascade');
+    });
   }
 
   /**

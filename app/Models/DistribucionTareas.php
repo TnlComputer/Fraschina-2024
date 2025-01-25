@@ -11,5 +11,14 @@ class DistribucionTareas extends Model
 
   protected $table = 'distribucion_tareas';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'tarea',
+    'status'
+  ];
+
+  // Relación: una tarea tiene muchas líneas de tarea
+  public function tarea()
+  {
+    return $this->hasMany(DistribucionLineaTareas::class, 'tarea_id', 'id');
+  }
 }

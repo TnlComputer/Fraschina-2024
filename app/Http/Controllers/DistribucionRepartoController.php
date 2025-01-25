@@ -20,35 +20,41 @@ class DistribucionRepartoController extends Controller
   {
     $fecha = $request->get('fecha', now()->toDateString());
 
-    // Obtener datos principales sin ordenar por la relación
-    // $distribuciones = DistribucionNroPedidos::with(['lineasPedidos', 'lineasTareas', 'distribucion'])
-    //   ->where('status', 'A')
-    //   // ->where('linea', '1')
-    //   ->whereDate('fechaEntrega', '=', $fecha)
-    //   ->orderBy('orden', 'asc')
-    //   ->orderBy('fechaEntrega', 'desc')
-    //   ->orderBy('id', 'asc')
-    //   ->paginate(20);
     $distribuciones = DistribucionNroPedidos::with([
       'lineasPedidos' => function ($query) {
         $query->where('linea', 1);
       },
-      'lineasTareas',
+      'lineasTareas.tarea',  // Cargar la tarea de distribucion_tareas
       'distribucion'
     ])
-    ->where('status', 'A')
-    ->whereDate('fechaEntrega', '=', $fecha)
-    ->orderBy('orden', 'asc')
-    ->orderBy('fechaEntrega', 'desc')
-    ->orderBy('id', 'asc')
-    ->paginate(20);
-    
+      ->where('status', 'A')
+      ->whereDate('fechaEntrega', '=', $fecha)
+      ->orderBy('orden', 'asc')
+      ->orderBy('fechaEntrega', 'desc')
+      ->orderBy('id', 'asc')
+      ->paginate(20);
+
+    // $distribuciones = DistribucionNroPedidos::with([
+    //   'lineasPedidos' => function ($query) {
+    //     $query->where('linea', 1);
+    //   },
+    //   'lineasTareas',
+    //   'distribucion'
+    // ])
+    // ->where('status', 'A')
+    // ->whereDate('fechaEntrega', '=', $fecha)
+    // ->orderBy('orden', 'asc')
+    // ->orderBy('fechaEntrega', 'desc')
+    // ->orderBy('id', 'asc')
+    // ->paginate(20);
+
     // Ordenar las relaciones 'lineasPedidos' en memoria
     $distribuciones->getCollection()->transform(function ($distribucion) {
       $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
       return $distribucion;
     });
 
+    // dd($distribuciones);
     return view('pages.Distribucion.Reparto.index', compact('distribuciones', 'fecha'));
   }
 
@@ -190,5 +196,93 @@ class DistribucionRepartoController extends Controller
 
     // Descargar el PDF
     return $dompdf->stream('recibo.pdf', ['Attachment' => false]);
+  }
+
+  // IMPREMIR REPARTO
+  public function imprimirReparto(Request $request)
+  {
+    // Obtener la fecha de la solicitud o la fecha actual
+    $fecha = $request->get('fecha', now()->toDateString());
+
+    // Validar formato de la fecha
+    if (!Carbon::createFromFormat('Y-m-d', $fecha)) {
+      return redirect()->back()->with('error', 'Fecha inválida');
+    }
+
+    // Obtener las distribuciones con todas las líneas de pedido
+    $distribuciones = DistribucionNroPedidos::with([
+      'lineasPedidos', // Se eliminó el filtro de línea específica
+      'lineasTareas.tarea',
+      'distribucion'
+    ])
+      ->where('status', 'A')
+      ->whereDate('fechaEntrega', '=', $fecha)
+      ->orderBy('orden', 'asc')
+      ->orderBy('fechaEntrega', 'desc')
+      ->orderBy('id', 'asc')
+      ->get();
+
+    // Ordenar la colección de lineasPedidos por la columna 'linea'
+    $distribuciones->each(function ($distribucion) {
+      $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
+    });
+
+    // dd($distribuciones, $fecha);
+    // dd($distribuciones->all());
+
+    try {
+      // Configuración de Dompdf
+      $options = new Options();
+      $options->set('isRemoteEnabled', true);
+
+      $dompdf = new Dompdf($options);
+      $html = view('pages.Distribucion.Printer.reparto', ['distribuciones' => $distribuciones, 'fecha'
+      => $fecha])->render();
+      $dompdf->loadHtml($html);
+      $dompdf->setPaper('A4', 'landscape');
+      $dompdf->render();
+
+      // Descargar el PDF
+      return $dompdf->stream('Reparto-' . $fecha . '.pdf', ['Attachment' => false]);
+    } catch (\Exception $e) {
+      //   return redirect()->back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+    }
+  }
+
+
+  public function imprimirControl($fecha)
+  {
+    // Obtener el pedido principal con datos relacionados
+    $pedido = DB::table('distribucion_nropedidon as dn')
+      ->join('distribucions as d', 'dn.distribucion_id', '=', 'd.id')
+      ->join('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
+      ->select(
+        'dn.*',
+        'd.nomfantasia',
+        'd.razonsocial',
+        'ac.calle as direccion',
+        'd.telefono',
+        'dn.totalFactura'
+      )
+      ->where('dn.fechaEntrega', $fecha)
+      ->first();
+
+    // Verificar si el pedido existe
+    if (!$pedido) {
+      return response()->json(['error' => 'Pedido no encontrado'], 404);
+    }
+
+    // Configuración de Dompdf y generación del recibo en PDF
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+
+    $dompdf = new Dompdf($options);
+    $html = view('pages.Distribucion.Printer.control', ['pedido' => $pedido])->render();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Descargar el PDF
+    return $dompdf->stream('Control-' . $fecha . '.pdf', ['Attachment' => false]);
   }
 }
