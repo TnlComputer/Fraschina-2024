@@ -12,15 +12,28 @@ class DistribucionNroPedidos extends Model
 
   protected $guarded = [];
 
+  // public function lineasPedidos()
+  // {
+  //   return $this->hasMany(DistribucionLineaPedidos::class, 'pedido_id');
+  // }
+
+  // public function lineasTareas()
+  // {
+  //   return $this->hasMany(DistribucionLineaTareas::class, 'pedido_id');
+  // }
+
   public function lineasPedidos()
   {
-    return $this->hasMany(DistribucionLineaPedidos::class, 'pedido_id');
+    return $this->hasMany(DistribucionLineaPedidos::class, 'pedido_id', 'id');
+      // ->where('distribucion_id', $this->distribucion_id);
   }
 
   public function lineasTareas()
   {
-    return $this->hasMany(DistribucionLineaTareas::class, 'pedido_id');
+    return $this->hasMany(DistribucionLineaTareas::class, 'pedido_id', 'id');
+      // ->where('distribucion_id', $this->distribucion_id);
   }
+
   public function distribucion()
   {
     return $this->belongsTo(Distribucion::class, 'distribucion_id');  // Relación con la tabla distribucions

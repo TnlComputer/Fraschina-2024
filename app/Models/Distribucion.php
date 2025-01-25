@@ -117,9 +117,15 @@ class Distribucion extends Model
     return $this->belongsTo(AuxZonas::class, 'zona_id');
   }
 
-  public function auxcobro()
+
+  public function auxpago()
   {
     return $this->belongsTo(AuxPagos::class, 'cobro_id');
+  }
+
+  public function auxcobro()
+  {
+    return $this->belongsTo(AuxCobrar::class, 'cobrar_id');
   }
 
   public function auxtcobro()

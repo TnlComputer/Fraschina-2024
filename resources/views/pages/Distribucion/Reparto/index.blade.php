@@ -8,13 +8,29 @@
 
   <!-- Botones para filtrar por fechas -->
   <div class="mb-3 d-flex justify-content-between align-items-center">
-    <!-- Botón Nuevo Reparto a la izquierda -->
+    <!-- Botón Nuevo Pedido a la Izquierda -->
     <div>
       <a href="{{ route('distribucion_reparto.create') }}" class="btn btn-primary">
-        Nuevo Reparto
+        Nuevo Pedido
       </a>
     </div>
-
+    <!-- Botón Reparto Impresion -->
+    <div>
+      <a href="{{ route('distribucion_reparto.imprimirReparto', ['fecha' => $fecha]) }}" title="Impresión Reparto"
+        target="_blank" class="btn btn-primary">
+        Reparto
+      </a>
+      {{-- <a href="{{ route('distribucion_reparto.imprimirReparto', $fecha) }}" title="Impresi´on Reparto"
+        target="_blank" class="btn btn-primary">
+        Reparto
+      </a> --}}
+    </div> <!-- Botón Control Impresion -->
+    <div>
+      <a href="{{ route('distribucion_reparto.imprimirControl', $fecha) }}" title="Impresi´on Control" target="_blank"
+        class="btn btn-primary">
+        Control
+      </a>
+    </div>
     <!-- Formulario y Botones de Cambio de Fecha a la derecha -->
     <form method="GET" action="{{ route('distribucion_reparto.index') }}" id="fecha-form"
       class="d-flex align-items-center">
@@ -117,21 +133,7 @@
           <td colspan="11"></td>
           @endif
           <td>{{ $distribucion->id }}</td>
-          {{-- <td>
-            <a href="#" class="btn btn-xs" id="openModal" data-id="{{ $distribucion->id }}"
-              data-calle="{{ $distribucion->distribucion->auxCalles->calle }}"
-              data-direccion="{{ $distribucion->distribucion->dire_nro }}"
-              data-piso="{{ $distribucion->distribucion->piso }}" data-dpto="{{ $distribucion->distribucion->dpto }}"
-              data-barrio="{{ $distribucion->distribucion->auxbarrio->nombrebarrio }}"
-              data-localidad="{{ $distribucion->distribucion->auxlocalidad->localidad }}"
-              data-desde="{{ $distribucion->distribucion->desde }}"
-              data-hasta="{{ $distribucion->distribucion->hasta }}"
-              data-desde1="{{ $distribucion->distribucion->desde1 }}"
-              data-hasta1="{{ $distribucion->distribucion->hasta1 }}"
-              data-nomfantasia="{{ $distribucion->distribucion->nomfantasia }}">
-              {{ $distribucion->distribucion->nomfantasia }}
-            </a>
-          </td> --}}
+
           <!-- En la vista donde quieres mostrar el modal -->
           <td>
             <button type="button" class="btn btn-xs" data-toggle="modal"
@@ -147,7 +149,7 @@
               <div class="modal-content">
                 <!-- Encabezado del Modal -->
                 <div class="modal-header">
-                  <h5 class="modal-title" id="infoModalLabel_{{ $distribucion->id }}">Información del Pedido</h5>
+                  <h5 class="modal-title" id="infoModalLabel_{{ $distribucion->id }}">Información del Cliente</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -199,7 +201,51 @@
           </td>
           {{-- <td>{{ $lineaTarea->linea }}</td> --}}
           <td>{{ $distribucion->id }}</td>
-          <td>{{ $distribucion->distribucion->nomfantasia }}</td>
+          <!-- En la vista donde quieres mostrar el modal -->
+          <td>
+            <button type="button" class="btn btn-xs" data-toggle="modal"
+              data-target="#infoModal_{{ $distribucion->id }}">
+              {{ $distribucion->distribucion->nomfantasia }}
+            </button>
+          </td>
+
+          <!-- Modal para mostrar la información del pedido -->
+          <div class="modal fade" id="infoModal_{{ $distribucion->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="infoModalLabel_{{ $distribucion->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <!-- Encabezado del Modal -->
+                <div class="modal-header">
+                  <h5 class="modal-title" id="infoModalLabel_{{ $distribucion->id }}">Información del Cliente</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <!-- Cuerpo del Modal -->
+                <div class="modal-body">
+                  <strong>Razón Social:</strong> {{ $distribucion->distribucion->nomfantasia }}<br>
+                  <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles->calle }} {{
+                  $distribucion->distribucion->dire_nro }}
+                  {{ $distribucion->distribucion->piso }}
+                  {{ $distribucion->distribucion->dpto }} <br>
+                  {{ $distribucion->distribucion->auxbarrio->nombrebarrio }} -
+                  {{ $distribucion->distribucion->auxlocalidad->localidad }} - {{
+                  $distribucion->distribucion->auxmunicipio->ciudadmunicipio }} <br>
+                  <strong>Horarios:</strong><br> Mañana: {{ $distribucion->distribucion->desde }} - {{
+                  $distribucion->distribucion->hasta }}<br>
+                  Tarde: {{ $distribucion->distribucion->desde1 }} -{{ $distribucion->distribucion->hasta1 }}<br>
+                  <strong>Detalles:</strong><br>
+                  {{ $lineaTarea->detalles ?? 'No hay detalles' }}<br>
+                  <strong>Tarea:</strong><br>
+                  {{ $lineaTarea->tarea->tarea ?? 'Sin tarea' }}<br>
+                </div>
+                <!-- Pie del Modal -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <td>{{ $distribucion->distribucion->razonsocial }}</td>
         </tr>
         @endforeach
@@ -279,9 +325,7 @@
   event.preventDefault(); // Evita el envío del formulario
   }
   });
-</script>
 
-<script>
   $(document).ready(function(){
     // Al hacer clic en el nombre de fantasía, abrir el modal y cargar contenido
     $('#openModal').on('click', function(e) {
