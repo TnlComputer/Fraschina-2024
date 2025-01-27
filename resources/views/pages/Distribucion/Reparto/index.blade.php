@@ -17,18 +17,13 @@
     <!-- Botón Reparto Impresion -->
     <div>
       <a href="{{ route('distribucion_reparto.imprimirReparto', ['fecha' => $fecha]) }}" title="Impresión Reparto"
-        target="_blank" class="btn btn-primary">
+        target="_blank" class="btn btn-info"><i class="fas fa-print"></i>
         Reparto
       </a>
-      {{-- <a href="{{ route('distribucion_reparto.imprimirReparto', $fecha) }}" title="Impresi´on Reparto"
-        target="_blank" class="btn btn-primary">
-        Reparto
-      </a> --}}
     </div> <!-- Botón Control Impresion -->
     <div>
-      <a href="{{ route('distribucion_reparto.imprimirControl', $fecha) }}" title="Impresi´on Control" target="_blank"
-        class="btn btn-primary">
-        Control
+      <a href="{{ route('distribucion_reparto.imprimirControl', ['fecha' => $fecha]) }}" title="Impresi´on Control"
+        target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i> Control
       </a>
     </div>
     <!-- Formulario y Botones de Cambio de Fecha a la derecha -->

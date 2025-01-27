@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Distribucion_Producto;
+use App\Models\DistribucionProducto;
 use App\Models\productoCDA;
 use Illuminate\Http\Request;
 
@@ -42,7 +43,7 @@ class DistribucionProductoController extends Controller
     // Agregar status predeterminado
     $validated['status'] = 'A';
 
-    Distribucion_Producto::create($validated);
+    DistribucionProducto::create($validated);
 
     return redirect()->route('distribucion.show', ['distribucion' => $validated['distribucion_id']])
       ->with('success', 'Producto agregado a la distribución.');
@@ -50,9 +51,9 @@ class DistribucionProductoController extends Controller
 
 
 
-  public function edit(Distribucion_Producto $distribucionProducto)
+  public function edit(DistribucionProducto $distribucionProducto)
   {
-    $distribucion_producto = Distribucion_Producto::findOrFail($distribucionProducto->id);
+    $distribucion_producto = DistribucionProducto::findOrFail($distribucionProducto->id);
 
     $productos = productoCDA::where('status', '=', 'A')->orderBy('productoCDA', 'asc')->get();
 
@@ -69,7 +70,7 @@ class DistribucionProductoController extends Controller
       'status'      => 'required|in:A,D', // Validar que el estado sea 'A' o 'D'
     ]);
 
-    $distribucion_producto = Distribucion_Producto::findOrFail($id);
+    $distribucion_producto = DistribucionProducto::findOrFail($id);
     $distribucion_producto->update($validated);
 
     return redirect()->route('distribucion.show', ['distribucion' => $distribucion_producto->distribucion_id])
@@ -92,7 +93,7 @@ class DistribucionProductoController extends Controller
     // dd($id);
 
     // Buscar el producto en la distribución
-    $producto = Distribucion_Producto::findOrFail($id);
+    $producto = DistribucionProducto::findOrFail($id);
 
     // Cambiar el estado a 'D' (desactivado)
     $producto->update(['status' => 'D']);

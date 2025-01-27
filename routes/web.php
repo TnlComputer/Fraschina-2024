@@ -114,14 +114,12 @@ Route::get('/distribucion/pedidos/{id}/imprimirRecibo', [DistribucionRepartoCont
 
 Route::get('/convertir-letras/{numero}/{moneda}', [DistribucionRepartoController::class, 'convertirNumeroALetras']);
 
-// Route::get('/distribucion/pedidos/{fecha}/imprimirReparto', [DistribucionRepartoController::class, 'imprimirReparto'])->name('distribucion_reparto.imprimirReparto');
-
 Route::get(
   '/distribucion/reparto/imprimir',
   [DistribucionRepartoController::class, 'imprimirReparto']
 )->name('distribucion_reparto.imprimirReparto');
 
-Route::get('/distribucion/pedidos/{fecha}/imprimirControl', [DistribucionRepartoController::class, 'imprimirControl'])->name('distribucion_reparto.imprimirControl');
+Route::get('/distribucion/reparto/control', [DistribucionRepartoController::class, 'imprimirControl'])->name('distribucion_reparto.imprimirControl');
 
 // Rutas para Distribucion Rstock
 Route::middleware('auth')->resource('distribucion_stock', DistribucionStockController::class);

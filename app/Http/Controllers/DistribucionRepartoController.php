@@ -250,39 +250,57 @@ class DistribucionRepartoController extends Controller
   }
 
 
-  public function imprimirControl($fecha)
+  public function imprimirControl(Request $request)
   {
-    // Obtener el pedido principal con datos relacionados
-    $pedido = DB::table('distribucion_nropedidon as dn')
-      ->join('distribucions as d', 'dn.distribucion_id', '=', 'd.id')
-      ->join('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
-      ->select(
-        'dn.*',
-        'd.nomfantasia',
-        'd.razonsocial',
-        'ac.calle as direccion',
-        'd.telefono',
-        'dn.totalFactura'
-      )
-      ->where('dn.fechaEntrega', $fecha)
-      ->first();
+    // Obtener la fecha de la solicitud o la fecha actual
+    $fecha = $request->get('fecha', now()->toDateString());
 
-    // Verificar si el pedido existe
-    if (!$pedido) {
-      return response()->json(['error' => 'Pedido no encontrado'], 404);
+    // Validar formato de la fecha
+    if (!Carbon::createFromFormat('Y-m-d', $fecha)) {
+      return redirect()->back()->with('error', 'Fecha inválida');
     }
 
-    // Configuración de Dompdf y generación del recibo en PDF
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
+    // Obtener las distribuciones con todas las líneas de pedido
+    $distribuciones = DistribucionNroPedidos::with([
+      'lineasPedidos', // Se eliminó el filtro de línea específica
+      'distribucion'
+    ])
+      ->where('status', 'A')
+      ->where('tipo', 'P')
+      ->whereDate('fechaEntrega', '=', $fecha)
+      ->orderBy('orden', 'asc')
+      ->orderBy('fechaEntrega', 'desc')
+      ->orderBy('id', 'asc')
+      ->get();
 
-    $dompdf = new Dompdf($options);
-    $html = view('pages.Distribucion.Printer.control', ['pedido' => $pedido])->render();
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
+    // Ordenar la colección de lineasPedidos por la columna 'linea'
+    // $distribuciones->each(function ($distribucion) {
+    //   $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
+    // });
 
-    // Descargar el PDF
-    return $dompdf->stream('Control-' . $fecha . '.pdf', ['Attachment' => false]);
+    // dd($distribuciones, $fecha);
+    //  dd($distribuciones->all());
+
+    try {
+      // Configuración de Dompdf
+      $options = new Options();
+      $options->set('isRemoteEnabled', true);
+
+      $dompdf = new Dompdf($options);
+      $html = view('pages.Distribucion.Printer.control', ['distribuciones' => $distribuciones, 'fecha'
+      => $fecha])->render();
+      $dompdf->loadHtml($html);
+      $dompdf->setPaper('A4', 'portrait');
+      $dompdf->render();
+      $canvas = $dompdf->getCanvas();
+      $canvas->page_script(function ($pageNumber, $pageCount, $canvas) {
+        $canvas->text(500, 820, "Página $pageNumber de $pageCount", null, 10, array(0, 0, 0));
+      });
+
+      // Descargar el PDF
+      return $dompdf->stream('Control-' . $fecha . '.pdf', ['Attachment' => false]);
+    } catch (\Exception $e) {
+      //   return redirect()->back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+    }
   }
 }
