@@ -53,7 +53,7 @@
       text-align: center;
       font-size: 9px;
       padding: 2px;
-      height: 20px;
+      height: 15px;
     }
 
     th {
@@ -101,7 +101,6 @@
 </head>
 
 <body>
-
   <div class="title">
     CONTROL RECAUDACIÓN : {{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}
     {{-- <span style="float: right;">Página 1/1</span> --}}
@@ -132,7 +131,7 @@
     <tbody>
       <tr>
         <td class="t-izquierda">{{ $distribucion->distribucion->nomfantasia }}</td>
-        <td class="t-izquierda" colspan="1">{{ $distribucion->distribucion->razonsocial }}</td>
+        <td class="t-izquierda">{{ $distribucion->distribucion->razonsocial }} </td>
         <td">{{ $distribucion->distribucion->auxpago->nombre ?? '' }}</td>
           <td class="text-rigth">${{ number_format($distribucion->totalFactura, 2) }}</td>
           <td>{{ $distribucion->nroFactura }}</td>
@@ -144,7 +143,7 @@
       @endforeach
       @php
       $lin = $distribuciones->count();
-      $gen = 18 - $lin;
+      $gen = 25 - $lin;
       @endphp
       @for ($x = 0; $x < $gen; $x++) <tr>
         <td></td>
