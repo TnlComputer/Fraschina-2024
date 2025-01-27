@@ -29,9 +29,9 @@ class ProveedorController extends Controller
 
     // Construir la consulta base
     $query = DB::table('proveedores as resp')
-      ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-      ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-      ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
+      ->join('auxbarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+      ->join('auxlocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
+      ->join('auxmunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
       ->join('auxrubros as auxrub', 'resp.rubro_id', '=', 'auxrub.id')
       ->select(
         'auxb.nombrebarrio as barrio',
@@ -55,7 +55,7 @@ class ProveedorController extends Controller
     // Paginar los resultados
     $proveedores = $query->paginate(15);
 
-    return view('Pages.Proveedor.index', compact('proveedores', 'name'));
+    return view('pages.Proveedor.index', compact('proveedores', 'name'));
   }
 
   /**
@@ -68,7 +68,7 @@ class ProveedorController extends Controller
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
     $rubros = DB::table('auxrubros')->orderBy('nombre', 'asc')->get();
 
-    return view('Pages.Proveedor.create', compact('barrios', 'localidades', 'municipios', 'rubros'));
+    return view('pages.Proveedor.create', compact('barrios', 'localidades', 'municipios', 'rubros'));
   }
 
 
@@ -120,7 +120,7 @@ class ProveedorController extends Controller
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
     $rubros = DB::table('auxrubros')->orderBy('nombre', 'asc')->get();
 
-    return view('Pages.Proveedor.edit', compact('proveedor', 'barrios', 'localidades', 'municipios', 'rubros'));
+    return view('pages.Proveedor.edit', compact('proveedor', 'barrios', 'localidades', 'municipios', 'rubros'));
   }
 
   /**

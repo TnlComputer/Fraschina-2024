@@ -20,9 +20,9 @@ class AgroController extends Controller
 
     // Construir la consulta base
     $query = DB::table('agros as resp')
-      ->join('AuxBarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
-      ->join('AuxLocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
-      ->join('AuxMunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
+      ->join('auxbarrios as auxb', 'resp.barrio_id', '=', 'auxb.id')
+      ->join('auxlocalidades as auxLoc', 'resp.localidad_id', '=', 'auxLoc.id')
+      ->join('auxmunicipios as auxMun', 'resp.municipio_id', '=', 'auxMun.id')
       ->join('auxrubros as auxrub', 'resp.rubro_id', '=', 'auxrub.id')
       ->select(
         'auxb.nombrebarrio as barrio',
@@ -61,7 +61,7 @@ class AgroController extends Controller
     // Paginar los resultados
     $agros = $query->paginate(15);
 
-    return view('Pages.Agro.index', compact('agros', 'name'));
+    return view('pages.Agro.index', compact('agros', 'name'));
   }
 
   /**
@@ -74,7 +74,7 @@ class AgroController extends Controller
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
     $rubros = DB::table('auxrubros')->orderBy('nombre', 'asc')->get();
 
-    return view('Pages.Agro.create', compact('barrios', 'localidades', 'municipios', 'rubros'));
+    return view('pages.Agro.create', compact('barrios', 'localidades', 'municipios', 'rubros'));
   }
 
 
@@ -120,7 +120,7 @@ class AgroController extends Controller
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
     $rubros = DB::table('auxrubros')->orderBy('nombre', 'asc')->get();
 
-    return view('Pages.Agro.edit', compact('agro', 'barrios', 'localidades', 'municipios', 'rubros'));
+    return view('pages.Agro.edit', compact('agro', 'barrios', 'localidades', 'municipios', 'rubros'));
   }
 
   /**

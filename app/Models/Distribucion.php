@@ -54,7 +54,7 @@ class Distribucion extends Model
 
   public function auxCalles()
   {
-    return $this->belongsTo(Auxcalles::class, 'dire_calle_id', 'id');
+    return $this->belongsTo(AuxCalles::class, 'dire_calle_id', 'id');
   }
 
   public function distribucionLineaPedidos()

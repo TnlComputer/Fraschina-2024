@@ -28,7 +28,7 @@ class MolinoController extends Controller
       ->orderBy('resp.razonsocial', 'ASC')
       ->paginate(15);
 
-    return view('Pages.Molino.index', compact('molinos', 'name'));
+    return view('pages.Molino.index', compact('molinos', 'name'));
   }
 
 

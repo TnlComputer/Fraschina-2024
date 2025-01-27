@@ -30,10 +30,10 @@ class RepresentacionController extends Controller
 
     // Iniciar la consulta con las uniones necesarias
     $query = DB::table('representacions as r')
-      ->join('AuxBarrios as auxb', 'r.barrio_id', '=', 'auxb.id')
-      ->join('AuxLocalidades as auxLoc', 'r.localidad_id', '=', 'auxLoc.id')
-      ->join('AuxMunicipios as auxMun', 'r.municipio_id', '=', 'auxMun.id')
-      ->join('AuxZonas as auxZon', 'r.zona_id', '=', 'auxZon.id')
+      ->join('auxbarrios as auxb', 'r.barrio_id', '=', 'auxb.id')
+      ->join('auxlocalidades as auxLoc', 'r.localidad_id', '=', 'auxLoc.id')
+      ->join('auxmunicipios as auxMun', 'r.municipio_id', '=', 'auxMun.id')
+      ->join('auxzonas as auxZon', 'r.zona_id', '=', 'auxZon.id')
       ->select(
         'auxb.nombrebarrio as barrio',
         'auxLoc.localidad as localidad',
@@ -77,7 +77,7 @@ class RepresentacionController extends Controller
     $zonas = AuxZonas::all();
 
     // Pasar los datos a la vista
-    return view('Pages.Representacion.index', [
+    return view('pages.Representacion.index', [
       'representaciones' => $representaciones,
       'barrios' => $barrios,
       'localidades' => $localidades,
@@ -99,7 +99,7 @@ class RepresentacionController extends Controller
     $municipios = AuxMunicipios::all();
     $zonas = AuxZonas::all();
     // dd($municipios);
-    return view('Pages.Representacion.create', ['barrios' => $barrios, 'localidades' => $localidades, 'municipios' => $municipios, 'zonas' => $zonas]);
+    return view('pages.Representacion.create', ['barrios' => $barrios, 'localidades' => $localidades, 'municipios' => $municipios, 'zonas' => $zonas]);
   }
 
   /**
@@ -169,7 +169,7 @@ class RepresentacionController extends Controller
       },
     ])->findOrFail($representacion->id);
 
-    return view('Pages.Representacion.show', compact('representacion'));
+    return view('pages.Representacion.show', compact('representacion'));
   }
 
   /**
@@ -189,7 +189,7 @@ class RepresentacionController extends Controller
     $municipios = AuxMunicipios::all();
     $zonas = AuxZonas::all();
 
-    return view('Pages.Representacion.edit', compact('representacion', 'barrios', 'localidades', 'municipios', 'zonas'));
+    return view('pages.Representacion.edit', compact('representacion', 'barrios', 'localidades', 'municipios', 'zonas'));
   }
 
   /**

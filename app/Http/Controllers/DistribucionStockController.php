@@ -11,7 +11,8 @@ class DistribucionStockController extends Controller
    */
   public function index()
   {
-    return ("Hola Stock");
+    return
+      view('pages.Distribucion.Stock.index');
   }
 
   /**
