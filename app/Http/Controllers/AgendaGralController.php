@@ -43,7 +43,7 @@ class AgendaGralController extends Controller
 
     $agendaGral = $query->paginate(10);
 
-    return view('Pages.AgendaGral.index', compact('agendaGral', 'name'));
+    return view('pages.AgendaGral.index', compact('agendaGral', 'name'));
   }
 
   /**
@@ -55,7 +55,7 @@ class AgendaGralController extends Controller
       ->where('auxProf.agendas', '=', 'SI')
       ->orderBy('nombreprofesion', 'asc')
       ->get();
-    return view('Pages.AgendaGral.create', ['profesiones' => $profesiones]);
+    return view('pages.AgendaGral.create', ['profesiones' => $profesiones]);
   }
 
   /**
@@ -126,7 +126,7 @@ class AgendaGralController extends Controller
       return redirect()->route('AgendaGral.index')->with('error', 'Registro no encontrado.');
     }
 
-    return view('Pages.AgendaGral.edit', compact('agenda', 'profesiones'));
+    return view('pages.AgendaGral.edit', compact('agenda', 'profesiones'));
   }
 
   /**

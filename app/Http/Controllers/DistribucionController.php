@@ -57,7 +57,7 @@ class DistribucionController extends Controller
 
     $distribuciones = $query->paginate(15);
 
-    return view('Pages.Distribucion.index', compact('distribuciones', 'name'));
+    return view('pages.Distribucion.index', compact('distribuciones', 'name'));
   }
 
   public function show($id)
@@ -163,7 +163,7 @@ class DistribucionController extends Controller
         ->where('dp.status', '=', 'A')
         ->get();
 
-      return view('Pages.Distribucion.show', compact('distribucion', 'personal', 'productos'));
+      return view('pages.Distribucion.show', compact('distribucion', 'personal', 'productos'));
     } catch (\Exception $e) {
       // Redirigir en caso de error
       return redirect()->route('distribucion.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
@@ -318,7 +318,7 @@ class DistribucionController extends Controller
     $pagos = DB::table('auxpagos')->orderBy('nombre')->get();
     $tiposPago = DB::table('auxtipopagos')->orderBy('nombre')->get();
 
-    return view('Pages.Distribucion.edit', compact(
+    return view('pages.Distribucion.edit', compact(
       'distribucion',
       'calles',
       'barrios',

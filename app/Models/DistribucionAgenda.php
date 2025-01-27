@@ -50,6 +50,6 @@ class DistribucionAgenda extends Model
   }
   public function distribucionNropedidos()
   {
-    return $this->belongsTo(DistribucionNropedidos::class, 'pedido_id', 'id');
+    return $this->belongsTo(DistribucionNroPedidos::class, 'pedido_id', 'id');
   }
 }

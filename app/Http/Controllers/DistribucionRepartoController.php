@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DistribucionNroPedidos;
+use App\Models\DistribucionProducto;
 use App\Services\EnLetrasService;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
@@ -100,8 +101,15 @@ class DistribucionRepartoController extends Controller
    * Show the form for editing the specified resource.
    */
   public function edit(string $id)
-  {
-    //
+  { {
+      $pedido = DistribucionNroPedidos::with('lineasPedidos.producto')->findOrFail($id);
+      // dd($id, $pedido);
+      $productos = DistribucionProducto::with('producto')  // 'producto' es la relación que deberías definir en el modelo DistribucionProducto
+        ->where('distribucion_id', $pedido->distribucion_id)
+        ->get();
+
+      return view('pages.Distribucion.Pedido.edit', compact('pedido', 'productos'));
+    }
   }
 
   /**

@@ -83,9 +83,15 @@
             </a>
           </td>
 
-          <td><a href="#" id="edit-btn" class="btn btn-xs" title="Editar Pedido">
+          <td>
+            {{-- <a href="#" id="edit-btn" class="btn btn-xs" title="Editar Pedido">
+              <i class="fas fa-pen fs-xs text-blue"></i>
+            </a> --}}
+            <a href="{{ route('distribucion_reparto.edit', ['distribucion_reparto' => $distribucion->id]) }}"
+              class="btn btn-xs" title="Editar Pedido">
               <i class="fas fa-pen fs-xs text-blue"></i>
             </a>
+
           </td>
           <td><button type="submit" id="actualizar-btn" class="btn btn-xs" title="Actualizar">
               <i class="fas fa-sync-alt fs-xs text-orange"></i>
