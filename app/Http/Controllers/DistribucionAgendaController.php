@@ -8,6 +8,7 @@ use App\Models\Distribucion;
 use App\Models\Distribucion_Personal;
 use App\Models\DistribucionAgenda;
 use App\Models\DistribucionLineaPedidos;
+use App\Models\DistribucionPersonal;
 use App\Models\productoCDA;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -187,7 +188,7 @@ class DistribucionAgendaController extends Controller
       ->orderBy('nomfantasia', 'asc')
       ->get();
 
-    $personal = Distribucion_Personal::where('distribucion_id', $agenda->distribucion_id)->get();
+    $personal = DistribucionPersonal::where('distribucion_id', $agenda->distribucion_id)->get();
 
     $agenda->hs = Carbon::parse($agenda->hs)->format('H:i');
 
@@ -205,7 +206,7 @@ class DistribucionAgendaController extends Controller
   public function getPersonal($id)
   {
     // Lista de personal relacionada con la distribución filtrada por status = 'A'
-    $personal = Distribucion_Personal::where('distribucion_id', $id)
+    $personal = DistribucionPersonal::where('distribucion_id', $id)
       ->where('status', 'A')
       ->orderBy('nombre', 'asc')
       ->orderBy('apellido', 'asc')

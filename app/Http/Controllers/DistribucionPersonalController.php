@@ -7,6 +7,7 @@ use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Distribucion;
 use App\Models\Distribucion_Personal;
+use App\Models\DistribucionPersonal;
 use Illuminate\Http\Request;
 
 class DistribucionPersonalController extends Controller
@@ -77,7 +78,7 @@ class DistribucionPersonalController extends Controller
     $validated['fuera'] = $request->has('fuera') ? true : false;
     $validated['status'] = 'A';
 
-    Distribucion_Personal::create($validated);
+    DistribucionPersonal::create($validated);
 
     // dd($request->distribucion_id);
 
@@ -99,7 +100,7 @@ class DistribucionPersonalController extends Controller
    */
   public function edit(string $id)
   {
-    $personal = Distribucion_Personal::findOrFail($id); // Obtén el registro por ID
+    $personal = DistribucionPersonal::findOrFail($id); // Obtén el registro por ID
     $distribuciones = Distribucion::all(); // Dropdown para representaciones
     $areas = AuxAreas::orderBy('area', 'asc')->get(); // Ordenar áreas por nombre
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get(); // Ordenar cargos por nombre
@@ -116,7 +117,7 @@ class DistribucionPersonalController extends Controller
 
   public function update(Request $request, $id)
   {
-    $distribucionPersonal = Distribucion_Personal::findOrFail($id);
+    $distribucionPersonal = DistribucionPersonal::findOrFail($id);
 
     // Check if 'fuera' checkbox is checked
     // If checked, set to 1; if not, set to 0 or -1 based on your requirements
@@ -167,7 +168,7 @@ class DistribucionPersonalController extends Controller
   public function destroy($id)
   {
     // Buscar el registro
-    $persona = Distribucion_Personal::findOrFail($id);
+    $persona = DistribucionPersonal::findOrFail($id);
 
     // dd($id, $persona);
 

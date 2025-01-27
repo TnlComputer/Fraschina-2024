@@ -10,6 +10,8 @@
       font-family: Arial, sans-serif;
       font-size: 8pt;
       color: #000;
+      margin: 0;
+      padding: 0;
     }
 
     table {
@@ -20,7 +22,6 @@
 
     th,
     td {
-      /* padding: 5px; */
       border: 1px solid #ddd;
       text-align: left;
       font-size: 9px;
@@ -40,7 +41,25 @@
     }
 
     .footer {
-      margin-top: 20px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 10px;
+    }
+
+    @page {
+      /* size: A4; */
+      margin-bottom: 40px;
+    }
+
+    @page :last {
+      @bottom-center {
+        content: "Reporte generado automáticamente por el sistema.";
+        font-size: 10px;
+        color: #000;
+      }
     }
   </style>
 </head>
@@ -50,19 +69,19 @@
   $totalPorChofer = [];
   $totalPorProducto = [];
   @endphp
-  <div class="header">
-    <h1>Planilla de Reparto - Fecha de entrega:</strong> {{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}</h1>
-  </div>
 
+  <div class="header">
+    <h1>Planilla de Reparto - Fecha de entrega: <strong>{{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}</strong>
+    </h1>
+  </div>
 
   @foreach ($distribuciones as $distribucion)
   <table class="table table-bordered">
     <thead>
       <tr>
-        {{-- <th>Fecha</th> --}}
-        <th>Orden</th>
-        <th>Chofer</th>
-        <th>Pedido</th>
+        <th class="text-center">Orden</th>
+        <th class="text-center">Chofer</th>
+        <th class="text-center">Pedido</th>
         {{-- <th>Línea</th> --}}
         <th>Nombre Fantasía</th>
         <th>Razón Social</th>
@@ -75,12 +94,9 @@
     </thead>
     <tbody>
       <tr>
-        {{-- <td>{{ $distribucion->fechaEntrega }}</td> --}}
-        <td>{{ $distribucion->orden }}</td>
-        <td>{{ $distribucion->chofer }}</td>
-        <td>{{ $distribucion->id }}</td>
-        {{-- <td>{{ $distribucion->tipo }}</td> --}}
-        {{-- <td>{{ $distribucion->lineasPedidos->first()->linea ?? '-' }}</td> --}}
+        <td class="text-center">{{ $distribucion->orden }}</td>
+        <td class="text-center">{{ $distribucion->chofer }}</td>
+        <td class="text-center">{{ $distribucion->id }}</td>
         <td>{{ $distribucion->distribucion->nomfantasia }}</td>
         <td>{{ $distribucion->distribucion->razonsocial }}</td>
         <td>{{ $distribucion->distribucion->auxCalles->calle ?? '' }} {{ $distribucion->distribucion->dire_nro }}</td>
@@ -94,22 +110,22 @@
 
   <table class="table table-sm table-striped">
     <tr>
-      <th>Factura</th>
-      <th>Cobrar</th>
-      <th>Cond. Pago</th>
-      <th>Forma Pago</th>
-      <th>Horario Mañana</th>
-      <th>Horario Tarde</th>
-      <th>Lunes Cerrado</th>
-      <th>Sábado Recibe</th>
-      <th>Importe Factura</th>
+      <th class="text-center">Factura</th>
+      <th class="text-center">Cobrar</th>
+      <th class="text-center">Cond. Pago</th>
+      <th class="text-center">Forma Pago</th>
+      <th class="text-center">Horario Mañana</th>
+      <th class="text-center">Horario Tarde</th>
+      <th class="text-center">Lunes Cerrado</th>
+      <th class="text-center">Sábado Recibe</th>
+      <th class="text-rigth">Importe Factura</th>
     </tr>
     <tr>
-      <td><strong>{{ $distribucion->distribucion->fac_imp ? 'IMPRIMIR' : '' }}</strong></td>
-      <td>{{ $distribucion->distribucion->auxcobro->accion ?? '' }}</td>
-      <td>{{ $distribucion->distribucion->auxpago->nombre ?? '' }}</td>
-      <td>{{ $distribucion->distribucion->auxtcobro->nombre ?? '' }}</td>
-      <td>{{ \Carbon\Carbon::parse($distribucion->distribucion->desde)->format('H:i') ?? '' }} -
+      <td class="text-center"><strong>{{ $distribucion->distribucion->fac_imp ? 'IMPRIMIR' : '' }}</strong></td>
+      <td class="text-center">{{ $distribucion->distribucion->auxcobro->accion ?? '' }}</td>
+      <td class="text-center">{{ $distribucion->distribucion->auxpago->nombre ?? '' }}</td>
+      <td class="text-center">{{ $distribucion->distribucion->auxtcobro->nombre ?? '' }}</td>
+      <td class="text-center">{{ \Carbon\Carbon::parse($distribucion->distribucion->desde)->format('H:i') ?? '' }} -
         {{ \Carbon\Carbon::parse($distribucion->distribucion->hasta)->format('H:i') ?? '' }}</td>
       @if (empty($distribucion->distribucion->desde1) || $distribucion->distribucion->desde1 == '00:00:00')
       <td> </td>
@@ -119,47 +135,43 @@
         {{ \Carbon\Carbon::createFromFormat('H:i:s', $distribucion->distribucion->hasta1)->format('H:i') ?? '' }}
       </td>
       @endif
-      <td>{{ $distribucion->distribucion->sabado ? 'Sí' : 'No' }}</td>
-      <td>{{ $distribucion->distribucion->lunes ? 'Sí' : 'No' }}</td>
-      <td>${{ number_format($distribucion->totalFactura, 2) }}</td>
+      <td class="text-center">{{ $distribucion->distribucion->sabado ? 'Sí' : 'No' }}</td>
+      <td class="text-center">{{ $distribucion->distribucion->lunes ? 'Sí' : 'No' }}</td>
+      <td class="text-rigth">${{ number_format($distribucion->totalFactura, 2) }}</td>
   </table>
 
-  <table class="table ">
+  <table class="table" style="padding-left:70px;">
     @if ($distribucion->tipo == 'P')
     <thead>
-      <td></td>
-      <th>Observaciones :</th>
-      <td style="width: 80%">{{ $distribucion->distribucion->obsrecep ?? 'Sin observaciones' }}</td>
+      <th class="text-center" style="width: 80px">Observaciones :</th>
+      <td style="max-width: 100%">{{ $distribucion->distribucion->obsrecep ?? 'Sin observaciones' }}</td>
     </thead>
     @endif
     @if ($distribucion->tipo == 'T')
+    @foreach($distribucion->lineasTareas as $lineaTarea)
     <thead>
-      @foreach($distribucion->lineasTareas as $lineaTarea)
-      <td></td>
-      <th>Tarea : </th>
-      <td style="width: 80%">{{ $lineaTarea->tarea->tarea ?? 'Sin tareas' }}</td>
-      @endforeach
+      <th class="text-center" style="width: 80px">Tarea : </th>
+      <td style="max-width: 100%">{{ $lineaTarea->tarea->tarea ?? 'Sin tareas' }}</td>
+    </thead>
+    @endforeach
     </thead>
     @endif
-
-    </thead>
   </table>
   @if ($distribucion->tipo == 'P')
-  <table class="table">
+  <table class="table" style="width: 230px">
     <thead>
       <tr>
         <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio Unitario</th>
-        <th style="width: 70%"></th>
+        <th class="text-center">Cantidad</th>
+        <th class="text-right">Precio Unitario</th>
       </tr>
     </thead>
     <tbody>
       @foreach ($distribucion->lineasPedidos as $linea)
       <tr>
         <td>{{ $linea->producto->productoCDA }}</td>
-        <td>{{ $linea->cantidad }}</td>
-        <td>${{ number_format($linea->precio_unitario, 2) }}</td>
+        <td class="text-center">{{ $linea->cantidad }}</td>
+        <td class="text-right">$ {{ number_format($linea->precio_unitario, 2) }}</td>
       </tr>
       @php
       $totalPorChofer[$distribucion->chofer] = ($totalPorChofer[$distribucion->chofer] ?? 0) + $linea->cantidad;
@@ -173,40 +185,44 @@
   <hr>
   @endforeach
 
-  <h3>Total por Chofer:</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Chofer</th>
-        <th>Total Cantidad</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach ($totalPorChofer as $chofer => $totalCantidad)
-      <tr>
-        <td>{{ $chofer }}</td>
-        <td>{{ $totalCantidad }}</td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Total Cantidad</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach ($totalPorProducto as $producto => $totalCantidad)
-      <tr>
-        <td>{{ $producto }}</td>
-        <td>{{ $totalCantidad }}</td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table>
+  @if ($distribuciones->isNotEmpty())
+  <div>
+    <h3>Total por Chofer:</h3>
+    <table class=" table" style="width: 200px">
+      <thead>
+        <tr>
+          <th style="width: 50%">Chofer</th>
+          <th class="text-center">Total Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($totalPorChofer as $chofer => $totalCantidad)
+        <tr>
+          <td style="width: 100px">{{ $chofer }}</td>
+          <td class="text-center">{{ $totalCantidad }}</td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+    <br>
+    <table class="table" style="width: 200px">
+      <thead>
+        <tr>
+          <th style="width: 100px">Producto</th>
+          <th class="text-center">Total Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($totalPorProducto as $producto => $totalCantidad)
+        <tr>
+          <td>{{ $producto }}</td>
+          <td class="text-center">{{ $totalCantidad }}</td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+  @endif
 
   <div class="footer text-center">
     <p>Reporte generado automáticamente por el sistema.</p>

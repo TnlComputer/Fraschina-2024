@@ -4,524 +4,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recibo Provisorio</title>
-
+  <title>Control de Recaudación</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
       font-size: 10pt;
+      color: #000;
+      box-sizing: border-box;
     }
 
-    .header {
-      border-bottom: 2px solid black;
-      padding-bottom: 10px;
+    .title {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: bold;
       margin-bottom: 10px;
     }
 
-    .header table {
-      width: 100%;
+    table {
       border-collapse: collapse;
     }
 
-    .header .sector {
-      font-size: 8pt;
+    .tabla-cobro-dia {
+      width: 70%;
+      margin-right: 0;
     }
 
-    .header .text-right {
-      text-align: right;
+    .tabla-cobro {
+      width: 100%;
+
     }
 
-    .header .text-center {
+    .tabla-gastos {
+      width: 100%;
+    }
+
+    .tabla-firmas {
+      width: 100%;
       text-align: center;
-      font-size: 6pt;
     }
 
-    .header .sector-left small {
-      font-size: 6pt;
+    .tabla-cobro-td {
+      width: 40px;
     }
 
-    .header .sector-right {
-      font-size: 6pt;
-      text-align: right;
-    }
-
-    .header .sector-right .recibo-titulo {
-      font-size: 12pt;
-    }
-
-    .header .sector-right .fecha {
-      font-size: 10pt;
-    }
-
-    .text-x {
-      display: inline-block;
-      background-color: white;
-      color: black;
-      font-weight: bold;
-      font-size: 14pt;
-      width: 20px;
+    th,
+    td {
+      border: 1px solid #000;
+      text-align: center;
+      font-size: 9px;
+      padding: 2px;
       height: 20px;
-      border: 2px solid black;
-      text-align: center;
-      line-height: 20px;
-      margin-top: -10px;
-      padding: 3px;
     }
 
-    .table-recibo {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    .table-recibo th,
-    .table-recibo td {
-      border: 1px solid black;
-      padding: 8px;
-      font-size: 8pt;
-    }
-
-    .total-amount {
-      font-size: 12pt;
+    th {
+      background-color: #eaeaea;
       font-weight: bold;
     }
 
-    .amount-in-words {
-      font-size: 10pt;
-      font-style: italic;
-      margin-top: 10px;
+    td.t-izquierda {
+      text-align: left;
     }
 
-    /* Flex container to align tables side by side */
-    .flex-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-      width: 100%;
-      gap: 20px;
-    }
-
-    .table-recibo {
-      width: 100%;
-      table-layout: fixed;
-    }
-
-    .letra-cliente {
-      font-size: 8pt;
-      text-transform: uppercase;
+    .subtotal,
+    .total {
       font-weight: bold;
     }
 
-    .tabla-derecha {
-      text-align: right;
-    }
-
-    .derecha {
-      width: 58%;
-      float: left;
-      margin-right: 4%;
-    }
-
-    .izquierda {
-      width: 38%;
-      float: left;
-      margin-right: 4%;
-    }
-
-    .importe_letras {
-      margin: 0;
-      padding: 0;
-      text-align: left;
-      font-size: 8pt
-    }
-
-    .container-firma {
-      display: flex;
-      justify-content: space-between;
-      /* Distribuye el espacio entre los divs */
-      align-items: flex-start;
-      /* Alinea verticalmente los elementos al principio */
-    }
-
-    .left {
-      text-align: left;
-      /* Alinea el texto a la izquierda */
+    .signature-section {
       margin-top: 30px;
-      /* Ajusta la posición de "ORIGINAL" para que esté un poco más abajo */
+      text-align: center;
     }
 
-    .right {
-      text-align: right;
-      padding-right: 80px;
-      /* Alinea el texto a la derecha */
+    .signature-box {
+      display: inline-block;
+      width: 30%;
+      border-top: 1px solid #000;
+      padding-top: 5px;
+      font-weight: bold;
     }
 
-    .left p,
-    .right p {
-      margin: 0;
-      /* Elimina márgenes por defecto que podrían interferir con la alineación */
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 8pt;
     }
 
-    .separacion {
-      padding-top: 95px;
-    }
+    @page {
 
-    */ .clearfix::after {
-      content: "";
-      display: table;
-      clear: both;
+      @bottom-right {
+        content: 'Página ' counter(page) ' de ' counter(pages);
+        font-size: 10px;
+        font-family: Arial, sans-serif;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="header">
-    <table>
+
+  <div class="title">
+    CONTROL RECAUDACIÓN : {{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}
+    {{-- <span style="float: right;">Página 1/1</span> --}}
+  </div>
+  <table style="width: 376px; margin-left: 328px;">
+    <thead>
       <tr>
-        <td class="sector-left" style="width: 33%">
-          <strong>FRASCHINA SRL</strong><br>
-          <small>RAMÓN L. FALCÓN 2364 - Piso 1° Dpto "B"<br>
-            (1406) - CIUDAD AUT.DE BUENOS AIRES<br>
-            CEL.: 11-5955-7937<br>
-            TEL.: 4637-4444<br>
-            IVA Responsable Inscripto<br></small>
-        </td>
-        <td class="sector text-center" style="width: 33%">
-          <span class="text-x">X</span><br><br>
-          <small><strong>DOCUMENTO<br>
-              NO VALIDO<br>
-              COMO FACTURA</strong></small><br>
-        </td>
-        <td class="sector-right" style="width: 33%">
-          <strong class="recibo-titulo">RECIBO PROVISORIO</strong><br>
-          <strong class="fecha">NRO.: 0002-000016488</strong><br>
-          <strong class="fecha">Fecha: 08-01-2025</strong><br>
-          C.U.I.T.: 30-64021320-1<br>
-          Ingresos Brutos: 771176-10<br>
-          Inicio actividades: 01/05/1990
-        </td>
+        <th style="width: 168px">Facturas del Día</th>
+        <th style="width: 122px">Cobrado en el Día</th>
       </tr>
-    </table>
-  </div>
-
-  <div class="clearfix">
-    <div class="izquierda">
-      <table class="table-recibo">
-        <thead>
-          <tr>
-            <th colspan="3">LIQUIDACION</th>
-          </tr>
-          <tr>
-            <th>Fecha</th>
-            <th>Factura</th>
-            <th>Importe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ \Carbon\Carbon::parse($pedido->fechaFactura)->format('d-m-Y') }}</td>
-            <td>{{ $pedido->nroFactura }}</td>
-            <td>{{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="tabla-derecha">Total</td>
-            <td>${{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-          {{-- <tr>
-            <td colspan="3"></td>
-          </tr> --}}
-          <tr>
-            <td colspan="2" class="tabla-derecha">Importe Neto</td>
-            <td>${{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="derecha">
-      <strong class="letra-cliente">Recibimos de : {{ $pedido->razonsocial }} - {{ $pedido->nomfantasia }}</strong>
-
-      <table class="table-recibo">
-        <thead>
-          <tr>
-            <th>Banco</th>
-            <th>Cheque</th>
-            <th>Fecha</th>
-            <th>Importe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3" class="tabla-derecha">Total</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3" class="tabla-derecha">Importe Neto</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="clearfix">
-    <div class="container-firma">
-      <div class="left">
-        <p>ORIGINAL</p>
-      </div>
-      <div class="right">
-        <p>____________</p>
-        <p>Fraschina SRL</p>
-      </div>
-    </div>
-  </div>
-
-  {{-- DUPLICADO --}}
-  <div class="header separacion">
-    <table>
+    </thead>
+  </table>
+  <table class="tabla-cobro">
+    <thead>
       <tr>
-        <td class="sector-left" style="width: 33%">
-          <strong>FRASCHINA SRL</strong><br>
-          <small>RAMÓN L. FALCÓN 2364 - Piso 1° Dpto "B"<br>
-            (1406) - CIUDAD AUT.DE BUENOS AIRES<br>
-            CEL.: 11-5955-7937<br>
-            TEL.: 4637-4444<br>
-            IVA Responsable Inscripto<br></small>
-        </td>
-        <td class="sector text-center" style="width: 33%">
-          <span class="text-x">X</span><br><br>
-          <small><strong>DOCUMENTO<br>
-              NO VALIDO<br>
-              COMO FACTURA</strong></small><br>
-        </td>
-        <td class="sector-right" style="width: 33%">
-          <strong class="recibo-titulo">RECIBO PROVISORIO</strong><br>
-          <strong class="fecha">NRO.: 0002-000016488</strong><br>
-          <strong class="fecha">Fecha: 08-01-2025</strong><br>
-          C.U.I.T.: 30-64021320-1<br>
-          Ingresos Brutos: 771176-10<br>
-          Inicio actividades: 01/05/1990
-        </td>
+        <th style="width: 120px">Nombre de Fantasía</th>
+        <th style="width: 150px">Razón Social</th>
+        <th class="tabla-cobro-td">C.Pago</th>
+        <th class="tabla-cobro-td">Importe</th>
+        <th class="tabla-cobro-td">Factura</th>
+        <th class="tabla-cobro-td">Recibo</th>
+        <th class="tabla-cobro-td">Factura</th>
+        <th class="tabla-cobro-td">Importe</th>
+        <th class="tabla-cobro-td">Recibo</th>
       </tr>
-    </table>
-  </div>
+    </thead>
+    @foreach ($distribuciones as $distribucion)
+    <tbody>
+      <tr>
+        <td class="t-izquierda">{{ $distribucion->distribucion->nomfantasia }}</td>
+        <td class="t-izquierda" colspan="1">{{ $distribucion->distribucion->razonsocial }}</td>
+        <td">{{ $distribucion->distribucion->auxpago->nombre ?? '' }}</td>
+          <td class="text-rigth">${{ number_format($distribucion->totalFactura, 2) }}</td>
+          <td>{{ $distribucion->nroFactura }}</td>
+          <td>{{ $distribucion->id }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      @endforeach
+      @php
+      $lin = $distribuciones->count();
+      $gen = 18 - $lin;
+      @endphp
+      @for ($x = 0; $x < $gen; $x++) <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </tr>
+        @endfor
+    </tbody>
+  </table>
+  <table style="width: 90px; margin-left:543px;">
+    <thead>
+      <tr>
+        <th style="width: 40px">SUBTOTAL</th>
+        <td style="width: 48px"></td>
+      </tr>
+    </thead>
+  </table>
 
-  <div class="clearfix">
-    <div class="izquierda">
-      <table class="table-recibo">
-        <thead>
-          <tr>
-            <th colspan="3">LIQUIDACION</th>
-          </tr>
-          <tr>
-            <th>Fecha</th>
-            <th>Factura</th>
-            <th>Importe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ \Carbon\Carbon::parse($pedido->fechaFactura)->format('d-m-Y') }}</td>
-            <td>{{ $pedido->nroFactura }}</td>
-            <td>{{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="tabla-derecha">Total</td>
-            <td>${{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-          {{-- <tr>
-            <td colspan="3"></td>
-          </tr> --}}
-          <tr>
-            <td colspan="2" class="tabla-derecha">Importe Neto</td>
-            <td>${{ number_format($pedido->totalFactura, 2, ',', '.') }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="derecha">
-      <strong class="letra-cliente">Recibimos de : {{ $pedido->razonsocial }} - {{ $pedido->nomfantasia }}</strong>
+  <br>
 
-      <table class="table-recibo">
-        <thead>
-          <tr>
-            <th>Banco</th>
-            <th>Cheque</th>
-            <th>Fecha</th>
-            <th>Importe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3" class="tabla-derecha">Total</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3" class="tabla-derecha">Importe Neto</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="clearfix">
-    <div class="container-firma">
-      <div class="left">
-        <p>DUPLICADO</p>
-      </div>
-      <div class="right">
-        <p>____________</p>
-        <p>Fraschina SRL</p>
-      </div>
-    </div>
+  <table class="tabla-gastos">
+    <thead>
+      <tr style="background-color: #a9a9a9; font-weight: bold;">
+        <th style="width: 530px">Gastos</th>
+        <th style="width: 42px">Importe</th>
+        <th style="width: 42px">Compr.</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for ($i = 0; $i < 6; $i++) <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        </tr>
+        @endfor
+    </tbody>
+  </table>
+  </table>
+  <table style="width: 90px; margin-left:543px;">
+    <thead>
+      <tr>
+        <th style="width: 40px">SUBTOTAL</th>
+        <td style="width: 48px"></td>
+      </tr>
+    </thead>
+  </table>
+  <br>
+  </table>
+  <table style="width: 150px; margin-left:502px;">
+    <thead>
+      <tr>
+        <th style="width: 80px">TOTAL RENDIDO</th>
+        <td style="width: 44px"></td>
+      </tr>
+    </thead>
+  </table>
+  <br>
+  <table style="width: 150px; margin-left:502px;">
+    <thead>
+      <tr>
+        <th style="width: 80px">PRECINTO NRO.</th>
+        <td style="width: 44px"></td>
+      </tr>
+    </thead>
+  </table>
+  <br>
+  <table class="tabla-firmas">
+    <tr>
+      <td style="width: 230px">RENDICIÓN REPARTO (Firma y Fecha)</td>
+      <td style="width: 230px">CONTROL (Firma y Fecha) </td>
+      <td style="width: 230px">RENDICIÓN OFICINA (Firma y Fecha)</td>
+    </tr>
+    <tr>
+      <td style="height: 80px; border: 1px solid #000;"></td>
+      <td style="border: 1px solid #000;"></td>
+      <td style="border: 1px solid #000;"></td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    Reporte generado automáticamente por el sistema.
   </div>
 </body>
 
