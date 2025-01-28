@@ -26,7 +26,7 @@ class RubroController extends Controller
     // Aplica la paginación después de construir la consulta
     $rubros = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Rubro.index', compact('rubros', 'name'));
+    return view('pages.Tools.Rubro.index', compact('rubros', 'name'));
   }
 
 

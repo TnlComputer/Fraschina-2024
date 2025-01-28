@@ -12,12 +12,12 @@ class PermissionController extends Controller
   {
     // $permissions = Permission::paginate(10);
     $permissions = Permission::where('name', '!=', 'permiso_99')->paginate(10);
-    return view('Pages.Tools.Permiso.index', compact('permissions'));
+    return view('pages.Tools.Permiso.index', compact('permissions'));
   }
 
   public function create()
   {
-    return view('Pages.Tools.Permiso.create');
+    return view('pages.Tools.Permiso.create');
   }
 
   public function store(Request $request)
@@ -37,7 +37,7 @@ class PermissionController extends Controller
 
   public function edit(Permission $permission)
   {
-    return view('Pages.Tools.Permiso.edit', compact('permission'));
+    return view('pages.Tools.Permiso.edit', compact('permission'));
   }
 
   public function update(Request $request, Permission $permission)

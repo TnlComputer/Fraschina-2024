@@ -26,7 +26,7 @@ class ModoController extends Controller
     // Aplica la paginación después de construir la consulta
     $modos = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Modo.index', compact('modos', 'name'));
+    return view('pages.Tools.Modo.index', compact('modos', 'name'));
   }
 
   /**

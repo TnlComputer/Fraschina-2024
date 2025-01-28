@@ -41,7 +41,7 @@ class UsuarioController extends Controller
     $roles = Role::all(); // Obtiene todos los roles
 
     // Devuelve la vista con los usuarios
-    return view('Pages.Tools.Usuario.index', compact('usuarios', 'name', 'roles'));
+    return view('pages.Tools.Usuario.index', compact('usuarios', 'name', 'roles'));
   }
 
 
@@ -51,7 +51,7 @@ class UsuarioController extends Controller
   public function create()
   {
     $roles = Role::all(); // Obtiene todos los roles
-    return view('Pages.Tools.Usuario.create', compact('roles'));
+    return view('pages.Tools.Usuario.create', compact('roles'));
   }
 
   /**
@@ -107,7 +107,7 @@ class UsuarioController extends Controller
     $usuario = User::findOrFail($id); // Encuentra el usuario por ID
     $roles = Role::all(); // Obtiene todos los roles disponibles
 
-    return view('Pages.Tools.Usuario.edit', compact('usuario', 'roles'));
+    return view('pages.Tools.Usuario.edit', compact('usuario', 'roles'));
   }
 
   public function update(Request $request, $id)

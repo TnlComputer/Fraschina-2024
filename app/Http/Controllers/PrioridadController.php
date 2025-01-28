@@ -26,7 +26,7 @@ class PrioridadController extends Controller
     // Aplica la paginación después de construir la consulta
     $prioridades = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Prioridad.index', compact('prioridades', 'name'));
+    return view('pages.Tools.Prioridad.index', compact('prioridades', 'name'));
   }
 
 

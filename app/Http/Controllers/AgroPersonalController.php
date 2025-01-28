@@ -107,7 +107,7 @@ class AgroPersonalController extends Controller
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 
-    return view('Pages.Agro.Personal.edit', compact('personal', 'agros', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Agro.Personal.edit', compact('personal', 'agros', 'areas', 'cargos', 'profesiones'));
   }
 
   /**

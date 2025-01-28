@@ -27,7 +27,7 @@ class ZonaController extends Controller
     $zonas = $query->orderBy($sortField)->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Zona.index', compact('zonas', 'name'));
+    return view('pages.Tools.Zona.index', compact('zonas', 'name'));
   }
 
   /**

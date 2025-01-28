@@ -26,7 +26,7 @@ class ExpedicionController extends Controller
     // if ($name) {
     // $expediciones =  Expedicion_molinos::paginate(15)->get();
     // }
-    // return view('Pages.Expedicion.index', compact('expediciones'));
+    return view('pages.Expedicion.index', compact('expediciones'));
     //
   }
 }

@@ -26,7 +26,7 @@ class HoraController extends Controller
     // Aplica la paginación después de construir la consulta
     $horas = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Hora.index', compact('horas', 'name'));
+    return view('pages.Tools.Hora.index', compact('horas', 'name'));
   }
 
   /**

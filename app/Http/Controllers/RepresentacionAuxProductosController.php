@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Representacion_AuxProductos;
+use App\Models\RepresentacionAuxProductos;
 use Illuminate\Http\Request;
 
 class RepresentacionAuxProductosController extends Controller
@@ -34,7 +35,7 @@ class RepresentacionAuxProductosController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Representacion_AuxProductos $representacion_AuxProductos)
+    public function show(RepresentacionAuxProductos $representacionAuxProductos)
     {
         //
     }
@@ -42,7 +43,7 @@ class RepresentacionAuxProductosController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Representacion_AuxProductos $representacion_AuxProductos)
+    public function edit(RepresentacionAuxProductos $representacionAuxProductos)
     {
         //
     }
@@ -50,7 +51,7 @@ class RepresentacionAuxProductosController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Representacion_AuxProductos $representacion_AuxProductos)
+    public function update(Request $request, RepresentacionAuxProductos $representacionAuxProductos)
     {
         //
     }
@@ -58,7 +59,7 @@ class RepresentacionAuxProductosController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Representacion_AuxProductos $representacion_AuxProductos)
+    public function destroy(RepresentacionAuxProductos $representacionAuxProductos)
     {
         //
     }

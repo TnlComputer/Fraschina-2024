@@ -6,7 +6,7 @@ use App\Models\AuxAreas;
 use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Proveedor;
-use App\Models\Proveedor_Personal;
+use App\Models\ProveedorPersonal;
 use Illuminate\Http\Request;
 
 class ProveedorPersonalController extends Controller
@@ -77,7 +77,7 @@ class ProveedorPersonalController extends Controller
     //   'status' => 'A', // Valor predeterminado
     // ]));
     try {
-      Proveedor_Personal::create(array_merge($validatedData, [
+      ProveedorPersonal::create(array_merge($validatedData, [
         'fuera' => 0,
         'status' => 'A',
       ]));
@@ -105,7 +105,7 @@ class ProveedorPersonalController extends Controller
    */
   public function edit(string $id)
   {
-    $personal = Proveedor_Personal::findOrFail($id); // Obtén el registro por ID
+    $personal = ProveedorPersonal::findOrFail($id); // Obtén el registro por ID
     $proveedores = Proveedor::all(); // Dropdown para representaciones
     $areas = AuxAreas::orderBy('area', 'asc')->get(); // Ordenar áreas por nombre
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get(); // Ordenar cargos por nombre
@@ -113,7 +113,7 @@ class ProveedorPersonalController extends Controller
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 
-    return view('Pages.Proveedor.Personal.edit', compact('personal', 'proveedores', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Proveedor.Personal.edit', compact('personal', 'proveedores', 'areas', 'cargos', 'profesiones'));
   }
 
   /**
@@ -123,7 +123,7 @@ class ProveedorPersonalController extends Controller
   {
     // dd($request);
 
-    $proveedorPersonal = Proveedor_Personal::findOrFail($id);
+    $proveedorPersonal = ProveedorPersonal::findOrFail($id);
 
     $validated = $request->validate([
       'nombre' => 'required|string|max:150',
@@ -170,7 +170,7 @@ class ProveedorPersonalController extends Controller
     // dd($id);
 
     // Buscar el registro
-    $persona = Proveedor_Personal::findOrFail($id);
+    $persona = ProveedorPersonal::findOrFail($id);
 
     // dd($id, $persona);
 

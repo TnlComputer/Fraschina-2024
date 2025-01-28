@@ -200,8 +200,6 @@ class AgroController extends Controller
     }
   }
 
-
-
   /**
    * Remove the specified resource from storage.
    * Changes the status from 'A' to 'D' instead of deleting the record.

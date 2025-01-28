@@ -113,7 +113,7 @@ class MolinoPersonalController extends Controller
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 
-    return view('Pages.Molino.Personal.edit', compact('personal', 'molinos', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Molino.Personal.edit', compact('personal', 'molinos', 'areas', 'cargos', 'profesiones'));
   }
 
   /**

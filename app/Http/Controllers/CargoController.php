@@ -26,7 +26,7 @@ class CargoController extends Controller
     // Aplica la paginación después de construir la consulta
     $cargos = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.cargo.index', compact('cargos', 'name'));
+    return view('pages.Tools.cargo.index', compact('cargos', 'name'));
   }
 
   /**

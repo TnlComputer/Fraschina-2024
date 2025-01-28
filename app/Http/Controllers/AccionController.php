@@ -26,7 +26,7 @@ class AccionController extends Controller
     // Aplica la paginación después de construir la consulta
     $acciones = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Accion.index', compact('acciones', 'name'));
+    return view('pages.Tools.Accion.index', compact('acciones', 'name'));
   }
 
     /**

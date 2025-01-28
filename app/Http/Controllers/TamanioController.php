@@ -26,7 +26,7 @@ class TamanioController extends Controller
     $tamanios = $query->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Tamanio.index', compact('tamanios', 'name'));
+    return view('pages.Tools.Tamanio.index', compact('tamanios', 'name'));
   }
 
   /**

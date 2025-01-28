@@ -27,7 +27,7 @@ class Tipo_PersonaController extends Controller
     $tipo_personas = $query->orderBy($sortField)->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Tipo_persona.index', compact('tipo_personas', 'name'));
+    return view('pages.Tools.Tipo_persona.index', compact('tipo_personas', 'name'));
   }
 
   /**

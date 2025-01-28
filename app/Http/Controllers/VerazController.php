@@ -27,7 +27,7 @@ class VerazController extends Controller
     $verazes = $query->orderBy($sortField)->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Veraz.index', compact('verazes', 'name'));
+    return view('pages.Tools.Veraz.index', compact('verazes', 'name'));
   }
 
   /**

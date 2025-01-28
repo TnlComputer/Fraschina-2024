@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Proveedor;
 use App\Models\Proveedor_AuxProductos;
 use App\Models\Proveedor_Producto;
+use App\Models\ProveedorAuxProductos;
+use App\Models\ProveedorProducto;
 use Illuminate\Http\Request;
 
 class ProveedorProductoController extends Controller
@@ -26,7 +28,7 @@ class ProveedorProductoController extends Controller
     $proveedor = Proveedor::findOrFail($id);
 
     // Obtener los productos disponibles para seleccionar, ordenados por nombre
-    $productosAux = Proveedor_AuxProductos::where('is_active', true)
+    $productosAux = ProveedorAuxProductos::where('is_active', true)
       ->orderBy('nombre', 'asc')
       ->get();
 
@@ -49,7 +51,7 @@ class ProveedorProductoController extends Controller
 
     try {
       // Crear el registro en la base de datos
-      Proveedor_Producto::create([
+      ProveedorProducto::create([
         'proveedor_id'      => $validatedData['proveedor_id'],
         'producto_id'       => $validatedData['producto_id'],
         'familia'           => $validatedData['familia'],
@@ -59,7 +61,7 @@ class ProveedorProductoController extends Controller
 
       // Redirigir con un mensaje de éxito
       return redirect()->route('proveedor.show', $validatedData['proveedor_id'])
-      ->with('success', 'Producto agregado correctamente.');
+        ->with('success', 'Producto agregado correctamente.');
     } catch (\Exception $e) {
       // Manejar errores
       return back()->withErrors(['error' => 'Hubo un problema al guardar el producto: ' . $e->getMessage()]);
@@ -81,14 +83,14 @@ class ProveedorProductoController extends Controller
   {
     try {
       // Buscar el producto por ID
-      $producto = Proveedor_Producto::findOrFail($id);
+      $producto = ProveedorProducto::findOrFail($id);
       // dd($producto);
 
       // Obtener la representación asociada
       $proveedor = Proveedor::findOrFail($producto->proveedor_id);
 
       // Obtener la lista de productos auxiliares
-      $productosAux = Proveedor_AuxProductos::all();
+      $productosAux = ProveedorAuxProductos::all();
       // dd($producto, $proveedor, $productosAux);
 
       // Retornar la vista con los datos necesarios
@@ -118,7 +120,7 @@ class ProveedorProductoController extends Controller
 
 
     try {
-      $producto = Proveedor_Producto::findOrFail($id);
+      $producto = ProveedorProducto::findOrFail($id);
 
       $producto->update($request->all());
 
@@ -132,7 +134,7 @@ class ProveedorProductoController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Proveedor_Producto $proveedor_producto)
+  public function destroy(ProveedorProducto $proveedor_producto)
   {
     // Alternar el estado entre 'A' y 'D'
     $proveedor_producto->status = $proveedor_producto->status === 'A' ? 'D' : 'A';
