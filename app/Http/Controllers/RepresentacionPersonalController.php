@@ -6,7 +6,7 @@ use App\Models\AuxAreas;
 use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Representacion;
-use App\Models\Representacion_Personal;
+use App\Models\RepresentacionPersonal;
 use Illuminate\Http\Request;
 
 class RepresentacionPersonalController extends Controller
@@ -78,7 +78,7 @@ class RepresentacionPersonalController extends Controller
     ]);
 
     // Crear un nuevo personal
-    $personal = new Representacion_Personal();
+    $personal = new RepresentacionPersonal();
     $personal->fuera = $request->has('fuera') ? $request->fuera : 0;
     $personal->status = $request->has('status') ? $request->status : 'A';
 
@@ -93,7 +93,7 @@ class RepresentacionPersonalController extends Controller
   /**
    * Display the specified resource.
    */
-  public function show(Representacion_personal $representacion_personal)
+  public function show(RepresentacionPersonal $representacionPersonal)
   {
     //
   }
@@ -106,13 +106,13 @@ class RepresentacionPersonalController extends Controller
    */
   public function edit($id)
   {
-    $personal = Representacion_Personal::findOrFail($id); // Obtén el registro por ID
+    $personal = RepresentacionPersonal::findOrFail($id); // Obtén el registro por ID
     $representaciones = Representacion::all(); // Dropdown para representaciones
     $areas = AuxAreas::all(); // Dropdown para áreas
     $cargos = AuxCargos::all(); // Dropdown para cargos
     $profesiones = AuxProfesion::all(); // Dropdown para profesiones
 
-    return view('Pages.Representacion.Personal.edit', compact('personal', 'representaciones', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Representacion.Personal.edit', compact('personal', 'representaciones', 'areas', 'cargos', 'profesiones'));
   }
 
   /**
@@ -146,7 +146,7 @@ class RepresentacionPersonalController extends Controller
     ]);
 
     // Recuperar el personal por ID
-    $personal = Representacion_Personal::findOrFail($id);
+    $personal = RepresentacionPersonal::findOrFail($id);
 
     // Asignar valores por defecto si no se proporcionan
     $personal->fuera = $request->has('fuera') ? $request->fuera : 0;
@@ -163,7 +163,7 @@ class RepresentacionPersonalController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Representacion_personal $representacion_personal)
+  public function destroy(RepresentacionPersonal $representacion_personal)
   {
     // Alternar el estado entre 'A' y 'D'
     $representacion_personal->status = $representacion_personal->status === 'A' ? 'D' : 'A';

@@ -27,7 +27,7 @@ class CalleController extends Controller
     $calles = $query->orderBy($sortField)->paginate(15);
 
     // Devuelve la vista con las calles y el filtro de búsqueda
-    return view('Pages.Tools.Calle.index', compact('calles', 'name'));
+    return view('pages.Tools.Calle.index', compact('calles', 'name'));
   }
 
 

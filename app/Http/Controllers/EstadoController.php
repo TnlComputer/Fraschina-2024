@@ -26,7 +26,7 @@ class EstadoController extends Controller
     // Aplica la paginación después de construir la consulta
     $estados = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Estado.index', compact('estados', 'name'));
+    return view('pages.Tools.Estado.index', compact('estados', 'name'));
   }
 
 

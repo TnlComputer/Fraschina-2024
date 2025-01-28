@@ -26,7 +26,7 @@ class MunicipioController extends Controller
     // Aplica la paginación después de construir la consulta
     $municipios = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Municipio.index', compact('municipios', 'name'));
+    return view('pages.Tools.Municipio.index', compact('municipios', 'name'));
   }
 
   /**

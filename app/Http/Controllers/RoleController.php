@@ -13,7 +13,7 @@ class RoleController extends Controller
   {
     $roles = Role::where('name', '!=', 'Admin')->with('permissions')->paginate(10);
     // $roles = Role::with('permissions')->paginate(10);
-    return view('Pages.Tools.Role.index', compact('roles'));
+    return view('pages.Tools.Role.index', compact('roles'));
 
     //   $roles = Role::with('permissions')->paginate(10);
     // $permissions = Permission::all();
@@ -25,7 +25,7 @@ class RoleController extends Controller
   {
     // $permissions = Permission::all();
     $permissions = Permission::where('name', '!=', 'permiso_99')->get();
-    return view('Pages.Tools.Role.create', compact('permissions'));
+    return view('pages.Tools.Role.create', compact('permissions'));
   }
 
   // public function store(Request $request)
@@ -67,7 +67,7 @@ class RoleController extends Controller
     // $permissions = Permission::all();
     $permissions = Permission::where('name', '!=', 'permiso_99')->get();
     // dd($permissions);
-    return view('Pages.Tools.Role.edit', compact('role', 'permissions'));
+    return view('pages.Tools.Role.edit', compact('role', 'permissions'));
   }
 
   // public function update(Request $request, Role $role)

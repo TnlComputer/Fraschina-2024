@@ -27,7 +27,7 @@ class TareaController extends Controller
     $tareas = $query->orderBy($sortField)->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Tarea.index', compact('tareas', 'name'));
+    return view('pages.Tools.Tarea.index', compact('tareas', 'name'));
   }
 
   /**

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Representacion;
 use App\Models\Representacion_AuxProductos;
 use App\Models\Representacion_Producto;
+use App\Models\RepresentacionAuxProductos;
+use App\Models\RepresentacionProducto;
 use Illuminate\Http\Request;
 
 class RepresentacionProductoController extends Controller
@@ -29,7 +31,7 @@ class RepresentacionProductoController extends Controller
     $representacion = Representacion::findOrFail($representacionId);
 
     // Obtener los productos disponibles para seleccionar
-    $productos = Representacion_AuxProductos::where('is_active', true)->get();
+    $productos = RepresentacionAuxProductos::where('is_active', true)->get();
 
     return view('pages.Representacion.Producto.create', compact('representacion', 'productos'));
   }
@@ -61,7 +63,7 @@ class RepresentacionProductoController extends Controller
 
     try {
       // Crear el registro en la base de datos
-      Representacion_Producto::create([
+      RepresentacionProducto::create([
         'representacion_id' => $request->representacion_id,
         'producto_id'       => $request->producto_id,
         'pl'                => $request->pl,
@@ -104,13 +106,13 @@ class RepresentacionProductoController extends Controller
   {
     try {
       // Buscar el producto por ID
-      $producto = Representacion_Producto::findOrFail($id);
+      $producto = RepresentacionProducto::findOrFail($id);
 
       // Obtener la representación asociada
       $representacion = Representacion::findOrFail($producto->representacion_id);
 
       // Obtener la lista de productos auxiliares
-      $productos = Representacion_AuxProductos::all();
+      $productos = RepresentacionAuxProductos::all();
       // dd($producto, $representacion, $productos);
 
       // Retornar la vista con los datos necesarios
@@ -146,7 +148,7 @@ class RepresentacionProductoController extends Controller
     ]);
 
     try {
-      $producto = Representacion_Producto::findOrFail($id);
+      $producto = RepresentacionProducto::findOrFail($id);
       $producto->update([
         'representacion_id' => $request->representacion_id,
         'producto_id'       => $request->producto_id,
@@ -175,7 +177,7 @@ class RepresentacionProductoController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Representacion_Producto $representacion_producto)
+  public function destroy(RepresentacionProducto $representacion_producto)
   {
     // Alternar el estado entre 'A' y 'D'
     $representacion_producto->status = $representacion_producto->status === 'A' ? 'D' : 'A';

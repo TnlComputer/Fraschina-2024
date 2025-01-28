@@ -26,7 +26,7 @@ class AreaController extends Controller
     // Aplica la paginación después de construir la consulta
     $areas = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.area.index', compact('areas', 'name'));
+    return view('pages.Tools.area.index', compact('areas', 'name'));
   }
     /**
      * Show the form for creating a new resource.

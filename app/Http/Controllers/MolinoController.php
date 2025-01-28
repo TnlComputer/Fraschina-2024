@@ -38,7 +38,7 @@ class MolinoController extends Controller
     $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
 
-    return view('Pages.Molino.create', compact('barrios', 'localidades', 'municipios'));
+    return view('pages.Molino.create', compact('barrios', 'localidades', 'municipios'));
   }
 
   public function store(Request $request)
@@ -77,7 +77,7 @@ class MolinoController extends Controller
     $localidades = DB::table('auxlocalidades')->orderBy('localidad', 'asc')->get();
     $municipios = DB::table('auxmunicipios')->orderBy('ciudadmunicipio', 'asc')->get();
 
-    return view('Pages.Molino.edit', compact('molino', 'barrios', 'localidades', 'municipios'));
+    return view('pages.Molino.edit', compact('molino', 'barrios', 'localidades', 'municipios'));
   }
 
   public function update(Request $request, $id)

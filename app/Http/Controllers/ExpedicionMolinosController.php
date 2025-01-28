@@ -15,7 +15,7 @@ class ExpedicionMolinosController extends Controller
     $name = $request->name;
     $expedicion_molinos = Expedicion_molinos::all();
     // dd($expedicion_molinos);
-    return view('Pages.Expedicion.Molino.index', compact('expedicion_molinos', 'name'));
+    return view('pages.Expedicion.Molino.index', compact('expedicion_molinos', 'name'));
   }
 
   /**

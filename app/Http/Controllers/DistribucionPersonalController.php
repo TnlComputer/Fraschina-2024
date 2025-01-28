@@ -108,7 +108,7 @@ class DistribucionPersonalController extends Controller
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 
-    return view('Pages.Distribucion.Personal.edit', compact('personal', 'distribuciones', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Distribucion.Personal.edit', compact('personal', 'distribuciones', 'areas', 'cargos', 'profesiones'));
   }
 
   /**

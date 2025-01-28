@@ -7,6 +7,7 @@ use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Transporte;
 use App\Models\Transporte_Personal;
+use App\Models\TransportePersonal;
 use Illuminate\Http\Request;
 
 class TransportePersonalController extends Controller
@@ -77,7 +78,7 @@ class TransportePersonalController extends Controller
     //   'status' => 'A', // Valor predeterminado
     // ]));
     try {
-      Transporte_Personal::create(array_merge($validatedData, [
+      TransportePersonal::create(array_merge($validatedData, [
         'fuera' => 0,
         'status' => 'A',
       ]));
@@ -105,7 +106,7 @@ class TransportePersonalController extends Controller
    */
   public function edit(string $id)
   {
-    $personal = Transporte_Personal::findOrFail($id); // Obtén el registro por ID
+    $personal = TransportePersonal::findOrFail($id); // Obtén el registro por ID
     $transportes = Transporte::all(); // Dropdown para representaciones
     $areas = AuxAreas::orderBy('area', 'asc')->get(); // Ordenar áreas por nombre
     $cargos = AuxCargos::orderBy('cargo', 'asc')->get(); // Ordenar cargos por nombre
@@ -113,7 +114,7 @@ class TransportePersonalController extends Controller
       ->orderBy('nombreprofesion', 'asc') // Ordenar por "nombreprofesion"
       ->get();
 
-    return view('Pages.Transporte.Personal.edit', compact('personal', 'transportes', 'areas', 'cargos', 'profesiones'));
+    return view('pages.Transporte.Personal.edit', compact('personal', 'transportes', 'areas', 'cargos', 'profesiones'));
   }
 
   /**
@@ -123,7 +124,7 @@ class TransportePersonalController extends Controller
   {
     // dd($request);
 
-    $transportePersonal = Transporte_Personal::findOrFail($id);
+    $transportePersonal = TransportePersonal::findOrFail($id);
 
     $validated = $request->validate([
       'nombre' => 'required|string|max:150',
@@ -168,7 +169,7 @@ class TransportePersonalController extends Controller
   public function destroy($id)
   {
     // Buscar el registro
-    $persona = Transporte_Personal::findOrFail($id);
+    $persona = TransportePersonal::findOrFail($id);
 
     // Cambiar el status a 'D'
     $persona->update(['status' => 'D']);

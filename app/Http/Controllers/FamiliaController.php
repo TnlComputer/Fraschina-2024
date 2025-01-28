@@ -26,7 +26,7 @@ class FamiliaController extends Controller
     // Aplica la paginación después de construir la consulta
     $familias = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Familia.index', compact('familias', 'name'));
+    return view('pages.Tools.Familia.index', compact('familias', 'name'));
   }
 
 

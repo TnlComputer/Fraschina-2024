@@ -82,7 +82,7 @@ class ExportarController extends Controller
     });
 
     // Retornar la vista con las tablas disponibles
-    return view('Pages.Tools.Exportar.selectTables', compact('tables'));
+    return view('pages.Tools.Exportar.selectTables', compact('tables'));
   }
 
   public function generate(Request $request)

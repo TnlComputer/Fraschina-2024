@@ -27,7 +27,7 @@ class LocalidadController extends Controller
     $localidades = $query->orderBy($sortField)->paginate(15);
     
     // Retorna la vista con los datos
-    return view('Pages.Tools.Localidad.index', compact('localidades', 'name'));
+    return view('pages.Tools.Localidad.index', compact('localidades', 'name'));
   }
 
     /**

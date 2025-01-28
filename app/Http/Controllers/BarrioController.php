@@ -27,7 +27,7 @@ class BarrioController extends Controller
     $barrios = $query->orderBy($sortField)->paginate(15);
 
     // Retorna la vista con los datos
-    return view('Pages.Tools.Barrio.index', compact('barrios', 'name'));
+    return view('pages.Tools.Barrio.index', compact('barrios', 'name'));
   }
     /**
      * Show the form for creating a new resource.

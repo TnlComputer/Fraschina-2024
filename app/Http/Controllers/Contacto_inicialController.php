@@ -26,7 +26,7 @@ class Contacto_inicialController extends Controller
     // Aplica la paginación después de construir la consulta
     $contactos = $query->orderBy($sortField)->paginate(15);
     // Retorna la vista con los datos
-    return view('Pages.Tools.Contacto_inicial.index', compact('contactos', 'name'));
+    return view('pages.Tools.Contacto_inicial.index', compact('contactos', 'name'));
   }
 
 
