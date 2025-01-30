@@ -10,9 +10,9 @@
   <div class="mb-3 d-flex justify-content-between align-items-center">
     <!-- Botón Nuevo Pedido a la Izquierda -->
     <div>
-      <a href="{{ route('distribucion_reparto.create') }}" class="btn btn-primary">
-        Nuevo Pedido
-      </a>
+      </a><a href="{{ route('distribucion_pedido.create') }}" class="btn btn-primary ml-3">
+        <i class="fas fa-plus"></i> Nuevo Pedido
+      </a> <!-- Formulario de búsqueda -->
     </div>
     <!-- Botón Reparto Impresion -->
     <div>
