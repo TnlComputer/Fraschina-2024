@@ -1,5 +1,5 @@
 INSERT INTO
-    distribucion_nropedidon (
+    fraschina_2024.distribucion_nropedidon (
         id,
         tipo,
         distribucion_id,
@@ -20,10 +20,10 @@ SELECT
     status,
     created_at,
     updated_at
-FROM distribucion_nropedidos;
+FROM fraschin_backup.nropedidos;
 
-UPDATE distribucion_nropedidon AS dn
-JOIN distribucion_linea_pedidos AS dl ON dn.id = dl.pedido_id
+UPDATE distribucion_nropedidos AS dn
+JOIN fraschin_backup.distribucion_linea_pedidos AS dl ON dn.id = dl.pedido_id
 SET
     dn.tipo = 'P',
     dn.fechaFactura = dl.fechaFactura,

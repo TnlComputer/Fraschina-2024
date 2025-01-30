@@ -9,7 +9,7 @@ class DistribucionLineaTareas extends Model
 {
   use HasFactory;
 
-  protected $table = 'distribucion_linea_tarean';
+  protected $table = 'distribucion_linea_tareas';
 
   protected $fillable = [
     'fecha',

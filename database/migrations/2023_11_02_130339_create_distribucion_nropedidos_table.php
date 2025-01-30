@@ -13,10 +13,16 @@ return new class extends Migration
   {
     Schema::create('distribucion_nropedidos', function (Blueprint $table) {
       $table->id();
+      $table->string('tipo', 2);
       $table->unsignedBigInteger('distribucion_id');
       $table->date('fecha')->nullable();
-      $table->string('reservado', 2)->nullable();
       $table->date('fechaEntrega')->nullable();
+      $table->date('fechaFactura')->nullable();
+      $table->string('nroFactura', 20)->nullable();
+      $table->decimal('totalFactura', 12, 2)->nullable();
+      $table->date('totalPedido')->nullable();
+      $table->string('chofer', 2)->nullable();
+      $table->integer('orden')->nullable();
       $table->longText('observaciones')->nullable();
       $table->string('status')->default('A')->nullable();
       $table->timestamps();

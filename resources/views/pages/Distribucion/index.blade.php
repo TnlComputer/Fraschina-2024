@@ -14,8 +14,13 @@
               <div class="p-2 text-gray-900 text-left text-xs">
                 <div class="barra__index d-flex justify-content-between align-items-center mb-3">
                   <div class="div__nuevo">
-                    <form action="{{ route('distribucion.create') }}">
-                      <input class="btn btn-primary" type="submit" value="Nuevo">
+                    <form action="{{ route('distribucion_pedido.create') }}">
+                      <input class="btn btn-primary" type="submit" value="Nueva Distribuciòn">
+                    </form>
+                  </div>
+                  <div class="div__nuevo">
+                    <form action="{{ route('distribucion_pedido.create') }}">
+                      <input class="btn btn-info" type="submit" value="Nuevo Pedido">
                     </form>
                   </div>
                   <div class="div__buscar d-flex">

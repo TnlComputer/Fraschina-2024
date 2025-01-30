@@ -8,8 +8,9 @@
   <!-- Botón para nuevo contacto -->
   <a href="{{ route('distribucion_agenda.create') }}" class="btn btn-success ml-3">
     <i class="fas fa-plus"></i> Nuevo Contacto Agenda
-  </a>
-  <!-- Formulario de búsqueda -->
+  </a><a href="{{ route('distribucion_pedido.create') }}" class="btn btn-info ml-3">
+    <i class="fas fa-plus"></i> Nuevo Pedido
+  </a> <!-- Formulario de búsqueda -->
   <form method="GET" action="{{ route('distribucion_agenda.index') }}" class="d-flex">
     <div class="input-group">
       <input type="text" name="search" class="form-control" placeholder="Buscar..."

@@ -9,7 +9,7 @@ class DistribucionLineaPedidos extends Model
 {
   use HasFactory;
 
-  protected $table = 'distribucion_linea_pedidon';
+  protected $table = 'distribucion_linea_pedidos';
 
   protected $guarded = [];
 

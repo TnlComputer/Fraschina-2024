@@ -12,6 +12,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\Contacto_inicialController;
 use App\Http\Controllers\DistribucionAgendaController;
 use App\Http\Controllers\DistribucionController;
+use App\Http\Controllers\DistribucionPedidoController;
 use App\Http\Controllers\DistribucionPersonalController;
 use App\Http\Controllers\DistribucionProductoController;
 use App\Http\Controllers\DistribucionRepartoController;
@@ -107,6 +108,11 @@ Route::middleware(['auth'])->group(function () {
   Route::get('distribucion_agenda/{id}/personal', [DistribucionAgendaController::class, 'getPersonal'])->name('distribucion.getPersonal');
 });
 
+// Rutas para Distribucion Pedidos
+Route::middleware('auth')->resource('distribucion_pedido', DistribucionPedidoController::class);
+Route::get('/productos-y-tareas-por-cliente/{clienteId}', [DistribucionPedidoController::class, 'getProductosYTareasPorCliente']);
+
+
 // Rutas para Distribucion Reparto
 Route::middleware('auth')->resource('distribucion_reparto', DistribucionRepartoController::class);
 
@@ -121,7 +127,7 @@ Route::get(
 
 Route::get('/distribucion/reparto/control', [DistribucionRepartoController::class, 'imprimirControl'])->name('distribucion_reparto.imprimirControl');
 
-// Rutas para Distribucion Rstock
+// Rutas para Distribucion Stock
 Route::middleware('auth')->resource('distribucion_stock', DistribucionStockController::class);
 
 

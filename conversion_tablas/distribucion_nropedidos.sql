@@ -1,9 +1,9 @@
 INSERT INTO
     fraschina_2024.distribucion_nropedidos (
         id,
+        tipo,
         distribucion_id,
         fecha,
-        reservado,
         fechaEntrega,
         observaciones,
         status,
@@ -11,21 +11,37 @@ INSERT INTO
         updated_at
     )
 SELECT
-    id_NroPed AS id, -- Asignar el valor de id_NroPed a id
-    cliente AS distribucion_id, -- Asignar cliente a distribucion_id
-    STR_TO_DATE(fechaPed, '%Y-%m-%d') AS fecha, -- Convertir fechaPed a formato de fecha
-    reservado, -- Mantener el valor de reservado
-    CASE
-        WHEN fechaEnt IS NOT NULL THEN STR_TO_DATE(fechaEnt, '%Y-%m-%d')
-        ELSE NULL
-    END AS fechaEntrega, -- Si 'fechaEnt' es NULL, asignar NULL, de lo contrario, convertir a fecha
-    obsPed AS observaciones, -- Asignar el valor de obsPed a observaciones
-    'A' AS status, -- Asignar un valor constante 'A' a status
-    CURRENT_TIMESTAMP AS created_at, -- Fecha y hora actual para created_at
-    CURRENT_TIMESTAMP AS updated_at -- Fecha y hora actual para updated_at
-FROM fraschin_backup.nropedidos
+    np.id_NroPed AS id,
+    'D' AS tipo,
+    np.cliente AS distribucion_id,
+    -- Convertir fechaPed a NULL si es inválida
+    IFNULL(np.fechaPed, NULL) AS fecha,
+    -- Convertir fechaEnt a NULL si es inválida
+    IFNULL(np.fechaEnt, NULL) AS fechaEntrega,
+    np.obsPed AS observaciones,
+    'A' AS status,
+    CURRENT_TIMESTAMP AS created_at,
+    CURRENT_TIMESTAMP AS updated_at
+FROM fraschin_backup.nropedidos np
 WHERE
-    cliente IN (
+    np.cliente IN (
         SELECT id
         FROM fraschina_2024.distribucions
-    );
+    )
+    AND (
+        -- Aseguramos que al menos una de las fechas sea válida
+        np.fechaPed IS NOT NULL
+        OR np.fechaEnt IS NOT NULL
+    )
+ON DUPLICATE KEY UPDATE
+    tipo = VALUES(tipo),
+    distribucion_id = VALUES(distribucion_id),
+    fecha = VALUES(fecha),
+    fechaEntrega = VALUES(fechaEntrega),
+    observaciones = VALUES(observaciones),
+    status = VALUES(status),
+    created_at = VALUES(created_at),
+    updated_at = VALUES(updated_at);
+
+
+    

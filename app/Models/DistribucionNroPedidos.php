@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DistribucionNroPedidos extends Model
 {
   use HasFactory;
-  protected $table = 'distribucion_nropedidon';
+  protected $table = 'distribucion_nropedidos';
 
   protected $guarded = [];
 
@@ -25,13 +25,13 @@ class DistribucionNroPedidos extends Model
   public function lineasPedidos()
   {
     return $this->hasMany(DistribucionLineaPedidos::class, 'pedido_id', 'id');
-      // ->where('distribucion_id', $this->distribucion_id);
+    // ->where('distribucion_id', $this->distribucion_id);
   }
 
   public function lineasTareas()
   {
     return $this->hasMany(DistribucionLineaTareas::class, 'pedido_id', 'id');
-      // ->where('distribucion_id', $this->distribucion_id);
+    // ->where('distribucion_id', $this->distribucion_id);
   }
 
   public function distribucion()

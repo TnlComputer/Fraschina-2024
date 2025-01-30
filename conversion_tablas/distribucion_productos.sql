@@ -1,3 +1,4 @@
+SET foreign_key_checks = 0;
 INSERT INTO fraschina_2024.distribucion_productos (
     id,
     distribucion_id,
@@ -27,3 +28,4 @@ SELECT
 FROM fraschin_backup.productoporclientedist
 WHERE
     IdProCli IS NOT NULL; -- Evitar registros nulos en la clave primaria
+SET foreign_key_checks = 1;

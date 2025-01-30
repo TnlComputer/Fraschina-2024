@@ -33,10 +33,10 @@ class DistribucionPersonal extends Model
     return $this->belongsTo(Distribucion::class, 'distribucion_id');
   }
 
-  public function area()
-  {
-    return $this->belongsTo(AuxAreas::class, 'area_id');
-  }
+  // public function area()
+  // {
+  //   return $this->belongsTo(AuxAreas::class, 'area_id');
+  // }
 
   public function cargo()
   {

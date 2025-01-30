@@ -21,21 +21,6 @@ class RolesAndPermissionsSeeder extends Seeder
     DB::table('roles')->truncate();
 
     // Crear permisos
-    // $permissions = [
-    //   'permiso_1',  // Representación
-    //   'permiso_2',  // Distribución
-    //   'permiso_3',  // Molino
-    //   'permiso_4',  // Agro
-    //   'permiso_5',  // Proveedores
-    //   'permiso_6',  // Transportes
-    //   'permiso_7',  // Expedición
-    //   'permiso_8',  // Agenda General
-    //   'permiso_9',  // Tools
-    //   'permiso_11', // Alta
-    //   'permiso_12', // Editar
-    //   'permiso_13', // Eliminar
-    //   'permiso_99', // Super permiso
-    // ];
     $permissions = [
       ['name' => 'permiso_1', 'description' => 'Representación'],
       ['name' => 'permiso_2', 'description' => 'Distribución'],
@@ -52,14 +37,19 @@ class RolesAndPermissionsSeeder extends Seeder
       ['name' => 'permiso_99', 'description' => 'Super Usuario'],
     ];
 
-    // Crear todos los permisos en un solo paso
-    foreach ($permissions as $permissionName) {
-      Permission::firstOrCreate(['name' => $permissionName]);
+    foreach ($permissions as $permission) {
+      Permission::firstOrCreate(
+        ['name' => $permission['name']],
+        [
+          'guard_name' => 'web',
+          'description' => $permission['description']
+        ]
+      );
     }
 
     // Crear roles
     $roles = [
-      'admin' => $permissions, // Admin tiene todos los permisos
+      'admin' => array_column($permissions, 'name'),  // Admin tiene todos los permisos
       'supervisor' => [
         'permiso_1',
         'permiso_2',
@@ -83,10 +73,12 @@ class RolesAndPermissionsSeeder extends Seeder
       'admindistrib' => ['permiso_1', 'permiso_2', 'permiso_3', 'permiso_5', 'permiso_8', 'permiso_11', 'permiso_12', 'permiso_13']
     ];
 
-    // Crear roles y asignarles permisos
+    // Crear roles y asignar permisos
     foreach ($roles as $roleName => $rolePermissions) {
       $role = Role::firstOrCreate(['name' => $roleName]);
-      $role->syncPermissions($rolePermissions);
+
+      // Asignar los permisos al rol
+      $role->syncPermissions($rolePermissions); // Esto asigna los permisos a cada rol
     }
 
     // Habilitar restricciones de claves foráneas nuevamente
