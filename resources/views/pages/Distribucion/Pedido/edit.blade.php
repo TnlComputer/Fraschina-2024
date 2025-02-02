@@ -11,7 +11,7 @@
       Información del Pedido
     </div>
     <div class="card-body">
-      <form action="{{ route('distribucion_reparto.update', $pedido->id) }}" method="POST">
+      <form action="{{ route('distribucion_pedido.update', $pedido->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -43,29 +43,36 @@
               <th class="text-center">Cantidad</th>
               <th class="text-center">Precio Unitario</th>
               <th class="text-center">Subtotal</th>
-              <th class="text-center">c/Iva</th>
+              <th class="text-center">Total Item</th>
             </tr>
           </thead>
           <tbody>
             @foreach ($pedido->lineasPedidos as $detalle)
-            <tr>
+            <tr class="linea-row">
               <td>
-                <select name="lineas[{{ $detalle->id }}][producto_id]" class="form-control">
+                <select name="lineas[{{ $detalle->id }}][producto_id]" class="form-control producto">
                   @foreach ($productos as $producto)
-                  <option value="{{ $producto->id }}" {{ $producto->id == $detalle->producto_id ? 'selected' : '' }}>
-                    {{ $producto->productoCDA }}
-                  </option>
-                  @endforeach
+                  <option value="{{ $producto->producto_id }}" data-iva="{{ $producto->producto->ivacda }}" {{
+                    $producto->producto_id ==
+                    $detalle->producto_id ? 'selected' : '' }}>
+                    {{ $producto->producto->productoCDA }}
+                  </option> @endforeach
                 </select>
               </td>
               <td class="text-center">
                 <input type="number" name="lineas[{{ $detalle->id }}][cantidad]" value="{{ $detalle->cantidad }}"
-                  class="form-control" required>
+                  class="form-control cantidad" required>
               </td>
-              <td class="text-center">${{ number_format($detalle->precio_unitario, 2) }}</td>
-              <td class="text-center">${{ number_format($detalle->cantidad * $detalle->precio_unitario, 2) }}</td>
-              <td class="text-center">${{ number_format(($detalle->cantidad * $detalle->precio_unitario) +
-                ($detalle->cantidad * $detalle->precio_unitario * $detalle->producto->ivancda / 100), 2) }}</td>
+              <td class="text-center">
+                <input type="number" step="0.01" name="lineas[{{ $detalle->id }}][precio_unitario]"
+                  value="{{ $detalle->precio_unitario }}" class="form-control precio" required>
+              </td>
+              <td class="text-center">
+                <span class="subtotal">0.00</span>
+              </td>
+              <td class="text-center">
+                <span class="total-iva">0.00</span>
+              </td>
             </tr>
             @endforeach
           </tbody>
@@ -82,4 +89,46 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // Selecciona todas las filas de línea de pedido
+  const filas = document.querySelectorAll('.linea-row');
+
+  filas.forEach(function(fila) {
+    const cantidadInput = fila.querySelector('.cantidad');
+    const precioInput = fila.querySelector('.precio');
+    const productoSelect = fila.querySelector('.producto');
+    const subtotalField = fila.querySelector('.subtotal');
+    const totalIvaField = fila.querySelector('.total-iva');
+
+    // Función para obtener el IVA del producto seleccionado
+    function getIva() {
+      const selectedOption = productoSelect.options[productoSelect.selectedIndex];
+      const iva = parseFloat(selectedOption.dataset.iva) || 0;
+      return iva;
+    }
+
+    // Función para actualizar subtotal y total con IVA
+    function actualizarTotales() {
+      const cantidad = parseFloat(cantidadInput.value) || 0;
+      const precio = parseFloat(precioInput.value) || 0;
+      const subtotal = cantidad * precio;
+      const iva = getIva();
+      // Total con IVA = subtotal * (1 + (iva/100))
+      const totalConIva = subtotal * (1 + iva / 100);
+      subtotalField.textContent = subtotal.toFixed(2);
+      totalIvaField.textContent = totalConIva.toFixed(2);
+    }
+
+    // Escuchar cambios en cantidad, precio y el select de producto
+    cantidadInput.addEventListener('input', actualizarTotales);
+    precioInput.addEventListener('input', actualizarTotales);
+    productoSelect.addEventListener('change', actualizarTotales);
+
+    // Actualiza los totales al cargar la página
+    actualizarTotales();
+  });
+});
+</script>
 @endsection

@@ -87,7 +87,7 @@
             {{-- <a href="#" id="edit-btn" class="btn btn-xs" title="Editar Pedido">
               <i class="fas fa-pen fs-xs text-blue"></i>
             </a> --}}
-            <a href="{{ route('distribucion_reparto.edit', ['distribucion_reparto' => $distribucion->id]) }}"
+            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id, 'fecha' => $fecha]) }}"
               class="btn btn-xs" title="Editar Pedido">
               <i class="fas fa-pen fs-xs text-blue"></i>
             </a>

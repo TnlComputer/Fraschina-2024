@@ -1,16 +1,53 @@
-INSERT INTO representacion__aux_productos (
-    id,           -- ID del producto
-    nombre,       -- Nombre del producto
-    is_active,    -- Estado activo (por defecto TRUE)
-    created_at,   -- Fecha y hora de creación
-    updated_at    -- Fecha y hora de última actualización
-)
+INSERT INTO
+    fraschina_2024.representacions (
+        razonsocial,
+        dire_calle,
+        dire_nro,
+        piso,
+        codpost,
+        dire_obs,
+        telefono,
+        fax,
+        cuit,
+        excenciones,
+        iva_id,
+        marcas,
+        info,
+        contacto,
+        horario,
+        objetivos,
+        comentarios,
+        fechagira,
+        correo,
+        dpto,
+        barrio_id,
+        localidad_id,
+        zona_id,
+        municipio_id
+    )
 SELECT
-    Id_Producto AS id,          -- ID del producto en la tabla original
-    Producto AS nombre,         -- Nombre del producto en la tabla original
-    TRUE AS is_active,          -- Asignar TRUE como valor constante para 'is_active'
-    CURRENT_TIMESTAMP AS created_at,  -- Fecha y hora actual para 'created_at'
-    CURRENT_TIMESTAMP AS updated_at   -- Fecha y hora actual para 'updated_at'
-FROM fraschin_backup.clientes
-WHERE 
-    Id_Producto IS NOT NULL;    -- Asegurarse de que 'Id_Producto' no sea nulo
+    RazonSocial,
+    dire_calle,
+    dire_nro,
+    piso,
+    codpos,
+    dire_obs,
+    Telefono,
+    Fax,
+    CUIT,
+    Excenciones,
+    Idiva,
+    NULL AS marcas, -- Asumiendo que esta columna no está en clientes
+    Info,
+    Contacto,
+    Horario,
+    Objetivos,
+    Comentarios,
+    FechaGira,
+    correo,
+    dpto,
+    Idbarrio AS barrio_id,
+    Idlocalidad AS localidad_id,
+    Zona AS zona_id,
+    IdMunicipio AS municipio_id
+FROM fraschin_backup.clientes;

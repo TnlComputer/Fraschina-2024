@@ -51,11 +51,11 @@ return new class extends Migration
       $table->unsignedBigInteger('producto_id')->nullable();
       $table->integer('cantidad')->nullable();
       $table->decimal('precio_unitario', 12, 2)->nullable();
-      $table->decimal('totalÑinea', 12, 2)->nullable();
+      $table->decimal('totalLinea', 12, 2)->nullable();
       $table->string('cambiar', 2)->nullable();
       $table->string('retirar', 2)->nullable();
       $table->string('estado_pedido', 1)->nullable();
-      $table->integer('status')->nullable();     
+      $table->integer('status')->nullable();
       $table->timestamps();
 
       // Claves foráneas
