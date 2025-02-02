@@ -20,7 +20,7 @@ return new class extends Migration
       $table->date('fechaFactura')->nullable();
       $table->string('nroFactura', 20)->nullable();
       $table->decimal('totalFactura', 12, 2)->nullable();
-      $table->date('totalPedido')->nullable();
+      $table->decimal('totalPedido', 12, 2)->nullable();
       $table->string('chofer', 2)->nullable();
       $table->integer('orden')->nullable();
       $table->longText('observaciones')->nullable();

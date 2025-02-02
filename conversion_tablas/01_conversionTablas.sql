@@ -1,4 +1,3 @@
-SET foreign_key_checks = 0;
 INSERT INTO
     fraschina_2024.productos_c_d_a (
         id,
@@ -138,24 +137,7 @@ FROM fraschin_backup.clientesdistribucion
 WHERE
     Idcliente IS NOT NULL;
 
-INSERT INTO
-    distribucion_aux_productos (
-        id, -- ID del producto
-        nombre, -- Nombre del producto
-        is_active, -- Estado activo (por defecto TRUE)
-        created_at, -- Fecha y hora de creación
-        updated_at -- Fecha y hora de última actualización
-    )
-SELECT
-    Id_Producto AS id, -- ID del producto en la tabla original
-    Producto AS nombre, -- Nombre del producto en la tabla original
-    TRUE AS is_active, -- Asignar TRUE como valor constante para 'is_active'
-    CURRENT_TIMESTAMP AS created_at, -- Fecha y hora actual para 'created_at'
-    CURRENT_TIMESTAMP AS updated_at -- Fecha y hora actual para 'updated_at'
-FROM fraschin_backup.auxproductosdist
-WHERE
-    Id_Producto IS NOT NULL;
--- Asegurarse de que 'Id_Producto' no sea nulo
+SET foreign_key_checks = 0;
 
 INSERT INTO
     fraschina_2024.distribucion_productos (
@@ -188,6 +170,116 @@ FROM fraschin_backup.productoporclientedist
 WHERE
     IdProCli IS NOT NULL;
 -- Evitar registros nulos en la clave primaria
+SET foreign_key_checks = 1;
+
+INSERT INTO
+    distribucion_aux_productos (
+        id, -- ID del producto
+        nombre, -- Nombre del producto
+        is_active, -- Estado activo (por defecto TRUE)
+        created_at, -- Fecha y hora de creación
+        updated_at -- Fecha y hora de última actualización
+    )
+SELECT
+    Id_Producto AS id, -- ID del producto en la tabla original
+    Producto AS nombre, -- Nombre del producto en la tabla original
+    TRUE AS is_active, -- Asignar TRUE como valor constante para 'is_active'
+    CURRENT_TIMESTAMP AS created_at, -- Fecha y hora actual para 'created_at'
+    CURRENT_TIMESTAMP AS updated_at -- Fecha y hora actual para 'updated_at'
+FROM fraschin_backup.auxproductosdist
+WHERE
+    Id_Producto IS NOT NULL;
+-- Asegurarse de que 'Id_Producto' no sea nulo
+
+INSERT INTO
+    fraschina_2024.distribucion_agenda (
+        id,
+        fecha,
+        hs,
+        prioridad_id,
+        accion_id,
+        temas,
+        cotizacion,
+        fecCotEnt,
+        fecCot,
+        producto_id,
+        distribucion_id,
+        persona_id,
+        tipoper_id,
+        veraz_id,
+        estado_id,
+        contacto_id,
+        cargo_id,
+        barrio_id,
+        municipio_id,
+        localidad_id,
+        zona_id,
+        rubro_id,
+        tamanio_id,
+        modo_id,
+        pedido_id,
+        estadoPedido,
+        status,
+        created_at,
+        updated_at
+    )
+SELECT
+    id_CDAg AS id,
+    fecha_CDAg AS fecha,
+    hora_CDAg AS hs,
+    idPrio AS prioridad_id,
+    idAccion AS accion_id,
+    temas_CDAg AS temas,
+    cotiz_CDAg AS cotizacion,
+    fecCotEnt_CDAg AS fecCotEnt,
+    fecCot_CDAg AS fecCot,
+    CASE
+        WHEN idProductoCDA IN (
+            SELECT id
+            FROM fraschina_2024.productos_c_d_a
+        ) THEN idProductoCDA
+        ELSE NULL
+    END AS producto_id,
+    Idcliente AS distribucion_id,
+    NULLIF(id_persCD, '') AS persona_id,
+    id_tipoper AS tipoper_id,
+    idVeraz AS veraz_id,
+    idEstado AS estado_id,
+    idContInit AS contacto_id,
+    NULLIF(idCargo, '') AS cargo_id,
+    idBarrio AS barrio_id,
+    idCiudad AS municipio_id,
+    idLocalidad AS localidad_id,
+    idZona AS zona_id,
+    idRubro AS rubro_id,
+    idTamano AS tamanio_id,
+    idModo AS modo_id,
+    CASE
+        WHEN pedidosID IN (
+            SELECT id
+            FROM fraschina_2024.distribucion_nropedidos
+        ) THEN pedidosID
+        ELSE NULL
+    END AS pedido_id,
+    estadoPed AS estadoPedido,
+    'A' AS status,
+    CURRENT_TIMESTAMP AS created_at,
+    CURRENT_TIMESTAMP AS updated_at
+FROM fraschin_backup.CDagenda
+WHERE
+    id_CDAg IS NOT NULL
+    AND Idcliente IN (
+        SELECT id
+        FROM fraschina_2024.distribucions
+    )
+    AND NULLIF(id_persCD, '') IN (
+        SELECT id
+        FROM fraschina_2024.distribucion_personal
+    )
+    AND NULLIF(idContInit, '') IN (
+        SELECT id
+        FROM fraschina_2024.auxcontacto
+    );
 
 INSERT INTO
     fraschina_2024.distribucion_tareas (
@@ -255,8 +347,128 @@ FROM fraschin_backup.personalclientesdist
 WHERE
     Ipersona IS NOT NULL;
 
+INSERT INTO
+    fraschina_2024.distribucion_nropedidos (
+        id,
+        tipo,
+        distribucion_id,
+        fecha,
+        fechaEntrega,
+        observaciones,
+        status,
+        created_at,
+        updated_at
+    )
+SELECT
+    np.id_NroPed AS id,
+    'D' AS tipo,
+    np.cliente AS distribucion_id,
+    -- Convertir fechaPed a NULL si es inválida
+    IFNULL(np.fechaPed, NULL) AS fecha,
+    -- Convertir fechaEnt a NULL si es inválida
+    IFNULL(np.fechaEnt, NULL) AS fechaEntrega,
+    np.obsPed AS observaciones,
+    'A' AS status,
+    CURRENT_TIMESTAMP AS created_at,
+    CURRENT_TIMESTAMP AS updated_at
+FROM fraschin_backup.nropedidos np
+WHERE
+    np.cliente IN (
+        SELECT id
+        FROM fraschina_2024.distribucions
+    )
+    AND (
+        -- Aseguramos que al menos una de las fechas sea válida
+        np.fechaPed IS NOT NULL
+        OR np.fechaEnt IS NOT NULL
+    )
+ON DUPLICATE KEY UPDATE
+    tipo = VALUES(tipo),
+    distribucion_id = VALUES(distribucion_id),
+    fecha = VALUES(fecha),
+    fechaEntrega = VALUES(fechaEntrega),
+    observaciones = VALUES(observaciones),
+    status = VALUES(status),
+    created_at = VALUES(created_at),
+    updated_at = VALUES(updated_at);
 
+INSERT INTO
+    fraschina_2024.distribucion_linea_pedidos (
+        pedido_id,
+        distribucion_id,
+        fecha,
+        fechaEntrega,
+        linea,
+        producto_id,
+        cantidad,
+        precio_unitario,
+        totalLinea,
+        cambiar,
+        retirar,
+        estado_pedido,
+        status,
+        created_at,
+        updated_at
+    )
+SELECT
+    CAST(lp.nroPed AS UNSIGNED), -- Convertir nroPed a número
+    lp.idCliente, -- ID del cliente como distribucion_id
+    lp.fechaPed,
+    lp.fecEntrega,
+    lp.linea,
+    lp.producto_id,
+    CAST(
+        NULLIF(TRIM(lp.cantidad), '') AS UNSIGNED
+    ), -- Evitar valores vacíos en cantidad
+    CASE
+        WHEN lp.preunit IS NOT NULL
+        AND lp.preunit != '' THEN CAST(
+            REPLACE (lp.preunit, ',', '.') AS DECIMAL(12, 2)
+        ) -- Reemplazar coma por punto y convertir
+        ELSE 0
+    END, -- Convertir solo si tiene un valor válido, de lo contrario poner 0
+    lp.totalPedidoN, -- Total de la línea del pedido
+    lp.cambiar,
+    lp.retirar,
+    CAST(lp.estado_Ped AS CHAR(1)), -- Convertir estado a string
+    1, -- Definir un estado por defecto (1 para activo)
+    NOW(),
+    NOW()
+FROM fraschin_backup.lineapedidos AS lp
+WHERE
+    CAST(lp.nroPed AS UNSIGNED) IN (
+        SELECT id
+        FROM fraschina_2024.distribucion_nropedidos
+    );
 
+INSERT INTO
+    fraschina_2024.distribucion_linea_tareas (
+        pedido_id,
+        distribucion_id,
+        fecha,
+        fechaEntrega,
+        linea,
+        tarea_id,
+        detalles,
+        estado_pedido,
+        status,
+        created_at,
+        updated_at
+    )
+SELECT CAST(lt.nroPed AS UNSIGNED), -- Convertir nroPed a número
+    lt.idCliente, -- ID del cliente como distribucion_id
+    lt.fechaPed, lt.fecEntrega, lt.linea, lt.tarea_id, lt.detalles, CAST(
+        lt.estado_Ped AS DECIMAL(1, 0)
+    ), -- Convertir estado
+    'A', -- Siempre asignamos 'A' como status
+    NOW(), NOW()
+FROM fraschin_backup.lineatareas AS lt
+WHERE
+    CAST(lt.nroPed AS UNSIGNED) IN (
+        SELECT id
+        FROM fraschina_2024.distribucion_nropedidos
+    );
+    
 
 
 INSERT INTO

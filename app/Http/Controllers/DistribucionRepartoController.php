@@ -35,20 +35,6 @@ class DistribucionRepartoController extends Controller
       ->orderBy('id', 'asc')
       ->paginate(20);
 
-    // $distribuciones = DistribucionNroPedidos::with([
-    //   'lineasPedidos' => function ($query) {
-    //     $query->where('linea', 1);
-    //   },
-    //   'lineasTareas',
-    //   'distribucion'
-    // ])
-    // ->where('status', 'A')
-    // ->whereDate('fechaEntrega', '=', $fecha)
-    // ->orderBy('orden', 'asc')
-    // ->orderBy('fechaEntrega', 'desc')
-    // ->orderBy('id', 'asc')
-    // ->paginate(20);
-
     // Ordenar las relaciones 'lineasPedidos' en memoria
     $distribuciones->getCollection()->transform(function ($distribucion) {
       $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
@@ -95,21 +81,6 @@ class DistribucionRepartoController extends Controller
 
     // Pasar datos a la vista
     return view('pages.Distribucion.Reparto.pedido', compact('pedido'));
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
-  { {
-      $pedido = DistribucionNroPedidos::with('lineasPedidos.producto')->findOrFail($id);
-      // dd($id, $pedido);
-      $productos = DistribucionProducto::with('producto')  // 'producto' es la relación que deberías definir en el modelo DistribucionProducto
-        ->where('distribucion_id', $pedido->distribucion_id)
-        ->get();
-
-      return view('pages.Distribucion.Pedido.edit', compact('pedido', 'productos'));
-    }
   }
 
   /**
@@ -170,7 +141,7 @@ class DistribucionRepartoController extends Controller
   public function imprimirRecibo($id)
   {
     // Obtener el pedido principal con datos relacionados
-    $pedido = DB::table('distribucion_nropedidon as dn')
+    $pedido = DB::table('distribucion_nropedidos as dn')
       ->join('distribucions as d', 'dn.distribucion_id', '=', 'd.id')
       ->join('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
       ->select(
@@ -235,9 +206,6 @@ class DistribucionRepartoController extends Controller
       $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
     });
 
-    // dd($distribuciones, $fecha);
-    // dd($distribuciones->all());
-
     try {
       // Configuración de Dompdf
       $options = new Options();
@@ -274,20 +242,12 @@ class DistribucionRepartoController extends Controller
       'distribucion'
     ])
       ->where('status', 'A')
-      ->where('tipo', 'P')
+      ->whereIn('tipo', ['P', 'PT']) // Permite ambos valores
       ->whereDate('fechaEntrega', '=', $fecha)
       ->orderBy('orden', 'asc')
       ->orderBy('fechaEntrega', 'desc')
       ->orderBy('id', 'asc')
       ->get();
-
-    // Ordenar la colección de lineasPedidos por la columna 'linea'
-    // $distribuciones->each(function ($distribucion) {
-    //   $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
-    // });
-
-    // dd($distribuciones, $fecha);
-    //  dd($distribuciones->all());
 
     try {
       // Configuración de Dompdf
