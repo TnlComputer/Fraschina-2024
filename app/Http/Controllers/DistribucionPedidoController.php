@@ -17,56 +17,122 @@ class DistribucionPedidoController extends Controller
   {
     $clientes = Distribucion::all();
     $distribuciones = Distribucion::orderBy('nomfantasia')->get();
-
-    return view('pages.Distribucion.Pedido.create', compact('clientes', 'distribuciones'));
+    $productos = DistribucionProducto::with('producto')->orderBy('producto_id')->get();
+    return view('pages.Distribucion.Pedido.create', compact('clientes', 'distribuciones', 'productos'));
   }
+
+  // public function store(Request $request)
+  // {
+
+  //   // dd($request);
+
+  //   // Validación de los datos recibidos
+  //   $validated = $request->validate([
+  //     'cliente_id' => 'required|exists:distribucions,id',
+  //     'fecha_entrega' => 'required|date',
+  //     'productos' => 'required|array',
+  //     'tipos' => 'required|array',
+  //     'cantidades' => 'required|array',
+  //     'precios' => 'required|array',
+  //     'observaciones' => 'nullable|string',
+  //   ]);
+
+  //   // dd($validated);
+
+  //   // Variables principales
+  //   $clienteId = $request->cliente_id;
+  //   $fechaPedido = now()->toDateString();
+  //   $fechaEntrega = $request->fecha_entrega;
+  //   $observaciones = $request->observaciones ?? null;
+  //   $tipos = $request->tipos;
+  //   $productos = $request->productos;
+  //   $cantidades = $request->cantidades ?? [];
+  //   $precioUnitario = $request->precios ?? [];
+
+  //   // Determinar el tipo de pedido (P, T o PT)
+  //   $tipoPedido = (in_array('P', $tipos) && in_array('T', $tipos)) ? 'PT' : (in_array('P', $tipos) ? 'P' : 'T');
+
+  //   // dd($tipoPedido);
+
+  //   // **1. Crear el registro en DistribucionNroPedidos**
+  //   $pedido = new DistribucionNroPedidos();
+  //   $pedido->fecha = $fechaPedido;
+  //   $pedido->fechaEntrega = $fechaEntrega;
+  //   $pedido->distribucion_id = $clienteId;
+  //   $pedido->observaciones = $observaciones;
+  //   $pedido->status = 'A';
+  //   $pedido->tipo = $tipoPedido;
+  //   $pedido->save();
+
+  //   // **2. Crear las líneas en DistribucionLineaPedidos**
+  //   $lineaNumeroP = 1;  // Control del número de línea
+  //   $lineaNumeroT = 1;  // Control del número de línea
+
+  //   foreach ($productos as $index => $productoId) {
+  //     $tipo = $tipos[$index];
+
+  //     if (
+  //       $tipo === 'P' || $tipo === 'PT'
+  //     ) {
+  //       dd($productos);
+
+  //       // **Obtener precio unitario del producto**
+  //       $producto = DistribucionProducto::firstWhere([
+  //         ['producto_id', '=', $productoId],
+  //         ['distribucion_id', '=', $clienteId]
+  //       ]);
+  //       // $precioUnitario = $producto->precio ?? 0;
+  //       $cantidad = $cantidades[$index];
+  //       $precioUnitario = $precios[$index];
+  //       $totalLinea = $precioUnitario * $cantidad;
+
+  //       dd($producto, $cantidad, $precioUnitario, $productoId);
+
+  //       // **Insertar en DistribucionLineaPedidos**
+  //       DistribucionLineaPedidos::create([
+  //         'pedido_id' => $pedido->id,
+  //         'distribucion_id' => $clienteId,
+  //         'fecha' => $fechaPedido,
+  //         'fechaEntrega' => $fechaEntrega,
+  //         'linea' => $lineaNumeroP++,
+  //         'producto_id' => $productoId,
+  //         'cantidad' => $cantidad,
+  //         'precio_unitario' => $precio_unitario,
+  //         'totalLinea' => $totalLinea,
+  //         'status' => 1,
+  //       ]);
+  //     }
+
+  //     if ($tipo === 'T' || $tipo === 'PT') {
+  //       // **Insertar en DistribucionLineaTareas**
+  //       DistribucionLineaTareas::create([
+  //         'pedido_id' => $pedido->id,
+  //         'distribucion_id' => $clienteId,
+  //         'fecha' => $fechaPedido,
+  //         'fechaEntrega' => $fechaEntrega,
+  //         'linea' => $lineaNumeroT++,
+  //         'tarea_id' => $productoId, // En este caso, producto_id representa una tarea
+  //         'status' => 'A',
+  //       ]);
+  //     }
+  //   }
+
+  //   // **Redirección con mensaje de éxito**
+  //   return redirect()->route('distribucion_agenda.index')->with('success', 'Pedido creado correctamente');
+  // }
 
   public function store(Request $request)
   {
-
-    // dd($request->all());
-
-    // Crear el pedido
-    // $pedido = DistribucionNroPedidos::create([
-    //   'cliente_id' => $request->cliente_id,
-    // ]);
-
-    // dd($request->all, $pedido);
-
-    // // Guardar productos en DistribucionProductos
-    // if ($request->has('productos')) {
-    //   foreach ($request->productos as $index => $producto_id) {
-    //     DistribucionProducto::create([
-    //       'distribucion_id' => $pedido->id, // Relación con pedido
-    //       'producto_id' => $producto_id,
-    //       'cantidad' => $request->cantidades[$index],
-    //     ]);
-    //   }
-    // }
-
-    // // Guardar tareas si existen
-    // if ($request->has('tareas')) {
-    //   foreach ($request->tareas as $descripcion) {
-    //     DistribucionTareas::create([
-    //       'pedido_id' => $pedido->id,
-    //       'descripcion' => $descripcion,
-    //     ]);
-    //   }
-    // }
-
-    // return redirect()->route('distribucion_agenda.index')->with('success', 'Pedido creado con éxito');
-
-    // Validación de los datos recibidos
     $validated = $request->validate([
       'cliente_id' => 'required|exists:distribucions,id',
       'fecha_entrega' => 'required|date',
       'productos' => 'required|array',
       'tipos' => 'required|array',
-      'cantidades' => 'nullable|array',
+      'cantidades' => 'required|array',
+      'precios' => 'required|array',
       'observaciones' => 'nullable|string',
     ]);
 
-    // Variables principales
     $clienteId = $request->cliente_id;
     $fechaPedido = now()->toDateString();
     $fechaEntrega = $request->fecha_entrega;
@@ -74,11 +140,14 @@ class DistribucionPedidoController extends Controller
     $tipos = $request->tipos;
     $productos = $request->productos;
     $cantidades = $request->cantidades ?? [];
+    $precios = $request->precios ?? [];
 
-    // Determinar el tipo de pedido (P, T o PT)
     $tipoPedido = (in_array('P', $tipos) && in_array('T', $tipos)) ? 'PT' : (in_array('P', $tipos) ? 'P' : 'T');
 
-    // **1. Crear el registro en DistribucionNroPedidos**
+    // Inicializar el total del pedido
+    $totalPedido = 0;
+
+    // Crear el pedido
     $pedido = new DistribucionNroPedidos();
     $pedido->fecha = $fechaPedido;
     $pedido->fechaEntrega = $fechaEntrega;
@@ -86,62 +155,33 @@ class DistribucionPedidoController extends Controller
     $pedido->observaciones = $observaciones;
     $pedido->status = 'A';
     $pedido->tipo = $tipoPedido;
+    $pedido->totalPedido = 0; // Se actualizará después
     $pedido->save();
 
-    // **2. Crear las líneas en DistribucionLineaPedidos**
-    $lineaNumeroP = 1;  // Control del número de línea
-    $lineaNumeroT = 1;  // Control del número de línea
-
-    // foreach ($productos as $index => $productoId) {
-    //   $tipo = $tipos[$index];
-
-    //   if ($tipo === 'P' ) {
-    //     // **Obtener precio unitario del producto**
-    //     $producto = productoCDA::find($productoId);
-    //     $precioUnitario = $producto->precio ?? 0; // Asigna 0 si el precio no está definido
-    //     $cantidad = $cantidades[$index] ?? 1; // Evita errores si no se pasa cantidad
-    //     $totalLinea = $precioUnitario * $cantidad;
-
-    //     // **Insertar la línea en DistribucionLineaPedidos**
-    //     DistribucionLineaPedidos::create([
-    //       'pedido_id' => $pedido->id,
-    //       'distribucion_id' => $clienteId,
-    //       'fecha' => $fechaPedido,
-    //       'fechaEntrega' => $fechaEntrega,
-    //       'linea' => $lineaNumeroP++,
-    //       'producto_id' => $productoId,
-    //       'cantidad' => $cantidad,
-    //       'precio_unitario' => $precioUnitario,
-    //       'totalLinea' => $totalLinea,
-    //       'status' => 1,
-    //     ]);
-    //   } elseif ($tipo === 'T' ) {
-    //     // **Insertar la línea de la tarea**
-    //     DistribucionLineaTareas::create([
-    //       'pedido_id' => $pedido->id,
-    //       'distribucion_id' => $clienteId,
-    //       'fecha' => $fechaPedido,
-    //       'fechaEntrega' => $fechaEntrega,
-    //       'linea' => $lineaNumeroT++,
-    //       'tarea_id' => $productoId, // En este caso, producto_id representa una tarea
-    //       'status' => 'A',
-    //     ]);
-    //   }
-    // }
+    $lineaNumeroP = 1;
+    $lineaNumeroT = 1;
 
     foreach ($productos as $index => $productoId) {
       $tipo = $tipos[$index];
 
-      if (
-        $tipo === 'P' || $tipo === 'PT'
-      ) {
-        // **Obtener precio unitario del producto**
-        $producto = productoCDA::find($productoId);
-        $precioUnitario = $producto->precio ?? 0;
+      if ($tipo === 'P' || $tipo === 'PT') {
+        // Obtener producto
+        $producto = DistribucionProducto::where('producto_id', $productoId)
+          ->where('distribucion_id', $clienteId)
+          ->first();
+
+        if (!$producto) {
+          return back()->withErrors(['error' => "El producto con ID $productoId no se encuentra en la distribución."]);
+        }
+
         $cantidad = $cantidades[$index] ?? 1;
+        $precioUnitario = $precios[$index] ?? $producto->precio ?? 0;
         $totalLinea = $precioUnitario * $cantidad;
 
-        // **Insertar en DistribucionLineaPedidos**
+        // Acumular el total del pedido
+        $totalPedido += $totalLinea;
+
+        // Insertar en DistribucionLineaPedidos
         DistribucionLineaPedidos::create([
           'pedido_id' => $pedido->id,
           'distribucion_id' => $clienteId,
@@ -157,21 +197,22 @@ class DistribucionPedidoController extends Controller
       }
 
       if ($tipo === 'T' || $tipo === 'PT') {
-        // **Insertar en DistribucionLineaTareas**
+        // Insertar en DistribucionLineaTareas
         DistribucionLineaTareas::create([
           'pedido_id' => $pedido->id,
           'distribucion_id' => $clienteId,
           'fecha' => $fechaPedido,
           'fechaEntrega' => $fechaEntrega,
           'linea' => $lineaNumeroT++,
-          'tarea_id' => $productoId, // En este caso, producto_id representa una tarea
+          'tarea_id' => $productoId,
           'status' => 'A',
         ]);
       }
     }
 
+    // Actualizar el totalPedidos en el pedido
+    $pedido->update(['totalPedido' => $totalPedido]);
 
-    // **Redirección con mensaje de éxito**
     return redirect()->route('distribucion_agenda.index')->with('success', 'Pedido creado correctamente');
   }
 
@@ -180,12 +221,11 @@ class DistribucionPedidoController extends Controller
     // Cargar productos del cliente
     $productos = DistribucionProducto::where('distribucion_id', $clienteId)
       ->join('productos_c_d_a', 'distribucion_productos.producto_id', '=', 'productos_c_d_a.id')
-      ->select('productos_c_d_a.id', 'productos_c_d_a.productoCDA as nombre')
+      ->select('productos_c_d_a.id', 'productos_c_d_a.productoCDA as nombre', 'distribucion_productos.precio')
       ->get();
 
     // Cargar tareas del cliente
-    $tareas = DistribucionTareas::all()
-      ->select('id', 'tarea'); // Asegúrate de que 'descripcion' es el campo correcto
+    $tareas = DistribucionTareas::all()->select('id', 'tarea'); // Asegúrate de que 'descripcion' es el campo correcto
 
     // dd($productos, $tareas);
 
@@ -263,6 +303,19 @@ class DistribucionPedidoController extends Controller
           // dd($linea->totalLinea);
 
           $linea->save();
+
+          if ($distribucionProducto) {
+            // Actualizar el precio si se envía en la petición
+            if (isset($lineaData['precio_unitario'])) {
+              $distribucionProducto->precio = $lineaData['precio_unitario'];
+            }
+            // Actualizar la fecha de última entrega si se envía en la petición
+            // Suponemos que en $lineaData se envía 'fecEntrega'
+            if (isset($lineaData['fecEntrega'])) {
+              $distribucionProducto->fechaUEnt = $lineaData['fecEntrega'];
+            }
+            $distribucionProducto->save();
+          }
         }
       }
     }

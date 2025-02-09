@@ -177,18 +177,20 @@
                 <th class=" text-center">Fecha Entrega</th>
                 <th class=" text-center">Cantidad</th>
                 <th>Producto</th>
-                <th>Precio Unit</th>
+                <th class=" text-right">Precio Unit</th>
+                <th class=" text-right">Total</th>
               </tr>
             </thead>
             <tbody>
-              @foreach($agenda->distribucion->distribucionLineaPedidos->sortByDesc('fecha')->take(3) as $pedido)
+              @foreach($agenda->distribucion->distribucionLineaPedidos->sortByDesc('fecha')->take(7) as $pedido)
               <tr>
-                <td class=" text-center">{{ $pedido->pedido_nro }}</td>
+                <td class=" text-center">{{ $pedido->pedido_id }}</td>
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ $pedido->cantidad }}</td>
-                <td>{{ $pedido->nombre_producto }}</td>
-                <td>${{ $pedido->precio_unitario }}</td>
+                <td>{{ $pedido->producto->productoCDA }}</td>
+                <td class=" text-right">${{ $pedido->precio_unitario }}</td>
+                <td class=" text-right">${{ $pedido->totalLinea }}</td>
               </tr>
               @endforeach
             </tbody>

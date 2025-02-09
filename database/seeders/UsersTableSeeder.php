@@ -25,7 +25,7 @@ class UsersTableSeeder extends Seeder
       [
         'name' => 'Luciano',
         'email' => 'lucho_frasch@hotmail.com',
-        'password' => 'vwgol',
+        'password' => 'vwgol00@',
         'permiso' => '9',
         'role' => 'gerencia',
         'permissions' => ['permiso_13', 'permiso_12', 'permiso_11', 'permiso_9', 'permiso_8', 'permiso_7', 'permiso_6', 'permiso_5', 'permiso_4', 'permiso_3', 'permiso_2', 'permiso_1'],
@@ -49,7 +49,7 @@ class UsersTableSeeder extends Seeder
       [
         'name' => 'Fito',
         'email' => 'fito@fraschina.com.ar',
-        'password' => 'tofi47',
+        'password' => 'tofi47A7',
         'permiso' => '7',
         'role' => 'administracion',
         'permissions' => ['permiso_12', 'permiso_11', 'permiso_8', 'permiso_5', 'permiso_3', 'permiso_2', 'permiso_1'],

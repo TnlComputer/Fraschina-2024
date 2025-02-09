@@ -105,10 +105,10 @@
     CONTROL RECAUDACIÓN : {{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}
     {{-- <span style="float: right;">Página 1/1</span> --}}
   </div>
-  <table style="width: 376px; margin-left: 328px;">
+  <table style="width: 378px; margin-left: 325px;">
     <thead>
       <tr>
-        <th style="width: 168px">Facturas del Día</th>
+        <th style="width: 174px">Facturas del Día</th>
         <th style="width: 122px">Cobrado en el Día</th>
       </tr>
     </thead>

@@ -31,7 +31,11 @@
     <label for="name">Nombre del Permiso</label>
     <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
   </div>
-
+<div class="form-group">
+    <label for="description">Descripción del Permiso</label>
+    <input type="text" name="description" id="description" class="form-control"
+      value="{{ old('description') }}" required>
+  </div>
   @if ($errors->any())
   <div class="alert alert-danger">
     <ul>
