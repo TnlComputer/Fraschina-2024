@@ -3,6 +3,7 @@
 @section('title', 'Distribución')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <div class="container">
   <h1>Distribución Reparto</h1>
 
@@ -21,9 +22,16 @@
         Reparto
       </a>
     </div> <!-- Botón Control Impresion -->
-    <div>
+    {{-- <div>
       <a href="{{ route('distribucion_reparto.imprimirControl', ['fecha' => $fecha]) }}" title="Impresi´on Control"
         target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i> Control
+      </a>
+    </div> --}}
+    <div>
+      <a href="#"
+        onclick="verificarDatos(event, '{{ route('distribucion_reparto.imprimirControl', ['fecha' => $fecha]) }}')"
+        title="Impresión Control" class="btn btn-secondary">
+        <i class="fas fa-print"></i> Control
       </a>
     </div>
     <!-- Formulario y Botones de Cambio de Fecha a la derecha -->
@@ -53,22 +61,23 @@
         <th><i class="fas fa-print"></i></th>
         <th class="text-center">Chofer</th>
         <th class="text-center">Orden</th>
-        {{-- <th>Linea</th> --}}
         <th>Pedido</th>
+        <th>PT</th>
         <th>Nombre Fantasia</th>
         <th>Razón Social</th>
       </tr>
     </thead>
     <tbody class="text-xs bold">
       @foreach ($distribuciones as $distribucion)
+      @if ($distribucion->tipo == 'P' || $distribucion->tipo == 'PT')
       <form method="POST" action="{{ route('distribucion_reparto.update', $distribucion->id) }}"
         id="distribucion-form-{{ $distribucion->id }}">
         @csrf
         @method('PUT')
         <input type="hidden" name="fecha" value="{{ $fecha }}">
-        @foreach ($distribucion->lineasPedidos as $lineaPedido)
+        {{-- @foreach ($distribucion->lineasPedidos as $lineaPedido) --}}
         <tr>
-          @if ($lineaPedido->linea == 1)
+          {{-- @if ($lineaPedido->linea == 1) --}}
           <td class=" text-center">{{ $distribucion->fechaEntrega }}</td>
           <td>
             <a href="{{ route('distribucion_reparto.imprimirRecibo', ['id' => $distribucion->id]) }}"
@@ -98,21 +107,28 @@
             </button>
           </td>
           <td class="text-center">
-            <input type="date" name="fechaFactura" value="{{ $distribucion->fechaFactura }}" class="text-center text-xs"
-              style="width: 100px;" />
+            <input type="date" name="fechaFactura" value="{{ $distribucion->fechaFactura }}"
+              class="text-center text-xs factura-fecha" data-label="Fecha Factura" style="width: 100px;" />
           </td>
           <td class="text-center">
-            <input type="text" name="nroFactura" value="{{ $distribucion->nroFactura }}" class=" text-center text-xs"
-              style="width: 60px;" />
+            <input type="text" name="nroFactura" value="{{ $distribucion->nroFactura }}"
+              class=" text-center text-xs factura-nro" data-label="Nro. Factura" style="width: 60px;" />
           </td>
           <td class="text-center">
-            @if ($distribucion->totalFactura != $distribucion->totalPedido)
+            @php
+            $dif = abs($distribucion->totalFactura - $distribucion->totalPedido);
+            @endphp
+
+            @if ($dif > 0.01)
             <input type="number" name="totalFactura" value="{{ $distribucion->totalFactura }}"
-              title="${{ number_format($distribucion->totalFactura - $distribucion->totalPedido, 2) }}" class="text-center
-            text-xs bg-red" step="0.01" style="width: 90px;" />
+              title="$ {{ number_format($distribucion->totalFactura - $distribucion->totalPedido, 2) }}"
+              class="text-center text-xs bg-red factura-importe" data-label="Importe Factura" step="0.01"
+              style="width: 90px;" />
             @else
             <input type="number" name="totalFactura" value="{{ $distribucion->totalFactura }}"
-              class="text-center text-xs" step="0.01" style="width: 90px;" />
+              title="$ {{ number_format($distribucion->totalFactura - $distribucion->totalPedido, 2) }}"
+              class="text-center text-xs factura-importe" data-label="Importe de Factura" step="0.01"
+              style="width: 90px;" />
             @endif
           </td>
           <td class="{{ $distribucion->distribucion->fac_imp ? 'bg-yellow-300' : '' }}">
@@ -134,7 +150,7 @@
           <td colspan="11"></td>
           @endif
           <td>{{ $distribucion->id }}</td>
-
+          <td>{{ $distribucion->tipo }}</td>
           <!-- En la vista donde quieres mostrar el modal -->
           <td>
             <button type="button" class="btn btn-xs" data-toggle="modal"
@@ -183,6 +199,7 @@
         </tr>
         @endforeach
 
+        {{-- @if ($distribucion->tipo == 'T')
         @foreach ($distribucion->lineasTareas as $lineaTarea)
         <tr>
           <td class="text-center text-xs">{{ $distribucion->fechaEntrega }}</td>
@@ -200,9 +217,8 @@
             <input type="number" name="orden" value="{{ $distribucion->orden }}" class="text-center text-xs"
               style="width: 40px;" min="0" step="1" />
           </td>
-          {{-- <td>{{ $lineaTarea->linea }}</td> --}}
           <td>{{ $distribucion->id }}</td>
-          <!-- En la vista donde quieres mostrar el modal -->
+          <td>T</td>
           <td>
             <button type="button" class="btn btn-xs" data-toggle="modal"
               data-target="#infoModal_{{ $distribucion->id }}">
@@ -210,7 +226,6 @@
             </button>
           </td>
 
-          <!-- Modal para mostrar la información del pedido -->
           <div class="modal fade" id="infoModal_{{ $distribucion->id }}" tabindex="-1" role="dialog"
             aria-labelledby="infoModalLabel_{{ $distribucion->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -240,7 +255,6 @@
                   <strong>Tarea:</strong><br>
                   {{ $lineaTarea->tarea->tarea ?? 'Sin tarea' }}<br>
                 </div>
-                <!-- Pie del Modal -->
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
@@ -250,8 +264,10 @@
           <td>{{ $distribucion->distribucion->razonsocial }}</td>
         </tr>
         @endforeach
+        @endif --}}
       </form>
-      @endforeach
+      {{-- @endif
+      @endforeach --}}
     </tbody>
   </table>
 
@@ -310,6 +326,41 @@
   posteriorBtn.addEventListener('click', () => {
   actualizarFecha(1);
   });
+
+function verificarDatos(event, url) {
+  event.preventDefault(); // Evita que el enlace se abra directamente
+
+  let faltanDatos = false;
+  let mensaje = "Faltan los siguientes datos:\n\n";
+
+  document.querySelectorAll(".factura-fecha, .factura-nro, .factura-importe").forEach(input => {
+    if (input.value.trim() === "") {
+      faltanDatos = true;
+      mensaje += `- ${input.getAttribute("data-label")}\n`;
+    }
+  });
+
+  if (faltanDatos) {
+    mensaje += "\n"; // Agregar una línea en blanco después de la lista de datos faltantes
+
+    Swal.fire({
+      title: "¡Atención!",
+      text: mensaje,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Continuar de todos modos",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(url, "_blank"); // Si el usuario confirma, abrir la impresión
+      }
+    });
+  } else {
+    window.open(url, "_blank"); // Si todo está completo, abrir directamente
+  }
+}
+
+
 
 // Enviar formulario solo cuando se hace clic en "Actualizar Distribución"
   actualizarBtn.addEventListener('click', function() {

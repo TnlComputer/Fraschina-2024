@@ -43,13 +43,17 @@
         <option value="T">Tarea</option>
       </select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <label for="producto_id">Producto/Tarea:</label>
       <select id="producto_id" class="form-control">
         <option value="">Seleccione</option>
       </select>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
+      <label for="precio">Precio:</label>
+      <input type="number" id="precio" class="form-control" placeholder="Precio">
+    </div>
+    <div class="col-md-2">
       <label for="cantidad">Cantidad:</label>
       <input type="number" id="cantidad" class="form-control" placeholder="Cantidad">
     </div>
@@ -65,6 +69,7 @@
       <tr>
         <th>Tipo</th>
         <th>Descripción</th>
+        <th>Precio</th>
         <th>Cantidad</th>
         <th>Acción</th>
       </tr>
@@ -83,17 +88,15 @@
   <button type="submit" class="btn btn-primary">Guardar Pedido</button>
 </form>
 
-<script>
+{{-- <script>
   let productosDisponibles = [];
   let tareasDisponibles = [];
 
-  // Cargar productos y tareas cuando se selecciona el cliente
   document.getElementById('cliente_id').addEventListener('change', async function() {
     let clienteId = this.value;
     if (!clienteId) return;
 
     try {
-      // Cargar productos y tareas del cliente
       let response = await fetch(`/productos-y-tareas-por-cliente/${clienteId}`);
       let data = await response.json();
       
@@ -106,114 +109,187 @@
     }
   });
 
-  // Cambiar opciones del select según tipo (Producto o Tarea)
-  document.getElementById('tipo').addEventListener('change', function() {
-    let tipo = this.value;
-
-    // Mostrar o ocultar el campo de cantidad
-    if (tipo === 'T') {
-      document.getElementById('cantidad').style.display = 'none';  // Ocultar cantidad para tareas
-    } else {
-      document.getElementById('cantidad').style.display = 'block'; // Mostrar cantidad para productos
-    }
-
-    actualizarSelectProductos();
-  });
+  document.getElementById('tipo').addEventListener('change', actualizarSelectProductos);
 
   function actualizarSelectProductos() {
     let tipo = document.getElementById('tipo').value;
     let select = document.getElementById('producto_id');
     select.innerHTML = '<option value="">Seleccione</option>';
 
-    if (tipo === 'P') {
-      // Mostrar productos
-      productosDisponibles.forEach(p => {
-        select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-      });
-    } else if (tipo === 'T') {
-      // Mostrar tareas
-      tareasDisponibles.forEach(t => {
-        select.innerHTML += `<option value="${t.id}">${t.tarea}</option>`;
-      });
-    }
+    let lista = tipo === 'P' ? productosDisponibles : tareasDisponibles;
+    console.log(lista);
+    lista.forEach(item => {
+      console.log("Agregando producto/tarea:", item);
+        select.innerHTML += `<option value="${item.id}" data-precio="${item.precio || 0}">${item.nombre}</option>`;
+    });
   }
 
-  // Agregar producto o tarea a la tabla
-  // document.getElementById('add-item').addEventListener('click', function () {
+  document.getElementById('producto_id').addEventListener('change', function() {
+    let selectedOption = this.options[this.selectedIndex];
+    document.getElementById('precio').value = selectedOption.dataset.precio || '';
+  });
+
+document.getElementById('add-item').addEventListener('click', function () {
+let tipo = document.getElementById('tipo').value;
+let productoSelect = document.getElementById('producto_id');
+let productoId = productoSelect.value;
+let productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+let cantidad = document.getElementById('cantidad').value;
+let precio = document.getElementById('precio').value;
+
+if (!productoId) {
+alert("Seleccione un producto/tarea.");
+return;
+}
+
+if (tipo === 'P' && (!cantidad || !precio)) {
+alert("Especifique la cantidad y precio para el producto.");
+return;
+}
+
+let tableBody = document.getElementById('pedido-detalle');
+let newRow = document.createElement('tr');
+
+newRow.innerHTML = `
+<td>${tipo === 'P' ? 'Producto' : 'Tarea'}</td>
+<td>${productoNombre}
+  <input type="hidden" name="productos[]" value="${productoId}">
+  <input type="hidden" name="tipos[]" value="${tipo}">
+</td>
+<td>${precio} <input type="hidden" name="precios[]" value="${precio}"></td>
+<td>${tipo === 'P' ? cantidad : ''} <input type="hidden" name="cantidades[]" value="${tipo === 'P' ? cantidad : ''}">
+</td>
+<td><button type="button" class="btn btn-danger remove-item">X</button></td>
+`;
+
+tableBody.appendChild(newRow);
+
+// Limpiar inputs
+document.getElementById('cantidad').value = "";
+document.getElementById('precio').value = "";
+});
+</script> --}}
+
+<script>
+  let productosDisponibles = [];
+  let tareasDisponibles = [];
+
+  document.getElementById('cliente_id').addEventListener('change', async function() {
+    let clienteId = this.value;
+    if (!clienteId) return;
+
+    try {
+      let response = await fetch(`/productos-y-tareas-por-cliente/${clienteId}`);
+      let data = await response.json();
+      
+      productosDisponibles = data.productos;
+      tareasDisponibles = data.tareas;
+
+      console.log(tareasDisponibles);
+
+      actualizarSelectProductos();
+    } catch (error) {
+      console.error('Error cargando productos/tareas:', error);
+    }
+  });
+
+  document.getElementById('tipo').addEventListener('change', actualizarSelectProductos);
+
+  function actualizarSelectProductos() {
+  let tipo = document.getElementById('tipo').value;
+  let select = document.getElementById('producto_id');
+  let precioInput = document.getElementById('precio');
+  let cantidadInput = document.getElementById('cantidad');
+  
+  select.innerHTML = '<option value="">Seleccione</option>';
+  let lista = tipo === 'P' ? productosDisponibles : tareasDisponibles;
+  
+  console.log("Lista de elementos:", lista);
+  
+  lista.forEach(item => {
+  let nombre = tipo === 'P' ? item.nombre : item.tarea; // Usar el campo correcto
+  select.innerHTML += `<option value="${item.id}" data-precio="${item.precio || 0}">${nombre}</option>`;
+  });
+  
+  // Ocultar cantidad y precio si es una tarea
+  if (tipo === 'T') {
+  precioInput.closest('.col-md-2').style.display = 'none';
+  cantidadInput.closest('.col-md-2').style.display = 'none';
+  } else {
+  precioInput.closest('.col-md-2').style.display = 'block';
+  cantidadInput.closest('.col-md-2').style.display = 'block';
+  }
+  }
+  // function actualizarSelectProductos() {
   //   let tipo = document.getElementById('tipo').value;
-  //   let productoSelect = document.getElementById('producto_id');
-  //   let productoId = productoSelect.value;
-  //   let productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
-  //   let cantidad = document.getElementById('cantidad').value;
+  //   let select = document.getElementById('producto_id');
+  //   let precioInput = document.getElementById('precio');
+  //   let cantidadInput = document.getElementById('cantidad');
 
-  //   if (!productoId) {
-  //     alert("Seleccione un producto/tarea.");
-  //     return;
+  //   select.innerHTML = '<option value="">Seleccione</option>';
+  //   let lista = tipo === 'P' ? productosDisponibles : tareasDisponibles;
+
+  //   console.log("Lista de elementos:", lista);
+
+  //   lista.forEach(item => {
+  //     select.innerHTML += `<option value="${item.id}" data-precio="${item.precio || 0}">${item.nombre}</option>`;
+  //   });
+
+  //   // Ocultar cantidad y precio si es una tarea
+  //   if (tipo === 'T') {
+  //     precioInput.closest('.col-md-2').style.display = 'none';
+  //     cantidadInput.closest('.col-md-2').style.display = 'none';
+  //   } else {
+  //     precioInput.closest('.col-md-2').style.display = 'block';
+  //     cantidadInput.closest('.col-md-2').style.display = 'block';
   //   }
+  // }
 
-  //   if (tipo === 'P' && !cantidad) {
-  //     alert("Especifique la cantidad para el producto.");
-  //     return;
-  //   }
-
-  //   let tableBody = document.getElementById('pedido-detalle');
-  //   let newRow = document.createElement('tr');
-
-  //   newRow.innerHTML = `
-  //     <td>${tipo === 'P' ? 'Producto' : 'Tarea'}</td>
-  //     <td>${productoNombre} <input type="hidden" name="productos[]" value="${productoId}"></td>
-  //     <td>${tipo === 'P' ? cantidad : ''} <input type="hidden" name="cantidades[]" value="${tipo === 'P' ? cantidad : ''}"></td>
-  //     <td><button type="button" class="btn btn-danger remove-item">X</button></td>
-  //   `;
-
-  //   tableBody.appendChild(newRow);
-  //   document.getElementById('cantidad').value = ""; // Limpiar cantidad
-  // });
+  document.getElementById('producto_id').addEventListener('change', function() {
+    let selectedOption = this.options[this.selectedIndex];
+    let tipo = document.getElementById('tipo').value;
+    if (tipo === 'P') {
+      document.getElementById('precio').value = selectedOption.dataset.precio || '';
+    }
+  });
 
   document.getElementById('add-item').addEventListener('click', function () {
-  let tipo = document.getElementById('tipo').value;
-  let productoSelect = document.getElementById('producto_id');
-  let productoId = productoSelect.value;
-  let productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
-  let cantidad = document.getElementById('cantidad').value;
-  
-  if (!productoId) {
-  alert("Seleccione un producto/tarea.");
-  return;
-  }
-  
-  if (tipo === 'P' && !cantidad) {
-  alert("Especifique la cantidad para el producto.");
-  return;
-  }
-  
-  let tableBody = document.getElementById('pedido-detalle');
-  let newRow = document.createElement('tr');
-  
-  // Si el tipo es 'Producto', se agregan campos de producto y cantidad.
-  // Si es 'Tarea', solo se agrega la tarea.
-  newRow.innerHTML = `
-  <td>${tipo === 'P' ? 'Producto' : 'Tarea'}</td>
-  <td>${productoNombre} <input type="hidden" name="tipos[]" value="${tipo}"><input type="hidden" name="productos[]"
-      value="${productoId}"></td>
-  <td>${tipo === 'P' ? cantidad : ''} <input type="hidden" name="cantidades[]" value="${tipo === 'P' ? cantidad : ''}">
-  </td>
-  <td><button type="button" class="btn btn-danger remove-item">X</button></td>
-  `;
-  
-  tableBody.appendChild(newRow);
-  document.getElementById('cantidad').value = ""; // Limpiar cantidad
-  });
+    let tipo = document.getElementById('tipo').value;
+    let productoSelect = document.getElementById('producto_id');
+    let productoId = productoSelect.value;
+    let productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+    let cantidad = document.getElementById('cantidad').value;
+    let precio = document.getElementById('precio').value;
 
-  
-  // Eliminar ítem de la tabla
-  document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('remove-item')) {
-      event.target.closest('tr').remove();
+    if (!productoId) {
+      alert("Seleccione un producto o tarea.");
+      return;
     }
-  });
 
-  // Establecer fecha mínima de entrega como la fecha actual
-  document.getElementById('fecha_entrega').setAttribute('min', new Date().toISOString().split('T')[0]);
+    if (tipo === 'P' && (!cantidad || !precio)) {
+      alert("Especifique la cantidad y precio para el producto.");
+      return;
+    }
+
+    let tableBody = document.getElementById('pedido-detalle');
+    let newRow = document.createElement('tr');
+
+    newRow.innerHTML = `
+      <td>${tipo === 'P' ? 'Producto' : 'Tarea'}</td>
+      <td>${productoNombre}
+        <input type="hidden" name="productos[]" value="${productoId}">
+        <input type="hidden" name="tipos[]" value="${tipo}">
+      </td>
+      <td>${tipo === 'P' ? precio : '-'} <input type="hidden" name="precios[]" value="${tipo === 'P' ? precio : ''}"></td>
+      <td>${tipo === 'P' ? cantidad : '-'} <input type="hidden" name="cantidades[]" value="${tipo === 'P' ? cantidad : ''}"></td>
+      <td><button type="button" class="btn btn-danger remove-item">X</button></td>
+    `;
+
+    tableBody.appendChild(newRow);
+
+    // Limpiar inputs
+    document.getElementById('cantidad').value = "";
+    document.getElementById('precio').value = "";
+  });
 </script>
 @endsection

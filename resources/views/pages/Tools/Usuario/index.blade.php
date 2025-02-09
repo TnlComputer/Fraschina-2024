@@ -50,24 +50,14 @@
                       Sin roles asignados
                       @endif
                     </td>
-                    {{-- <td>
-                      @if ($usuario->roles->isNotEmpty())
-                      <ul>
-                        @foreach ($usuario->roles as $role)
-                        @if ($role->permissions->isNotEmpty())
-                        @foreach ($role->permissions as $permission)
-                        <li>{{ $permission->name }}</li>
-                        @endforeach
-                        @else
-                        <li>Sin permisos asignados</li>
-                        @endif
-                        @endforeach
-                      </ul>
-                      @else
-                      Sin permisos
-                      @endif
-                    </td> --}}
                     <td>{{ $usuario->status }}</td>
+                    @can('permiso_99')
+                    <td>
+                      <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm">
+                        <i class="fas fa-edit text-blue"></i>
+                      </a>
+                    </td>
+                    @endcan
                     <td class=" d-flex justify-content-between">
                       {{-- Verifica el estado del usuario --}}
                       @if ($usuario->status == 'A')

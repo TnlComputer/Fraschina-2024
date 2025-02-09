@@ -11,20 +11,7 @@ class DistribucionLineaTareas extends Model
 
   protected $table = 'distribucion_linea_tareas';
 
-  protected $fillable = [
-    'fecha',
-    'tarea_id',
-    'cantidad',
-    'linea',
-    'bandera',
-    'distribucion_id',
-    'fechaEntrega',
-    'prePed',
-    'estado_pedido',
-    'detalles',
-    'pedido_id',
-    'status'
-  ];
+  protected $guarded = [];
 
   // Relación: una línea de tarea pertenece a una tarea
   public function tarea()

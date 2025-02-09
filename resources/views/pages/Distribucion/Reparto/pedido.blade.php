@@ -57,7 +57,6 @@ $total = 0;
         </tr>
       </thead>
       <tbody>
-        @if ($pedido && $pedido->lineasPedidos->count() > 0)
         @foreach ($pedido->lineasPedidos as $detalle)
         @php
         $precio = $detalle->cantidad * $detalle->precio_unitario;
@@ -66,12 +65,14 @@ $total = 0;
         $total = $total + $precioConIva;
         @endphp
         <tr>
+          <td>{{ $detalle->pedido_id }}- {{$detalle->id}}</td>
           <td>{{ $detalle->producto->productoCDA }}</td>
           <!-- Asumiendo que tienes una relación 'producto' en el modelo de línea -->
           <td class=" text-center">{{ number_format($detalle->cantidad, 0) }}</td>
           <td class=" text-center">${{ number_format($detalle->precio_unitario, 2) }}</td>
           <td class=" text-center">${{ number_format($precio, 2) }}</td>
           <td class=" text-center">${{ number_format($precioConIva, 2) }}</td>
+          <td class=" text-center">{{ $detalle->linea }}</td>
         </tr>
         @endforeach
       <tfoot>
@@ -79,11 +80,7 @@ $total = 0;
           <th colspan="4" class="text-right">Total</th>
           <td class="text-center">${{ number_format($total, 2) }}</td>
         </tr>
-      </tfoot> @else
-      <tr>
-        <td colspan="4" class="text-center">No hay detalles disponibles</td>
-      </tr>
-      @endif
+      </tfoot>
       </tbody>
     </table>
   </div>

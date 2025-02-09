@@ -139,25 +139,25 @@
       <td class="text-center">{{ $distribucion->distribucion->lunes ? 'Sí' : 'No' }}</td>
       <td class="text-rigth">${{ number_format($distribucion->totalFactura, 2) }}</td>
   </table>
-
   <table class="table" style="padding-left:70px;">
-    @if ($distribucion->tipo == 'P')
+    @if ($distribucion->tipo == 'P' || $distribucion->tipo == 'PT')
     <thead>
       <th class="text-center" style="width: 80px">Observaciones :</th>
       <td style="max-width: 100%">{{ $distribucion->distribucion->obsrecep ?? 'Sin observaciones' }}</td>
     </thead>
     @endif
-    @if ($distribucion->tipo == 'T')
+
+    @if ($distribucion->tipo == 'T' || $distribucion->tipo == 'PT')
     @foreach($distribucion->lineasTareas as $lineaTarea)
     <thead>
-      <th class="text-center" style="width: 80px">Tarea : </th>
+      <th class="text-center" style="width: 80px">Tarea :</th>
       <td style="max-width: 100%">{{ $lineaTarea->tarea->tarea ?? 'Sin tareas' }}</td>
     </thead>
     @endforeach
-    </thead>
     @endif
   </table>
-  @if ($distribucion->tipo == 'P')
+
+  @if ($distribucion->tipo == 'P' || $distribucion->tipo == 'PT')
   <table class="table" style="width: 230px">
     <thead>
       <tr>
