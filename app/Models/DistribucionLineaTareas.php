@@ -20,6 +20,6 @@ class DistribucionLineaTareas extends Model
   }
   public function distribucionNropedido()
   {
-    return $this->belongsTo(DistribucionNroPedidos::class, 'id');
+    return $this->belongsTo(DistribucionNroPedidos::class, 'pedido_id');
   }
 }

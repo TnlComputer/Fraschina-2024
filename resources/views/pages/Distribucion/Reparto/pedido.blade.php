@@ -50,9 +50,9 @@ $total = 0;
         <tr>
           <th>Producto</th>
           <th class=" text-center">Cantidad</th>
-          <th class=" text-center">Precio Unitario</th>
-          <th class=" text-center">Subtotal</th>
-          <th class=" text-center">c/Iva</th>
+          <th class=" text-right">Precio Unitario</th>
+          <th class=" text-right">Subtotal</th>
+          <th class=" text-right">c/Iva</th>
 
         </tr>
       </thead>
@@ -65,20 +65,20 @@ $total = 0;
         $total = $total + $precioConIva;
         @endphp
         <tr>
-          <td>{{ $detalle->pedido_id }}- {{$detalle->id}}</td>
+          {{-- <td>{{ $detalle->pedido_id }}- {{$detalle->id}}</td> --}}
           <td>{{ $detalle->producto->productoCDA }}</td>
           <!-- Asumiendo que tienes una relación 'producto' en el modelo de línea -->
           <td class=" text-center">{{ number_format($detalle->cantidad, 0) }}</td>
-          <td class=" text-center">${{ number_format($detalle->precio_unitario, 2) }}</td>
-          <td class=" text-center">${{ number_format($precio, 2) }}</td>
-          <td class=" text-center">${{ number_format($precioConIva, 2) }}</td>
-          <td class=" text-center">{{ $detalle->linea }}</td>
+          <td class=" text-right">${{ number_format($detalle->precio_unitario, 2) }}</td>
+          <td class=" text-right">${{ number_format($precio, 2) }}</td>
+          <td class=" text-right">${{ number_format($precioConIva, 2) }}</td>
+          {{-- <td class=" text-center">{{ $detalle->linea }}</td> --}}
         </tr>
         @endforeach
       <tfoot>
         <tr>
           <th colspan="4" class="text-right">Total</th>
-          <td class="text-center">${{ number_format($total, 2) }}</td>
+          <td class="text-right">${{ number_format($total, 2) }}</td>
         </tr>
       </tfoot>
       </tbody>
