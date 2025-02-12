@@ -3,6 +3,9 @@
     @csrf
     @if ($method !== 'POST') @method($method) @endif
 
+    <h1>
+      Falta alta personal y alta productos, verificando que no ya exista el producto para el cliente o el personal
+    </h1>
     <div class="row g-3">
       <!-- Razón Social y Nombre Fantasía -->
       <div class="col-md-2">

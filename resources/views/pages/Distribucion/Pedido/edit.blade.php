@@ -2,133 +2,261 @@
 
 @section('title', 'Editar Pedido')
 
+@section('content_header')
+<h1>Editar Pedido #{{ $pedido->id }}</h1>
+@endsection
+
 @section('content')
-<div class="container">
-  <h1>Editar Pedido</h1>
+<div class="card">
+  <div class="card-body">
+    <form action="{{ route('distribucion_pedido.update', $pedido->id) }}" method="POST" id="pedidoForm">
+      @csrf
+      @method('PUT')
 
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      Información del Pedido
-    </div>
-    <div class="card-body">
-      <form action="{{ route('distribucion_pedido.update', $pedido->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <div class="mb-3">
-          <label for="fechaEntrega" class="form-label">Fecha de Entrega</label>
-          <input type="date" id="fechaEntrega" name="fechaEntrega" class="form-control"
-            value="{{ $pedido->fechaEntrega }}" required>
+      <!-- Información General -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label>Cliente:</label>
+          <input type="text" class="form-control" value="{{ $pedido->distribucion->nomfantasia }}" disabled>
         </div>
-
-        <div class="mb-3">
-          <label for="cliente" class="form-label">Cliente</label>
-          <input type="text" id="cliente" name="cliente" class="form-control"
-            value="{{ $pedido->distribucion->nomfantasia }}" readonly>
+        <div class="col-md-4">
+          <label>Fecha de Entrega:</label>
+          <input type="date" name="fecha_entrega" class="form-control" value="{{ $pedido->fechaEntrega }}" required>
         </div>
+        <div class="col-md-4">
+          <label>Observaciones:</label>
+          <input type="text" name="observaciones" class="form-control" value="{{ $pedido->observaciones }}">
+        </div>
+      </div>
 
-        <div class="mb-3">
-          <label for="estado" class="form-label">Estado</label>
-          <select id="estado" name="estado" class="form-control">
-            <option value="pendiente" {{ $pedido->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-            <option value="completado" {{ $pedido->estado == 'completado' ? 'selected' : '' }}>Completado</option>
+      <!-- Detalles del Pedido -->
+      <h4>Detalles del Pedido</h4>
+      <table class="table table-bordered" id="detalleTable">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{-- Productos existentes --}}
+          @foreach($pedido->lineasPedidos as $linea)
+          <tr data-linea-id="{{ $linea->id }}" class="producto-row">
+            <td>Producto</td>
+            <td>
+              {{ $linea->producto->productoCDA }}
+              <input type="hidden" name="existing_product_line_ids[]" value="{{ $linea->id }}">
+            </td>
+            <td>
+              <input type="number" step="0.01" name="existing_precios[]" value="{{ $linea->precio_unitario }}"
+                class="form-control" required>
+            </td>
+            <td>
+              <input type="number" name="existing_cantidades[]" value="{{ $linea->cantidad }}" class="form-control"
+                required>
+            </td>
+            <td class="linea-total">${{ number_format($linea->totalLinea,2) }}</td>
+            <td>
+              <button type="button" class="btn btn-danger remove-row">X</button>
+            </td>
+          </tr>
+          @endforeach
+
+          {{-- Tareas existentes --}}
+          @foreach($pedido->lineasTareas as $linea)
+          <tr data-tarea-id="{{ $linea->id }}" class="tarea-row">
+            <td>Tarea</td>
+            <td>
+              {{ $linea->tarea->tarea }}
+              <input type="hidden" name="existing_tarea_ids[]" value="{{ $linea->id }}">
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <button type="button" class="btn btn-danger remove-row">X</button>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+
+      <!-- Sección para agregar nuevos productos o tareas -->
+      <h4>Agregar Producto o Tarea</h4>
+      <div class="row mb-3">
+        <div class="col-md-2">
+          <label for="tipo">Tipo:</label>
+          <select id="tipo" class="form-control">
+            <option value="">Seleccione</option>
+            <option value="P">Producto</option>
+            <option value="T">Tarea</option>
           </select>
         </div>
-
-        <h4>Detalles de los productos</h4>
-        <table class="table table-sm table-striped table-bordered">
-          <thead class="thead-dark">
-            <tr>
-              <th>Producto</th>
-              <th class="text-center">Cantidad</th>
-              <th class="text-center">Precio Unitario</th>
-              <th class="text-center">Subtotal</th>
-              <th class="text-center">Total Item</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($pedido->lineasPedidos as $detalle)
-            <tr class="linea-row">
-              <td>
-                <select name="lineas[{{ $detalle->id }}][producto_id]" class="form-control producto">
-                  @foreach ($productos as $producto)
-                  <option value="{{ $producto->producto_id }}" data-iva="{{ $producto->producto->ivacda }}" {{
-                    $producto->producto_id ==
-                    $detalle->producto_id ? 'selected' : '' }}>
-                    {{ $producto->producto->productoCDA }}
-                  </option> @endforeach
-                </select>
-              </td>
-              <td class="text-center">
-                <input type="number" name="lineas[{{ $detalle->id }}][cantidad]" value="{{ $detalle->cantidad }}"
-                  class="form-control cantidad" required>
-              </td>
-              <td class="text-center">
-                <input type="number" step="0.01" name="lineas[{{ $detalle->id }}][precio_unitario]"
-                  value="{{ $detalle->precio_unitario }}" class="form-control precio" required>
-              </td>
-              <td class="text-center">
-                <span class="subtotal">0.00</span>
-              </td>
-              <td class="text-center">
-                <span class="total-iva">0.00</span>
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-
-        <div class="mt-3">
-          <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Cambios</button>
-          <a href="{{ route('distribucion_reparto.index', ['fecha' => $pedido->fechaEntrega]) }}"
-            class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-          </a>
+        <div class="col-md-3">
+          <label for="item_id">Producto/Tarea:</label>
+          <select id="item_id" class="form-control">
+            <option value="">Seleccione</option>
+          </select>
         </div>
-      </form>
-    </div>
+        <div class="col-md-2" id="precioContainer" style="display: none;">
+          <label for="precio">Precio:</label>
+          <input type="number" step="0.01" id="precio" class="form-control">
+        </div>
+        <div class="col-md-2" id="cantidadContainer" style="display: none;">
+          <label for="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" class="form-control">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="button" id="addItemBtn" class="btn btn-success">Agregar</button>
+        </div>
+      </div>
+
+      <!-- Los nuevos ítems se agregarán dinámicamente a la tabla -->
+      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+      <a href="{{ route('distribucion_reparto.index', ['fecha' => $pedido->fechaEntrega]) }}"
+        class="btn btn-secondary">Cancelar</a>
+    </form>
   </div>
 </div>
 
+<!-- Script para manejar la carga dinámica -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-  // Selecciona todas las filas de línea de pedido
-  const filas = document.querySelectorAll('.linea-row');
-
-  filas.forEach(function(fila) {
-    const cantidadInput = fila.querySelector('.cantidad');
-    const precioInput = fila.querySelector('.precio');
-    const productoSelect = fila.querySelector('.producto');
-    const subtotalField = fila.querySelector('.subtotal');
-    const totalIvaField = fila.querySelector('.total-iva');
-
-    // Función para obtener el IVA del producto seleccionado
-    function getIva() {
-      const selectedOption = productoSelect.options[productoSelect.selectedIndex];
-      const iva = parseFloat(selectedOption.dataset.iva) || 0;
-      return iva;
+  // Al cambiar el tipo, cargar la lista de productos o tareas
+  document.getElementById('tipo').addEventListener('change', function() {
+    let tipo = this.value;
+    let select = document.getElementById('item_id');
+    select.innerHTML = '<option value="">Seleccione</option>';
+    // Mostrar u ocultar campos de precio y cantidad
+    if (tipo === 'P') {
+      document.getElementById('precioContainer').style.display = 'block';
+      document.getElementById('cantidadContainer').style.display = 'block';
+    } else {
+      document.getElementById('precioContainer').style.display = 'none';
+      document.getElementById('cantidadContainer').style.display = 'none';
     }
+    // Solicitar productos/tareas desde el servidor (ajusta la URL según tu ruta)
+    let distribucionId = "{{ $pedido->distribucion_id }}";
+    fetch(`/distribucion/${distribucionId}/productos-tareas`)
+      .then(response => response.json())
+      .then(data => {
+        let options = '<option value="">Seleccione</option>';
+        if (tipo === 'P') {
+          data.productos.forEach(item => {
+            options += `<option value="${item.producto_id}" data-precio="${item.precio}">${item.nomproducto}</option>`;
+          });
+        } else if (tipo === 'T') {
+          data.tareas.forEach(item => {
+            options += `<option value="${item.id}">${item.tarea}</option>`;
+          });
+        }
+        select.innerHTML = options;
+      })
+      .catch(err => console.error(err));
+  });
 
-    // Función para actualizar subtotal y total con IVA
-    function actualizarTotales() {
-      const cantidad = parseFloat(cantidadInput.value) || 0;
-      const precio = parseFloat(precioInput.value) || 0;
-      const subtotal = cantidad * precio;
-      const iva = getIva();
-      // Total con IVA = subtotal * (1 + (iva/100))
-      const totalConIva = subtotal * (1 + iva / 100);
-      subtotalField.textContent = subtotal.toFixed(2);
-      totalIvaField.textContent = totalConIva.toFixed(2);
+  // Al seleccionar un producto, auto-asigna el precio
+  document.getElementById('item_id').addEventListener('change', function() {
+    let selected = this.options[this.selectedIndex];
+    let precio = selected.getAttribute('data-precio');
+    if (precio) {
+      document.getElementById('precio').value = precio;
     }
+  });
 
-    // Escuchar cambios en cantidad, precio y el select de producto
-    cantidadInput.addEventListener('input', actualizarTotales);
-    precioInput.addEventListener('input', actualizarTotales);
-    productoSelect.addEventListener('change', actualizarTotales);
+  // Agregar un nuevo ítem a la tabla
+  document.getElementById('addItemBtn').addEventListener('click', function() {
+    let tipo = document.getElementById('tipo').value;
+    let itemSelect = document.getElementById('item_id');
+    let itemId = itemSelect.value;
+    let itemText = itemSelect.options[itemSelect.selectedIndex].text;
+    if (!tipo || !itemId) {
+      alert("Seleccione tipo y producto/tarea.");
+      return;
+    }
+    let tableBody = document.querySelector('#detalleTable tbody');
+    let newRow = document.createElement('tr');
+    if (tipo === 'P') {
+      let precio = document.getElementById('precio').value;
+      let cantidad = document.getElementById('cantidad').value;
+      if (!precio || !cantidad) {
+        alert("Ingrese precio y cantidad para el producto.");
+        return;
+      }
+      let total = parseFloat(precio) * parseFloat(cantidad);
+      newRow.innerHTML = `
+        <td>Producto</td>
+        <td>${itemText}
+          <input type="hidden" name="new_productos[]" value="${itemId}">
+        </td>
+        <td>
+          <input type="number" step="0.01" name="new_precios[]" value="${precio}" class="form-control" required>
+        </td>
+        <td>
+          <input type="number" name="new_cantidades[]" value="${cantidad}" class="form-control" required>
+        </td>
+        <td class="linea-total">$${total.toFixed(2)}</td>
+        <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+      `;
+    } else if (tipo === 'T') {
+      newRow.innerHTML = `
+        <td>Tarea</td>
+        <td>${itemText}
+          <input type="hidden" name="new_tareas[]" value="${itemId}">
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><button type="button" class="btn btn-danger remove-row">X</button></td>
+      `;
+    }
+    tableBody.appendChild(newRow);
+  });
 
-    // Actualiza los totales al cargar la página
-    actualizarTotales();
+  // Delegación de evento para remover filas (ya sean existentes o nuevas)
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('remove-row')) {
+      e.target.closest('tr').remove();
+    }
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+
+// Función para actualizar el total de cada fila
+function actualizarTotalFila(row) {
+let precioInput = row.querySelector('input[name="existing_precios[]"]');
+let cantidadInput = row.querySelector('input[name="existing_cantidades[]"]');
+let totalCell = row.querySelector('.linea-total');
+
+let precio = parseFloat(precioInput.value) || 0;
+let cantidad = parseInt(cantidadInput.value) || 0;
+let total = precio * cantidad;
+
+totalCell.textContent = `$${total.toFixed(2)}`;
+}
+
+// Escuchar cambios en los inputs de precios y cantidades
+document.querySelectorAll('input[name="existing_precios[]"], input[name="existing_cantidades[]"]').forEach(input => {
+input.addEventListener('input', function() {
+let row = this.closest('tr');
+actualizarTotalFila(row);
+});
+});
+
+// Delegación de eventos para nuevos productos agregados dinámicamente
+document.getElementById('detalleTable').addEventListener('input', function(event) {
+if (event.target.matches('input[name="new_precios[]"], input[name="new_cantidades[]"]')) {
+let row = event.target.closest('tr');
+actualizarTotalFila(row);
+}
+});
+
+});
+
 </script>
 @endsection

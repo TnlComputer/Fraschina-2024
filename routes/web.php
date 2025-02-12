@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
   // Rutas para Distribución Producto
   Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
     ->name('distribucion_producto.create'); // Ruta personalizada para crear Distribución Producto
+    
   Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)
     ->except(['create']); // Excluir `create` porque ya está definida por separado
 
@@ -111,7 +112,11 @@ Route::middleware(['auth'])->group(function () {
 // Rutas para Distribucion Pedidos
 Route::middleware('auth')->resource('distribucion_pedido', DistribucionPedidoController::class);
 Route::get('/productos-y-tareas-por-cliente/{clienteId}', [DistribucionPedidoController::class, 'getProductosYTareasPorCliente']);
-
+Route::get('/distribucion/{id}/productos-tareas', [DistribucionPedidoController::class, 'getProductosTareas']);
+Route::get('/producto/{nombre}/iva', function ($nombre) {
+  $producto = \App\Models\ProductoCda::where('nomproducto', $nombre)->first();
+  return response()->json(['ivacda' => $producto ? $producto->ivacda : 0]);
+});
 
 // Rutas para Distribucion Reparto
 Route::middleware('auth')->resource('distribucion_reparto', DistribucionRepartoController::class);

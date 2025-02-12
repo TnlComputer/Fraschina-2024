@@ -7,7 +7,7 @@ SET
     d.totalPedido = l.totalPedidoN,
     d.chofer = l.chofer_Ped,
     d.orden = l.orden_Ped,
-    d.observaciones = l.nom_prod,
+    -- d.observaciones = l.nom_prod,
     d.status = 'A',
     d.tipo = 'P'
 WHERE
