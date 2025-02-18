@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12">
       <div class="card-header">
-        <h3 class="card-title">{{ __('Expedicion Molino') }}</h3>
+        <h3 class="card-title">{{ __('Expediciòn') }}</h3>
       </div>
       <div class="col-12">
         <div class="py-2">
@@ -14,12 +14,12 @@
               <div class="p-2 text-gray-900 text-left text-xs">
                 <div class="barra__index d-flex justify-content-between align-items-center mb-3">
                   <div class="div__nuevo">
-                    <form action="{{ route('expedicion_molino.create') }}">
+                    <form action="{{ route('expedicion.create') }}">
                       <input class="btn btn-primary" type="submit" value="Nuevo">
                     </form>
                   </div>
                   <div class="div__buscar d-flex">
-                    <form method="get" action="{{ route('expedicion_molino.index') }}" class="form__buscar d-flex">
+                    <form method="get" action="{{ route('expedicion.index') }}" class="form__buscar d-flex">
                       @csrf
                       <input type="text" placeholder="Buscar por nombre" name="name" value="{{ $name }}"
                         class="form-control me-2" style="max-width: 350px;">
@@ -50,15 +50,15 @@
                     <td>{{ $expedicion_molino->estadoNroMolino }}</td>
                     <td>{{ $expedicion_molino->nroCliente_id }}</td>
                     <td class=" d-flex justify-content-between">
-                      <a href="{{ route('expedicion_molino.show', $expedicion_molino->id) }}" class="btn-xs btn-info"
+                      <a href="{{ route('expedicion_molinos.show', $expedicion_molino->id) }}" class="btn-xs btn-info"
                         title="Ver">
                         <i class="fa-regular fa-eye fa-xs align-middle"></i>
                       </a>
-                      <a href="{{ route('expedicion_molino.edit', $expedicion_molino->id) }}" class="btn-xs btn-warning"
-                        title="Editar">
+                      <a href="{{ route('expedicion_molinos.edit', $expedicion_molino->id) }}"
+                        class="btn-xs btn-warning" title="Editar">
                         <i class="fa-solid fa-pen-to-square fa-xs "></i>
                       </a>
-                      <form method="POST" action="{{ route('expedicion_molino.destroy', $expedicion_molino->id) }}"
+                      <form method="POST" action="{{ route('expedicion_molinos.destroy', $expedicion_molino->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
                         @method('DELETE')
@@ -73,7 +73,7 @@
                   <p>No hay registros para mostrar...</p>
                   @endforelse
                 </table>
-                {{ $expedicion_molinos->links() }}
+                {{-- {{ $expedicion_molinos->links() }} --}}
               </div>
             </div>
           </div>

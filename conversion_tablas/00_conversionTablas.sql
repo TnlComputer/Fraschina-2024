@@ -960,7 +960,8 @@ WHERE
 INSERT INTO
     fraschina_2024.expedicion_clientes (
         id,
-        nroClie_id,
+        distribucion_id,
+        sigla,
         linea1,
         linea2,
         linea3,
@@ -974,7 +975,8 @@ INSERT INTO
     )
 SELECT
     idExpClie AS id,
-    nroClieExp AS nroClie_id,
+    nroClieExp AS representacion_id,
+    siglaExp AS sigla,
     linea1Exp AS linea1,
     linea2Exp AS linea2,
     linea3Exp AS linea3,

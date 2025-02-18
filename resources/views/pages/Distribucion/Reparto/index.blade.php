@@ -69,16 +69,15 @@
     </thead>
     <tbody class="text-xs bold">
       @foreach ($distribuciones as $distribucion)
-      @if ($distribucion->tipo == 'P' || $distribucion->tipo == 'PT')
+      {{-- @if ($distribucion->tipo == 'P' || $distribucion->tipo == 'PT') --}}
       <form method="POST" action="{{ route('distribucion_reparto.update', $distribucion->id) }}"
         id="distribucion-form-{{ $distribucion->id }}">
         @csrf
         @method('PUT')
         <input type="hidden" name="fecha" value="{{ $fecha }}">
-        {{-- @foreach ($distribucion->lineasPedidos as $lineaPedido) --}}
         <tr>
-          {{-- @if ($lineaPedido->linea == 1) --}}
           <td class=" text-center">{{ $distribucion->fechaEntrega }}</td>
+          @if ($distribucion->tipo != 'T')
           <td>
             <a href="{{ route('distribucion_reparto.imprimirRecibo', ['id' => $distribucion->id]) }}"
               class="btn btn-xs mx-1" title="Impresi´on Recibo" target="_blank">
@@ -93,19 +92,31 @@
           </td>
 
           <td>
-            {{-- <a href="#" id="edit-btn" class="btn btn-xs" title="Editar Pedido">
-              <i class="fas fa-pen fs-xs text-blue"></i>
-            </a> --}}
-            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id, 'fecha' => $fecha]) }}"
+            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id]) }}"
               class="btn btn-xs" title="Editar Pedido">
               <i class="fas fa-pen fs-xs text-blue"></i>
             </a>
-
           </td>
+          @else
+          <td></td>
+          <td></td>
+          <td>
+            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id]) }}"
+              class="btn btn-xs" title="Editar Pedido">
+              <i class="fas fa-pen fs-xs text-blue"></i>
+            </a>
+            {{-- <a
+              href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id, 'fecha' => $fecha]) }}"
+              class="btn btn-xs" title="Editar Pedido">
+              <i class="fas fa-pen fs-xs text-blue"></i>
+            </a> --}}
+          </td>
+          @endif
           <td><button type="submit" id="actualizar-btn" class="btn btn-xs" title="Actualizar">
               <i class="fas fa-sync-alt fs-xs text-orange"></i>
             </button>
           </td>
+          @if ($distribucion->tipo != 'T')
           <td class="text-center">
             <input type="date" name="fechaFactura" value="{{ $distribucion->fechaFactura }}"
               class="text-center text-xs factura-fecha" data-label="Fecha Factura" style="width: 100px;" />
@@ -138,6 +149,12 @@
             <i class="fas fa-times-circle text-danger" title="Factura No Impresa"></i>
             @endif
           </td>
+          @else
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          @endif
           <td class="text-center">
             <input type="text" name="chofer" value="{{ $distribucion->chofer }}" class="text-center text-xs"
               style="width: 30px;" />
@@ -146,9 +163,9 @@
             <input type="number" name="orden" value="{{ $distribucion->orden }}" class="text-center text-xs"
               style="width: 40px;" />
           </td>
-          @else
+          {{-- @else
           <td colspan="11"></td>
-          @endif
+          @endif --}}
           <td>{{ $distribucion->id }}</td>
           <td>{{ $distribucion->tipo }}</td>
           <!-- En la vista donde quieres mostrar el modal -->
@@ -199,75 +216,7 @@
         </tr>
         @endforeach
 
-        {{-- @if ($distribucion->tipo == 'T')
-        @foreach ($distribucion->lineasTareas as $lineaTarea)
-        <tr>
-          <td class="text-center text-xs">{{ $distribucion->fechaEntrega }}</td>
-          <td colspan="3"></td>
-          <td><button type="submit" id="actualizar-btn" class="btn btn-xs text-orange">
-              <i class="fas fa-sync-alt"></i>
-            </button>
-          </td>
-          <td colspan="4"></td>
-          <td class="text-center">
-            <input type="text" name="chofer" value="{{ $distribucion->chofer }}" class="text-center text-xs"
-              style="width: 30px;" />
-          </td>
-          <td class="text-center">
-            <input type="number" name="orden" value="{{ $distribucion->orden }}" class="text-center text-xs"
-              style="width: 40px;" min="0" step="1" />
-          </td>
-          <td>{{ $distribucion->id }}</td>
-          <td>T</td>
-          <td>
-            <button type="button" class="btn btn-xs" data-toggle="modal"
-              data-target="#infoModal_{{ $distribucion->id }}">
-              {{ $distribucion->distribucion->nomfantasia }}
-            </button>
-          </td>
-
-          <div class="modal fade" id="infoModal_{{ $distribucion->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="infoModalLabel_{{ $distribucion->id }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <!-- Encabezado del Modal -->
-                <div class="modal-header">
-                  <h5 class="modal-title" id="infoModalLabel_{{ $distribucion->id }}">Información del Cliente</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <!-- Cuerpo del Modal -->
-                <div class="modal-body">
-                  <strong>Razón Social:</strong> {{ $distribucion->distribucion->nomfantasia }}<br>
-                  <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles->calle }} {{
-                  $distribucion->distribucion->dire_nro }}
-                  {{ $distribucion->distribucion->piso }}
-                  {{ $distribucion->distribucion->dpto }} <br>
-                  {{ $distribucion->distribucion->auxbarrio->nombrebarrio }} -
-                  {{ $distribucion->distribucion->auxlocalidad->localidad }} - {{
-                  $distribucion->distribucion->auxmunicipio->ciudadmunicipio }} <br>
-                  <strong>Horarios:</strong><br> Mañana: {{ $distribucion->distribucion->desde }} - {{
-                  $distribucion->distribucion->hasta }}<br>
-                  Tarde: {{ $distribucion->distribucion->desde1 }} -{{ $distribucion->distribucion->hasta1 }}<br>
-                  <strong>Detalles:</strong><br>
-                  {{ $lineaTarea->detalles ?? 'No hay detalles' }}<br>
-                  <strong>Tarea:</strong><br>
-                  {{ $lineaTarea->tarea->tarea ?? 'Sin tarea' }}<br>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <td>{{ $distribucion->distribucion->razonsocial }}</td>
-        </tr>
-        @endforeach
-        @endif --}}
       </form>
-      {{-- @endif
-      @endforeach --}}
     </tbody>
   </table>
 
