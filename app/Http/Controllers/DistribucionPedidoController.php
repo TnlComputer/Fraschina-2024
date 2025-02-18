@@ -151,6 +151,8 @@ class DistribucionPedidoController extends Controller
     // Filtrar tareas solo para el cliente del pedido
     $tareas = DistribucionTareas::all();
 
+    // dd($pedido);
+
     return view('pages.Distribucion.Pedido.edit', compact('pedido', 'productos', 'tareas'));
   }
 

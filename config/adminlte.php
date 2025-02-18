@@ -332,8 +332,8 @@ return [
         [
           'text' => 'Agenda',
           'url' => 'distribucion_agenda',
-          // 'icon' => 'fas fa-fw fa-truck',
-          'icon' => 'nav-icon fas fa-calendar-alt',
+          'icon' => 'fas fa-fw fa-truck',
+          // 'icon' => 'nav-icon fas fa-calendar-alt',
           'can' => ['permiso_99', 'permiso_2'],
         ],
         [
@@ -381,17 +381,17 @@ return [
       'submenu' => [
         [
           'text' => 'Expedición Pedidos',
-          'url' => 'expedicion_pedidos',
+          'url' => 'expedicion_pedido',
           'icon' => 'fas fa-fw fa-map-marked-alt',
         ],
         [
           'text' => 'Expedición Molinos',
-          'url' => 'expedicion_molinos',
+          'url' => 'expedicion_molino',
           'icon' => 'fas fa-fw fa-map-marked-alt',
         ],
         [
           'text' => 'Expedición Clientes',
-          'url' => 'expedicion_clientes',
+          'url' => 'expedicion_cliente',
           'icon' => 'fas fa-fw fa-map-marked-alt',
         ],
         [

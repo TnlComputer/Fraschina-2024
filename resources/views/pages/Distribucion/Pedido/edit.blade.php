@@ -47,6 +47,7 @@
           @foreach($pedido->lineasPedidos as $linea)
           <tr data-linea-id="{{ $linea->id }}" class="producto-row">
             <td>Producto</td>
+            @if ($pedido->tipo != 'T')
             <td>
               {{ $linea->producto->productoCDA }}
               <input type="hidden" name="existing_product_line_ids[]" value="{{ $linea->id }}">
@@ -64,6 +65,7 @@
               <button type="button" class="btn btn-danger remove-row">X</button>
             </td>
           </tr>
+          @endif
           @endforeach
 
           {{-- Tareas existentes --}}

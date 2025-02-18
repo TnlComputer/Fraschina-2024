@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Expedicion_molinos;
+use App\Models\ExpedicionMolinoTextoCliente;
 use Illuminate\Http\Request;
 
-class ExpedicionMolinosController extends Controller
+class ExpedicionMolinoTextoClienteController extends Controller
 {
   /**
    * Display a listing of the resource.
    */
   public function index(Request $request)
+  // public function index()
   {
     $name = $request->name;
-    $expedicion_molinos = Expedicion_molinos::all();
-    // dd($expedicion_molinos);
-    return view('pages.Expedicion.Molino.index', compact('expedicion_molinos', 'name'));
+    $expedicions_MTC = ExpedicionMolinoTextoCliente::all();
+    // dd($expedicion_pedidos);
+    return view('pages.Expedicion.MTC.index', compact('expedicions_MTC', 'name'));
+    // return view('pages.Expedicion.index', compact('expedicion_pedidos'));
   }
 
   /**
@@ -37,7 +39,7 @@ class ExpedicionMolinosController extends Controller
   /**
    * Display the specified resource.
    */
-  public function show(Expedicion_molinos $expedicion_molinos)
+  public function show(string $id)
   {
     //
   }
@@ -45,7 +47,7 @@ class ExpedicionMolinosController extends Controller
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit(Expedicion_molinos $expedicion_molinos)
+  public function edit(string $id)
   {
     //
   }
@@ -53,7 +55,7 @@ class ExpedicionMolinosController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Expedicion_molinos $expedicion_molinos)
+  public function update(Request $request, string $id)
   {
     //
   }
@@ -61,7 +63,7 @@ class ExpedicionMolinosController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Expedicion_molinos $expedicion_molinos)
+  public function destroy(string $id)
   {
     //
   }

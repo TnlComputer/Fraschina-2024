@@ -18,7 +18,12 @@ use App\Http\Controllers\DistribucionProductoController;
 use App\Http\Controllers\DistribucionRepartoController;
 use App\Http\Controllers\DistribucionStockController;
 use App\Http\Controllers\EstadoController;
-use App\Http\Controllers\ExpedicionMolinosController;
+use App\Http\Controllers\ExpedicionClienteController;
+use App\Http\Controllers\ExpedicionController;
+use App\Http\Controllers\ExpedicionGeneralController;
+use App\Http\Controllers\ExpedicionMolinoController;
+use App\Http\Controllers\ExpedicionMolinoTextoClienteController;
+use App\Http\Controllers\ExpedicionPedidoController;
 use App\Http\Controllers\ExportarController;
 use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\HoraController;
@@ -93,7 +98,7 @@ Route::middleware('auth')->group(function () {
   // Rutas para Distribución Producto
   Route::get('/distribucion/{distribucion}/distribucion_producto/create', [DistribucionProductoController::class, 'create'])
     ->name('distribucion_producto.create'); // Ruta personalizada para crear Distribución Producto
-    
+
   Route::resource('/distribucion/distribucion_producto', DistribucionProductoController::class)
     ->except(['create']); // Excluir `create` porque ya está definida por separado
 
@@ -135,10 +140,16 @@ Route::get('/distribucion/reparto/control', [DistribucionRepartoController::clas
 // Rutas para Distribucion Stock
 Route::middleware('auth')->resource('distribucion_stock', DistribucionStockController::class);
 
+// Rutas Expedicion
+Route::middleware('auth')->resource('/expedicion', ExpedicionController::class);
+Route::middleware('auth')->resource('/expedicion_cliente', ExpedicionClienteController::class);
+Route::middleware('auth')->resource('/expedicion_molino', ExpedicionMolinoController::class);
+Route::middleware('auth')->resource('/expedicion_general', ExpedicionGeneralController::class);
+Route::middleware('auth')->resource('/expedicion_pedido', ExpedicionPedidoController::class);
+Route::middleware('auth')->resource('/expedicion_MTC', ExpedicionMolinoTextoClienteController::class);
+
 
 // Rutas para Molinos
-Route::middleware('auth')->resource('/expedicion_molinos', ExpedicionMolinosController::class);
-
 Route::middleware('auth')->resource('/molino', MolinoController::class);
 Route::middleware('auth')->group(function () {
   // Rutas para Molino Personal

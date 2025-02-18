@@ -29,6 +29,13 @@ $total = 0;
         </tr>
         <tr>
           <th>Total</th>
+          <td>
+            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id, 'fecha' => $fecha]) }}"
+              class="btn btn-xs" title="Editar Pedido">
+              <i class="fas fa-pen fs-xs text-blue"></i>
+            </a>
+          </td>
+
           <td>${{ number_format($pedido->totalPedido, 2) }}</td>
         </tr>
         <tr>
