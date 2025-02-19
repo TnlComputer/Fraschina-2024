@@ -19,8 +19,9 @@ INSERT INTO
         fn,
         punt,
         particularidades,
-        marca_gral,
-        controlExp_gral,
+        -- marca_gral,
+        -- controlExp_gral,
+        status, -- Agregar el campo status
         created_at,
         updated_at
     )
@@ -44,8 +45,9 @@ SELECT
     FN,
     Punt,
     PARTICULARIDADES,
-    marca_gral,
-    controlExp_gral,
+    -- marca_gral,
+    -- controlExp_gral,
+    'A', -- Establecer el valor de status como 'A'
     NOW(),
     NOW()
 FROM fraschin_backup.generalCR;
