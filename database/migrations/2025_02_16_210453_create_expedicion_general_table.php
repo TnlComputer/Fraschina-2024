@@ -32,7 +32,8 @@ return new class extends Migration
       $table->string('punt')->nullable();
       $table->string('particularidades')->nullable();
       $table->string('marca_gral', 1)->nullable();
-      $table->unsignedBigInteger('controlExp_gral')->nullable();
+      $table->string('controlExp_gral')->nullable();
+      $table->string('status')->default('A')->nullable();
       $table->timestamps();
     });
   }

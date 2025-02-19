@@ -11,5 +11,9 @@ class ExpedicionGeneral extends Model
 
   protected $table = 'expedicion_general';
 
+  protected $attributes = [
+    'status' => 'A',
+  ];
+
   protected $guarded = [];
 }
