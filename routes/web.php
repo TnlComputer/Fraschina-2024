@@ -148,6 +148,15 @@ Route::middleware('auth')->resource('/expedicion_general', ExpedicionGeneralCont
 Route::middleware('auth')->resource('/expedicion_pedido', ExpedicionPedidoController::class);
 Route::middleware('auth')->resource('/expedicion_MTC', ExpedicionMolinoTextoClienteController::class);
 
+// use App\Exports\ExpedicionGeneralExport;
+// use Maatwebsite\Excel\Facades\Excel;
+// use Illuminate\Http\Request;
+
+
+// Route::middleware('auth')->get('/expedicion_general/export', function (Request $request) {
+//   return Excel::download(new ExpedicionGeneralExport($request), 'expedicion_general.xlsx');
+// })->name('expedicion_general.export');
+Route::middleware('auth')->get('/expedicion-general/export', [ExpedicionGeneralController::class, 'export'])->name('expedicion_general.export');
 
 // Rutas para Molinos
 Route::middleware('auth')->resource('/molino', MolinoController::class);

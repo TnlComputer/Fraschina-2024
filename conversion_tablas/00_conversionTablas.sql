@@ -882,6 +882,7 @@ ON DUPLICATE KEY UPDATE
 
 INSERT INTO
     fraschina_2024.distribucion_linea_pedidos (
+        id,
         pedido_id,
         distribucion_id,
         fecha,
@@ -899,6 +900,7 @@ INSERT INTO
         updated_at
     )
 SELECT
+    id_linea AS id,
     CAST(lp.nroPed AS UNSIGNED), -- Convertir nroPed a número
     lp.idCliente, -- ID del cliente como distribucion_id
     lp.fechaPed,
@@ -931,6 +933,7 @@ WHERE
 
 INSERT INTO
     fraschina_2024.distribucion_linea_tareas (
+        id,
         pedido_id,
         distribucion_id,
         fecha,
@@ -943,7 +946,9 @@ INSERT INTO
         created_at,
         updated_at
     )
-SELECT CAST(lt.nroPed AS UNSIGNED), -- Convertir nroPed a número
+SELECT
+    id_linea AS id,
+    CAST(lt.nroPed AS UNSIGNED), -- Convertir nroPed a número
     lt.idCliente, -- ID del cliente como distribucion_id
     lt.fechaPed, lt.fecEntrega, lt.linea, lt.tarea_id, lt.detalles, CAST(
         lt.estado_Ped AS DECIMAL(1, 0)
@@ -989,59 +994,59 @@ SELECT
     CURRENT_TIMESTAMP AS updated_at
 FROM fraschin_backup.expedicionclie;
 
-INSERT INTO
-    fraschina_2024.expedicion_molinos_textos_clientes (
-        id,
-        expClie_id,
-        expMolino_id,
-        linea1,
-        linea2,
-        linea3,
-        linea4,
-        linea5,
-        linea6,
-        created_at,
-        updated_at
-    )
-SELECT
-    idExpMTC AS id,
-    idExpClie AS expClie_id,
-    idExpMoli AS expMolino_id,
-    linea1Exp AS linea1,
-    linea2Exp AS linea2,
-    linea3Exp AS linea3,
-    linea4Exp AS linea4,
-    linea5Exp AS linea5,
-    linea6Exp AS linea6,
-    CURRENT_TIMESTAMP AS created_at,
-    CURRENT_TIMESTAMP AS updated_at
-FROM fraschin_backup.expedicionmtc;
+-- INSERT INTO
+--     fraschina_2024.expedicion_molinos_textos_clientes (
+--         id,
+--         expClie_id,
+--         expMolino_id,
+--         linea1,
+--         linea2,
+--         linea3,
+--         linea4,
+--         linea5,
+--         linea6,
+--         created_at,
+--         updated_at
+--     )
+-- SELECT
+--     idExpMTC AS id,
+--     idExpClie AS expClie_id,
+--     idExpMoli AS expMolino_id,
+--     linea1Exp AS linea1,
+--     linea2Exp AS linea2,
+--     linea3Exp AS linea3,
+--     linea4Exp AS linea4,
+--     linea5Exp AS linea5,
+--     linea6Exp AS linea6,
+--     CURRENT_TIMESTAMP AS created_at,
+--     CURRENT_TIMESTAMP AS updated_at
+-- FROM fraschin_backup.expedicionmtc;
 
-INSERT INTO
-    fraschina_2024.expedicion_molinos (
-        id,
-        nroMolino_id,
-        calificacion,
-        sigla,
-        nroUPed,
-        contMolino,
-        estadoNroPedido,
-        nroCliente_id,
-        created_at,
-        updated_at
-    )
-SELECT
-    idExpMoli AS id,
-    nroMolinoExp AS nroMolino_id,
-    calificacionExp AS calificacion,
-    SiglaExp AS sigla,
-    nroUPedExp AS nroUPed,
-    contMoliExp AS contMolino,
-    estadoNroPed AS estadoNroPedido,
-    nroClieEst AS nroCliente_id,
-    CURRENT_TIMESTAMP AS created_at,
-    CURRENT_TIMESTAMP AS updated_at
-FROM fraschin_backup.expedicionmoli;
+-- INSERT INTO
+--     fraschina_2024.expedicion_molinos (
+--         id,
+--         nroMolino_id,
+--         calificacion,
+--         sigla,
+--         nroUPed,
+--         contMolino,
+--         estadoNroPedido,
+--         nroCliente_id,
+--         created_at,
+--         updated_at
+--     )
+-- SELECT
+--     idExpMoli AS id,
+--     nroMolinoExp AS nroMolino_id,
+--     calificacionExp AS calificacion,
+--     SiglaExp AS sigla,
+--     nroUPedExp AS nroUPed,
+--     contMoliExp AS contMolino,
+--     estadoNroPed AS estadoNroPedido,
+--     nroClieEst AS nroCliente_id,
+--     CURRENT_TIMESTAMP AS created_at,
+--     CURRENT_TIMESTAMP AS updated_at
+-- FROM fraschin_backup.expedicionmoli;
 
 INSERT INTO
     fraschina_2024.molinos (
@@ -1221,6 +1226,7 @@ WHERE
 
 INSERT INTO
     fraschina_2024.proveedor_personal (
+        id,
         nombre, -- Nombre del personal
         apellido, -- Apellido del personal
         proveedor_id, -- Relación con proveedor
@@ -1240,6 +1246,7 @@ INSERT INTO
         updated_at -- Fecha de actualización
     )
 SELECT
+    Ipersona AS id,
     Nombre AS nombre, -- Nombre
     Apellido AS apellido, -- Apellido
     Idproveedores AS proveedor_id, -- Relación con proveedores
@@ -1309,6 +1316,7 @@ WHERE
 
 INSERT INTO
     fraschina_2024.representacion_personal (
+        `id`,
         `nombre`,
         `apellido`,
         `representacion_id`,
@@ -1328,6 +1336,7 @@ INSERT INTO
         `updated_at`
     )
 SELECT
+    `Ipersona` AS `id`,
     `Nombre`,
     `Apellido`,
     IF(
@@ -1355,6 +1364,7 @@ WHERE
 
 INSERT INTO
     fraschina_2024.representacion_productos (
+        `IdProCli` AS `id`,
         `representacion_id`,
         `producto_id`,
         `pl`,
@@ -1503,6 +1513,7 @@ SET foreign_key_checks = 1;
 
 INSERT INTO
     fraschina_2024.representacions (
+        id, -- Respetamos el ID antiguo
         razonsocial,
         dire_calle,
         dire_nro,
@@ -1529,6 +1540,7 @@ INSERT INTO
         municipio_id
     )
 SELECT
+    idcliente AS id, -- Tomamos el ID de la tabla vieja
     RazonSocial,
     dire_calle,
     dire_nro,
