@@ -32,6 +32,7 @@ return new class extends Migration
       $table->string('marcas', 255)->nullable();
       $table->string('zona', 50)->nullable();
       $table->unsignedBigInteger('barrio_id')->nullable();
+      $table->string('ver', 1)->nullable();
       $table->string('status', 1)->nullable();
       $table->timestamps();
     });

@@ -1,0 +1,20 @@
+CREATE TABLE fichas_unificadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    A VARCHAR(255),
+    B VARCHAR(255),
+    C VARCHAR(255),
+    D VARCHAR(255),
+    E VARCHAR(255),
+    F VARCHAR(255),
+    G VARCHAR(255),
+    H VARCHAR(255),
+    I VARCHAR(255),
+    J VARCHAR(255),
+    K VARCHAR(255),
+    L VARCHAR(255),
+    M VARCHAR(255),
+    N VARCHAR(255),
+    O VARCHAR(255),
+    P VARCHAR(255),
+    origen_tabla VARCHAR(50) -- Para identificar la tabla original
+);

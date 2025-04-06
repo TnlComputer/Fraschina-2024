@@ -58,7 +58,7 @@
                         title="Editar">
                         <i class="fa-solid fa-pen-to-square fa-xs "></i>
                       </a>
-                      <form method="POST" action="{{ route('expedicion_pedido.destroy', $expedicion_molino->id) }}"
+                      <form method="POST" action="{{ route('expedicion_pedido.destroy', $expedicion_pedido->id) }}"
                         onsubmit="return confirm('¿Estás seguro de eliminar este registro?');">
                         @csrf
                         @method('DELETE')

@@ -18,20 +18,21 @@ return new class extends Migration
       $table->string('cl')->nullable();
       $table->string('modo')->nullable();
       $table->string('prod')->nullable();
-      $table->string('p')->nullable();
-      $table->string('l')->nullable();
-      $table->string('pl')->nullable();
-      $table->string('w')->nullable();
-      $table->string('gh')->nullable();
-      $table->string('gs')->nullable();
-      $table->string('hum')->nullable();
-      $table->string('cz')->nullable();
-      $table->string('est')->nullable();
-      $table->string('abs')->nullable();
-      $table->string('fn')->nullable();
-      $table->string('punt')->nullable();
+      $table->integer('p')->nullable(); // ❌ Eliminado el (5)
+      $table->integer('l')->nullable(); // ❌ Eliminado el (5)
+      $table->decimal('pl', 5, 2)->nullable();
+      $table->integer('w')->nullable();
+      $table->decimal('gh', 5, 2)->nullable();
+      $table->decimal('gs', 5, 2)->nullable();
+      $table->integer('gi')->nullable();
+      $table->decimal('hum', 5, 2)->nullable();
+      $table->decimal('cz', 5, 3)->nullable();
+      $table->integer('est')->nullable(); // ❌ Eliminado el (5)
+      $table->integer('abs')->nullable(); // ✅ Convertido a DECIMAL con precisión
+      $table->integer('fn')->nullable();
+      $table->integer('punt')->nullable();
       $table->string('particularidades')->nullable();
-      $table->string('marca_gral', 1)->nullable();
+      $table->char('marca_gral', 1)->nullable(); // ✅ Mejor usar CHAR(1)
       $table->string('controlExp_gral')->nullable();
       $table->string('status')->default('A')->nullable();
       $table->timestamps();

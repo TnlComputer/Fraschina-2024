@@ -13,8 +13,8 @@ class ExpedicionPedidoController extends Controller
   public function index(Request $request)
   {
     $name = $request->name;
-    $expedicion_clientes = ExpedicionCliente::all();
-    return view('pages.Expedicion.Pedido.index', compact('expedicion_clientes', 'name'));
+    $expedicion_pedidos = ExpedicionCliente::all();
+    return view('pages.Expedicion.Pedido.index', compact('expedicion_pedidos', 'name'));
   }
 
   /**
