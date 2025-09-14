@@ -34,7 +34,7 @@ return new class extends Migration
       $table->string('horario', 50)->nullable();
       $table->longText('objetivos')->nullable();
       $table->longText('comentarios')->nullable();
-      $table->date('fechagira')->nullable();
+      // $table->date('fechagira')->nullable();
       $table->unsignedBigInteger('rubro_id')->nullable();
       $table->unsignedBigInteger('tamanio_id')->nullable();
       $table->unsignedBigInteger('modo_id')->nullable();
