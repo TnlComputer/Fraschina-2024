@@ -297,8 +297,9 @@ class DistribucionPedidoController extends Controller
       return redirect()->route('distribucion_reparto.index', ['fecha' => $pedido->fechaEntrega])
         ->with('success', 'Pedido actualizado correctamente.');
     } catch (\Exception $e) {
+      report($e);
       DB::rollback();
-      return redirect()->back()->with('error', 'Error al actualizar el pedido: ' . $e->getMessage());
+      return redirect()->back()->with('error', 'Error al actualizar el pedido. Intente nuevamente o contacte al administrador.');
     }
   }
 

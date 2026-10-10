@@ -83,7 +83,7 @@ class AgroController extends Controller
    */
   public function store(Request $request)
   {
-    $request->validate([
+    $validated = $request->validate([
       'razonsocial' => 'required|max:50',
       'dire_calle' => 'nullable|max:50',
       'dire_nro' => 'nullable|max:30',
@@ -103,7 +103,7 @@ class AgroController extends Controller
       'info' => 'nullable',
     ]);
 
-    Agro::create($request->all());
+    Agro::create($validated);
 
     return redirect()->route('agro.index')->with('success', 'Agro creado exitosamente.');
   }
@@ -128,7 +128,7 @@ class AgroController extends Controller
    */
   public function update(Request $request, $id)
   {
-    $request->validate([
+    $validated = $request->validate([
       'razonsocial' => 'required|max:50',
       'dire_calle' => 'nullable|max:50',
       'dire_nro' => 'nullable|max:30',
@@ -149,7 +149,7 @@ class AgroController extends Controller
     ]);
 
     $agro = Agro::findOrFail($id);
-    $agro->update($request->all());
+    $agro->update($validated);
 
     return redirect()->route('agro.index')->with('success', 'Agro actualizado exitosamente.');
   }
@@ -195,8 +195,9 @@ class AgroController extends Controller
 
       return view('pages.Agro.show', compact('agro', 'personal'));
     } catch (\Exception $e) {
+      report($e);
       // Redirigir en caso de error
-      return redirect()->route('agro.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+      return redirect()->route('agro.index')->with('error', 'Ocurrió un error. Intente nuevamente o contacte al administrador.');
     }
   }
 

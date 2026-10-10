@@ -6,7 +6,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DatabaseExport;
 use App\Exports\TableExport;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 
 class ExportarController extends Controller
 {
@@ -38,8 +39,9 @@ class ExportarController extends Controller
 
   public function getLaravelTables()
   {
-    // Detectar las tablas internas de Laravel
+    // Tablas internas o sensibles que nunca se exportan
     return [
+      'users',
       'migrations',
       'password_resets',
       'password_reset_tokens',
@@ -60,39 +62,31 @@ class ExportarController extends Controller
     ];
   }
 
+  /**
+   * Tablas que se pueden exportar (todas menos las excluidas).
+   */
+  protected function exportableTables(): array
+  {
+    return array_values(array_diff(Schema::getTableListing(), $this->getLaravelTables()));
+  }
+
   public function selectTables()
   {
-    // Obtener las tablas de la base de datos
-    $tables = DB::select('SHOW TABLES');
+    $tables = $this->exportableTables();
 
-    // Obtener el nombre de la base de datos desde la configuración de Laravel
-    $dbName = 'Tables_in_' . env('DB_DATABASE');
-
-    // Extraer solo el nombre de las tablas
-    $tables = array_map(function ($table) use ($dbName) {
-      return $table->$dbName;
-    }, $tables);
-
-    // Obtener las tablas internas de Laravel a excluir
-    $excludedTables = $this->getLaravelTables();
-
-    // Filtrar las tablas que no queremos mostrar
-    $tables = array_filter($tables, function ($table) use ($excludedTables) {
-      return !in_array($table, $excludedTables);
-    });
-
-    // Retornar la vista con las tablas disponibles
     return view('pages.Tools.Exportar.selectTables', compact('tables'));
   }
 
   public function generate(Request $request)
   {
-    // Obtener la tabla seleccionada
-    $table = $request->input('table'); // Cambiar a singular para solo una tabla
+    $request->validate([
+      'table' => ['required', 'string', Rule::in($this->exportableTables())],
+    ], [
+      'table.required' => 'Por favor selecciona una tabla.',
+      'table.in' => 'La tabla seleccionada no se puede exportar.',
+    ]);
 
-    if (empty($table)) {
-      return redirect()->route('export.selectTables')->with('error', 'Por favor selecciona una tabla.');
-    }
+    $table = $request->input('table');
 
     // Generar y descargar el archivo Excel para la tabla seleccionada
     return Excel::download(new TableExport($table), "{$table}.xlsx");

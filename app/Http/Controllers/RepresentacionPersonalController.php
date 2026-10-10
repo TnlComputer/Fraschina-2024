@@ -121,7 +121,7 @@ class RepresentacionPersonalController extends Controller
   public function update(Request $request, $id)
   {
     // Validación del formulario
-    $request->validate([
+    $validated = $request->validate([
       'nombre' => 'required|max:150',
       'apellido' => 'required|max:150',
       'representacion_id' => 'required|exists:representacions,id',
@@ -153,7 +153,7 @@ class RepresentacionPersonalController extends Controller
     $personal->status = $request->has('status') ? $request->status : 'A';
 
     // Actualizar el registro con los datos recibidos
-    $personal->update($request->all());
+    $personal->update($validated);
 
     // Redirigir con un mensaje de éxito
     return redirect()->route('representacion.show', $request->representacion_id)->with('success', 'Información actualizada correctamente.');

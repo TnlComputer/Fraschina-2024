@@ -142,8 +142,9 @@ class MolinoController extends Controller
 
       return view('pages.Molino.show', compact('molino', 'personal'));
     } catch (\Exception $e) {
+      report($e);
       // Redirigir en caso de error
-      return redirect()->route('molino.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+      return redirect()->route('molino.index')->with('error', 'Ocurrió un error. Intente nuevamente o contacte al administrador.');
     }
   }
 

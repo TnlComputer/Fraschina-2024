@@ -165,8 +165,9 @@ class DistribucionController extends Controller
 
       return view('pages.Distribucion.show', compact('distribucion', 'personal', 'productos'));
     } catch (\Exception $e) {
+      report($e);
       // Redirigir en caso de error
-      return redirect()->route('distribucion.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+      return redirect()->route('distribucion.index')->with('error', 'Ocurrió un error. Intente nuevamente o contacte al administrador.');
     }
   }
 

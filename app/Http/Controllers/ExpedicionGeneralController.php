@@ -110,7 +110,7 @@ class ExpedicionGeneralController extends Controller
   // Almacenar el nuevo registro en la base de datos
   public function store(Request $request)
   {
-    $request->validate([
+    $validated = $request->validate([
       'fecha' => 'required|date',
       'mo' => 'required|max:5',
       'cl' => 'required|max:5',
@@ -122,6 +122,7 @@ class ExpedicionGeneralController extends Controller
       'w' => 'nullable|numeric',
       'gh' => 'nullable|numeric',
       'gs' => 'nullable|numeric',
+      'gi' => 'nullable|numeric',
       'hum' => 'nullable|numeric',
       'cz' => 'nullable|numeric',
       'est' => 'nullable|numeric',
@@ -131,7 +132,7 @@ class ExpedicionGeneralController extends Controller
       'particularidades' => 'nullable|string',
     ]);
 
-    ExpedicionGeneral::create($request->all());
+    ExpedicionGeneral::create($validated);
 
     return redirect()->route('expedicion_general.index')->with('success', 'Expedición creada exitosamente.');
   }
@@ -160,7 +161,7 @@ class ExpedicionGeneralController extends Controller
   // Actualizar un registro existente
   public function update(Request $request, $id)
   {
-    $request->validate([
+    $validated = $request->validate([
       'fecha' => 'required|date',
       'mo' => 'required|max:5',
       'cl' => 'required|max:5',
@@ -172,6 +173,7 @@ class ExpedicionGeneralController extends Controller
       'w' => 'nullable|numeric',
       'gh' => 'nullable|numeric',
       'gs' => 'nullable|numeric',
+      'gi' => 'nullable|numeric',
       'hum' => 'nullable|numeric',
       'cz' => 'nullable|numeric',
       'est' => 'nullable|numeric',
@@ -182,7 +184,7 @@ class ExpedicionGeneralController extends Controller
     ]);
 
     $expedicionGeneral = ExpedicionGeneral::findOrFail($id);
-    $expedicionGeneral->update($request->all());
+    $expedicionGeneral->update($validated);
 
     return redirect()->route('expedicion_general.index')->with('success', 'Expedición actualizada exitosamente.');
   }

@@ -184,8 +184,9 @@ class TransporteController extends Controller
 
       return view('pages.Transporte.show', compact('transporte', 'personal'));
     } catch (\Exception $e) {
+      report($e);
       // Redirigir en caso de error
-      return redirect()->route('transporte.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+      return redirect()->route('transporte.index')->with('error', 'Ocurrió un error. Intente nuevamente o contacte al administrador.');
     }
   }
 

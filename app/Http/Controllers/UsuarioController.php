@@ -87,7 +87,8 @@ class UsuarioController extends Controller
 
       return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente.');
     } catch (\Exception $e) {
-      return redirect()->back()->withErrors(['error' => 'Ocurrió un error: ' . $e->getMessage()])->withInput();
+      report($e);
+      return redirect()->back()->withErrors(['error' => 'Ocurrió un error. Intente nuevamente o contacte al administrador.'])->withInput();
     }
   }
 

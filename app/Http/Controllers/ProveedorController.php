@@ -77,9 +77,7 @@ class ProveedorController extends Controller
    */
   public function store(Request $request)
   {
-
-
-    $request->validate([
+    $validated = $request->validate([
       'razonsocial' => 'required|max:50',
       'dire_calle' => 'required|max:50',
       'dire_nro' => 'required|max:30',
@@ -99,11 +97,9 @@ class ProveedorController extends Controller
       'info' => 'nullable',
     ]);
 
-    $request['status'] = 'A';
+    $validated['status'] = 'A';
 
-    // dd($request);
-
-    Proveedor::create($request->all());
+    Proveedor::create($validated);
 
     return redirect()->route('proveedor.index')->with('success', 'Proveedor creado exitosamente.');
   }
@@ -128,7 +124,7 @@ class ProveedorController extends Controller
    */
   public function update(Request $request, $id)
   {
-    $request->validate([
+    $validated = $request->validate([
       'razonsocial' => 'required|max:50',
       'dire_calle' => 'nullable|max:50',
       'dire_nro' => 'nullable|max:30',
@@ -149,7 +145,7 @@ class ProveedorController extends Controller
     ]);
 
     $proveedor = Proveedor::findOrFail($id);
-    $proveedor->update($request->all());
+    $proveedor->update($validated);
 
     return redirect()->route('proveedor.index')->with('success', 'Proveedor actualizado exitosamente.');
   }
@@ -177,8 +173,9 @@ class ProveedorController extends Controller
       // Pasamos los datos a la vista
       return view('pages.Proveedor.show', compact('proveedor'));
     } catch (\Exception $e) {
+      report($e);
       // Redirigir en caso de error
-      return redirect()->route('proveedor.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+      return redirect()->route('proveedor.index')->with('error', 'Ocurrió un error. Intente nuevamente o contacte al administrador.');
     }
   }
 

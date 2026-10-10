@@ -63,8 +63,9 @@ class ProveedorProductoController extends Controller
       return redirect()->route('proveedor.show', $validatedData['proveedor_id'])
         ->with('success', 'Producto agregado correctamente.');
     } catch (\Exception $e) {
+      report($e);
       // Manejar errores
-      return back()->withErrors(['error' => 'Hubo un problema al guardar el producto: ' . $e->getMessage()]);
+      return back()->withErrors(['error' => 'Hubo un problema al guardar el producto. Intente nuevamente o contacte al administrador.']);
     }
   }
 
@@ -96,9 +97,10 @@ class ProveedorProductoController extends Controller
       // Retornar la vista con los datos necesarios
       return view('pages.Proveedor.Producto.edit', compact('producto', 'proveedor', 'productosAux'));
     } catch (\Exception $e) {
+      report($e);
       // Manejar errores y redirigir con un mensaje
       return redirect()->route('proveedor.show', $producto->proveedor_id ?? null)
-        ->withErrors(['error' => 'Hubo un problema al cargar la edición: ' . $e->getMessage()]);
+        ->withErrors(['error' => 'Hubo un problema al cargar la edición. Intente nuevamente o contacte al administrador.']);
     }
   }
 
@@ -122,12 +124,13 @@ class ProveedorProductoController extends Controller
     try {
       $producto = ProveedorProducto::findOrFail($id);
 
-      $producto->update($request->all());
+      $producto->update($validatedData);
 
       return redirect()->route('proveedor.show', $request->proveedor_id)
         ->with('success', 'Producto actualizado correctamente.');
     } catch (\Exception $e) {
-      return back()->withErrors(['error' => 'Hubo un problema al actualizar el producto: ' . $e->getMessage()]);
+      report($e);
+      return back()->withErrors(['error' => 'Hubo un problema al actualizar el producto. Intente nuevamente o contacte al administrador.']);
     }
   }
 
