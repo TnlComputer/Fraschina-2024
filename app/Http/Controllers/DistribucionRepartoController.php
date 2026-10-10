@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DistribucionNroPedidos;
-use App\Models\DistribucionProducto;
-use App\Services\EnLetrasService;
-use Carbon\Carbon;
 use Dompdf\Dompdf;
-use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use NumberToWords\NumberToWords;
@@ -15,16 +11,20 @@ use NumberToWords\NumberToWords;
 class DistribucionRepartoController extends Controller
 {
   /**
-   * Display a listing of the resource.
+   * Relaciones de la distribución que usan las vistas de reparto (evita N+1).
    */
+  private const DIRECCION = [
+    'distribucion.auxCalles',
+    'distribucion.auxbarrio',
+    'distribucion.auxlocalidad',
+    'distribucion.auxmunicipio',
+  ];
 
   public function index(Request $request)
   {
-    $fecha = $request->get('fecha', now()->toDateString());
+    $fecha = $this->fechaValida($request);
 
-    $distribuciones = DistribucionNroPedidos::with([
-      'distribucion', // Cargar toda la información de la distribución
-    ])
+    $distribuciones = DistribucionNroPedidos::with(self::DIRECCION)
       ->where('status', 'A')
       ->whereDate('fechaEntrega', $fecha)
       ->orderBy('orden', 'asc')
@@ -32,90 +32,52 @@ class DistribucionRepartoController extends Controller
       ->orderBy('id', 'asc')
       ->paginate(20);
 
-    // dd($distribuciones);
-
     return view('pages.Distribucion.Reparto.index', compact('distribuciones', 'fecha'));
   }
 
-
-
-  /**
-   * Show the form for creating a new resource.
-   */
-  public function create()
-  {
-    //
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   */
-  public function store(Request $request)
-  {
-    //
-  }
-
-  /**
-   * Display the specified resource.
-   */
-
   public function show($id)
   {
-    // Obtener el pedido con sus relaciones necesarias
     $pedido = DistribucionNroPedidos::with([
-      'lineasPedidos' => function ($query) use ($id) {
-        $query->where('pedido_id', $id);
-      },
-      'lineasTareas' => function ($query) use ($id) {
-        $query->where('pedido_id', $id);
-      }
+      'distribucion',
+      'lineasPedidos' => fn($query) => $query->orderBy('linea'),
+      'lineasPedidos.producto',
+      'lineasTareas.tarea',
     ])->find($id);
 
-    // Verificar si el pedido existe
     if (!$pedido) {
       return redirect()->route('distribucion_reparto.index')->with('error', 'Pedido no encontrado.');
     }
 
-    // Pasar datos a la vista
     return view('pages.Distribucion.Reparto.pedido', compact('pedido'));
   }
 
-  /**
-   * Update the specified resource in storage.
-   */
   public function update(Request $request, $id)
   {
-    // Buscar el recurso (distribución)
-    $distribucion = DistribucionNroPedidos::findOrFail($id);
-    // dd($distribucion);
-    // Actualizar los campos del recurso
-    $distribucion->fechaFactura = $request->input('fechaFactura');
-    $distribucion->nroFactura = $request->input('nroFactura');
-    $distribucion->totalFactura = $request->input('totalFactura');
-    $distribucion->chofer = $request->input('chofer');
-    $distribucion->orden = $request->input('orden');
+    $validated = $request->validate([
+      'fechaFactura' => 'nullable|date',
+      'nroFactura' => 'nullable|string|max:20',
+      'totalFactura' => 'nullable|numeric',
+      'chofer' => 'nullable|string|max:2',
+      'orden' => 'nullable|integer',
+      'fecha' => 'nullable|date_format:Y-m-d',
+    ]);
 
-    // Guardar los cambios
-    $distribucion->save();
+    $pedido = DistribucionNroPedidos::findOrFail($id);
+    $pedido->fechaFactura = $validated['fechaFactura'] ?? null;
+    $pedido->nroFactura = $validated['nroFactura'] ?? null;
+    $pedido->totalFactura = $validated['totalFactura'] ?? null;
+    $pedido->chofer = $validated['chofer'] ?? null;
+    $pedido->orden = $validated['orden'] ?? null;
+    $pedido->save();
 
-    // dd($request->fecha);
-
-    // Redirigir con un mensaje de éxito
-    return redirect()->route('distribucion_reparto.index', ['fecha' => $request->fecha])
+    return redirect()->route('distribucion_reparto.index', ['fecha' => $validated['fecha'] ?? null])
       ->with('success', 'Distribución actualizada correctamente');
-  }
-
-
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy(string $id)
-  {
-    //
   }
 
   public function convertirNumeroALetras($numero, $moneda = 'Pesos')
   {
+    $numero = (float) $numero;
+
     // Separamos la parte entera y fraccionaria (centavos)
     $entero = floor($numero);
     $centavos = round(($numero - $entero) * 100);
@@ -131,16 +93,15 @@ class DistribucionRepartoController extends Controller
       $centavosEnLetras = ' con ' . $numberTransformer->toWords($centavos) . ' centavos';
     }
 
-    // Agregamos la moneda al texto
     return 'La suma de ' . $moneda . ': ' . ucfirst($numeroEnLetras) . $centavosEnLetras;
   }
 
   public function imprimirRecibo($id)
   {
-    // Obtener el pedido principal con datos relacionados
+    // LEFT JOIN: un cliente sin calle cargada igual debe poder imprimir su recibo
     $pedido = DB::table('distribucion_nropedidos as dn')
       ->join('distribucions as d', 'dn.distribucion_id', '=', 'd.id')
-      ->join('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
+      ->leftJoin('auxcalles as ac', 'd.dire_calle_id', '=', 'ac.id')
       ->select(
         'dn.*',
         'd.nomfantasia',
@@ -152,45 +113,32 @@ class DistribucionRepartoController extends Controller
       ->where('dn.id', $id)
       ->first();
 
-    // Verificar si el pedido existe
     if (!$pedido) {
-      return response()->json(['error' => 'Pedido no encontrado'], 404);
+      return redirect()->route('distribucion_reparto.index')->with('error', 'Pedido no encontrado.');
     }
 
-    // Convertimos el total de la factura a letras
     $importeTexto = $this->convertirNumeroALetras($pedido->totalFactura);
 
-    // Configuración de Dompdf y generación del recibo en PDF
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
-
-    $dompdf = new Dompdf($options);
-    $html = view('pages.Distribucion.Printer.recibo', ['pedido' => $pedido, 'importeTexto' => $importeTexto])->render();
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
-
-    // Descargar el PDF
-    return $dompdf->stream('recibo.pdf', ['Attachment' => false]);
+    return $this->pdf(
+      view('pages.Distribucion.Printer.recibo', ['pedido' => $pedido, 'importeTexto' => $importeTexto]),
+      'recibo.pdf',
+      'portrait'
+    );
   }
 
-  // IMPREMIR REPARTO
   public function imprimirReparto(Request $request)
   {
-    // Obtener la fecha de la solicitud o la fecha actual
-    $fecha = $request->get('fecha', now()->toDateString());
+    $fecha = $this->fechaValida($request);
 
-    // Validar formato de la fecha
-    if (!Carbon::createFromFormat('Y-m-d', $fecha)) {
-      return redirect()->back()->with('error', 'Fecha inválida');
-    }
-
-    // Obtener las distribuciones con todas las líneas de pedido
-    $distribuciones = DistribucionNroPedidos::with([
-      'lineasPedidos', // Se eliminó el filtro de línea específica
+    $distribuciones = DistribucionNroPedidos::with(array_merge(self::DIRECCION, [
+      'lineasPedidos' => fn($query) => $query->orderBy('linea'),
+      'lineasPedidos.producto',
       'lineasTareas.tarea',
-      'distribucion'
-    ])
+      'distribucion.auxzona',
+      'distribucion.auxcobro',
+      'distribucion.auxpago',
+      'distribucion.auxtcobro',
+    ]))
       ->where('status', 'A')
       ->whereDate('fechaEntrega', '=', $fecha)
       ->orderBy('orden', 'asc')
@@ -198,74 +146,68 @@ class DistribucionRepartoController extends Controller
       ->orderBy('id', 'asc')
       ->get();
 
-    // Ordenar la colección de lineasPedidos por la columna 'linea'
-    $distribuciones->each(function ($distribucion) {
-      $distribucion->lineasPedidos = $distribucion->lineasPedidos->sortBy('linea');
-    });
-
-    try {
-      // Configuración de Dompdf
-      $options = new Options();
-      $options->set('isRemoteEnabled', true);
-
-      $dompdf = new Dompdf($options);
-      $html = view('pages.Distribucion.Printer.reparto', ['distribuciones' => $distribuciones, 'fecha'
-      => $fecha])->render();
-      $dompdf->loadHtml($html);
-      $dompdf->setPaper('A4', 'landscape');
-      $dompdf->render();
-
-      // Descargar el PDF
-      return $dompdf->stream('Reparto-' . $fecha . '.pdf', ['Attachment' => false]);
-    } catch (\Exception $e) {
-      //   return redirect()->back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
-    }
+    return $this->pdf(
+      view('pages.Distribucion.Printer.reparto', ['distribuciones' => $distribuciones, 'fecha' => $fecha]),
+      'Reparto-' . $fecha . '.pdf',
+      'landscape'
+    );
   }
-
 
   public function imprimirControl(Request $request)
   {
-    // Obtener la fecha de la solicitud o la fecha actual
-    $fecha = $request->get('fecha', now()->toDateString());
+    $fecha = $this->fechaValida($request);
 
-    // Validar formato de la fecha
-    if (!Carbon::createFromFormat('Y-m-d', $fecha)) {
-      return redirect()->back()->with('error', 'Fecha inválida');
-    }
-
-    // Obtener las distribuciones con todas las líneas de pedido
-    $distribuciones = DistribucionNroPedidos::with([
-      'lineasPedidos', // Se eliminó el filtro de línea específica
-      'distribucion'
-    ])
+    $distribuciones = DistribucionNroPedidos::with(['lineasPedidos', 'distribucion.auxpago'])
       ->where('status', 'A')
-      ->whereIn('tipo', ['P', 'PT']) // Permite ambos valores
+      ->whereIn('tipo', ['P', 'PT'])
       ->whereDate('fechaEntrega', '=', $fecha)
       ->orderBy('orden', 'asc')
       ->orderBy('fechaEntrega', 'desc')
       ->orderBy('id', 'asc')
       ->get();
 
+    return $this->pdf(
+      view('pages.Distribucion.Printer.control', ['distribuciones' => $distribuciones, 'fecha' => $fecha]),
+      'Control-' . $fecha . '.pdf',
+      'portrait',
+      numerarPaginas: true
+    );
+  }
+
+  /**
+   * Fecha del request (Y-m-d) o la de hoy. Una fecha mal formada vuelve con error de validación.
+   */
+  private function fechaValida(Request $request): string
+  {
+    $request->validate(['fecha' => 'nullable|date_format:Y-m-d']);
+
+    return $request->get('fecha') ?: now()->toDateString();
+  }
+
+  /**
+   * Renderiza una vista a PDF con Dompdf y la muestra en el navegador.
+   */
+  private function pdf($view, string $nombre, string $orientacion, bool $numerarPaginas = false)
+  {
     try {
-      // Configuración de Dompdf
-      $options = new Options();
-      $options->set('isRemoteEnabled', true);
-
-      $dompdf = new Dompdf($options);
-      $html = view('pages.Distribucion.Printer.control', ['distribuciones' => $distribuciones, 'fecha'
-      => $fecha])->render();
-      $dompdf->loadHtml($html);
-      $dompdf->setPaper('A4', 'portrait');
+      $dompdf = new Dompdf();
+      $dompdf->loadHtml($view->render());
+      $dompdf->setPaper('A4', $orientacion);
       $dompdf->render();
-      $canvas = $dompdf->getCanvas();
-      $canvas->page_script(function ($pageNumber, $pageCount, $canvas) {
-        $canvas->text(500, 820, "Página $pageNumber de $pageCount", null, 10, array(0, 0, 0));
-      });
 
-      // Descargar el PDF
-      return $dompdf->stream('Control-' . $fecha . '.pdf', ['Attachment' => false]);
+      if ($numerarPaginas) {
+        $dompdf->getCanvas()->page_script(function ($pageNumber, $pageCount, $canvas) {
+          $canvas->text(500, 820, "Página $pageNumber de $pageCount", null, 10, [0, 0, 0]);
+        });
+      }
+
+      return response($dompdf->output(), 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="' . $nombre . '"',
+      ]);
     } catch (\Exception $e) {
-      //   return redirect()->back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+      report($e);
+      return redirect()->back()->with('error', 'No se pudo generar el PDF. Intente nuevamente o contacte al administrador.');
     }
   }
 }

@@ -10,7 +10,7 @@
     <form action="{{ route('transporte.store') }}" method="POST" id="transporteForm">
       @csrf
 
-      @include('Pages.Transporte.form', ['action' => 'create'])
+      @include('pages.Transporte.form', ['action' => 'create'])
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
         <a href="{{ route('transporte.index') }}" class="btn btn-secondary">Cancelar</a>

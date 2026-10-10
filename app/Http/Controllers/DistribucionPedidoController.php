@@ -17,106 +17,106 @@ class DistribucionPedidoController extends Controller
 {
   public function create()
   {
-    $clientes = Distribucion::all();
-    $distribuciones = Distribucion::orderBy('nomfantasia')->get();
-    $productos = DistribucionProducto::with('producto')->orderBy('producto_id')->get();
-    return view('pages.Distribucion.Pedido.create', compact('clientes', 'distribuciones', 'productos'));
+    $clientes = Distribucion::where('status', 'A')
+      ->orderBy('nomfantasia')
+      ->get(['id', 'nomfantasia', 'razonsocial']);
+    return view('pages.Distribucion.Pedido.create', compact('clientes'));
   }
 
   public function store(Request $request)
   {
-    $validated = $request->validate([
+    $request->validate([
       'cliente_id' => 'required|exists:distribucions,id',
       'fecha_entrega' => 'required|date',
       'productos' => 'required|array',
+      'productos.*' => 'required|integer',
       'tipos' => 'required|array',
+      'tipos.*' => 'required|in:P,T,PT',
       'cantidades' => 'required|array',
+      'cantidades.*' => 'nullable|numeric|min:0',
       'precios' => 'required|array',
+      'precios.*' => 'nullable|numeric|min:0',
       'observaciones' => 'nullable|string',
     ]);
 
     $clienteId = $request->cliente_id;
     $fechaPedido = now()->toDateString();
     $fechaEntrega = $request->fecha_entrega;
-    $observaciones = $request->observaciones ?? null;
     $tipos = $request->tipos;
     $productos = $request->productos;
     $cantidades = $request->cantidades ?? [];
     $precios = $request->precios ?? [];
 
-    $tipoPedido = (in_array('P', $tipos) && in_array('T', $tipos)) ? 'PT' : (in_array('P', $tipos) ? 'P' : 'T');
+    // Productos del cliente en una sola consulta, indexados por producto_id
+    $productosCliente = $this->productosDelCliente($clienteId);
 
-    // Inicializar el total del pedido
-    $totalPedido = 0;
-
-    // Crear el pedido
-    $pedido = new DistribucionNroPedidos();
-    $pedido->fecha = $fechaPedido;
-    $pedido->fechaEntrega = $fechaEntrega;
-    $pedido->distribucion_id = $clienteId;
-    $pedido->observaciones = $observaciones;
-    $pedido->status = 'A';
-    $pedido->tipo = $tipoPedido;
-    $pedido->totalPedido = 0; // Se actualizará después
-    $pedido->save();
-
-    $lineaNumeroP = 1;
-    $lineaNumeroT = 1;
-
+    // Validar todos los productos antes de escribir nada
     foreach ($productos as $index => $productoId) {
-      $tipo = $tipos[$index];
-
-      if ($tipo === 'P' || $tipo === 'PT') {
-        // Obtener producto
-        $producto = DistribucionProducto::where('producto_id', $productoId)
-          ->where('distribucion_id', $clienteId)
-          ->first();
-
-        if (!$producto) {
-          return back()->withErrors(['error' => "El producto con ID $productoId no se encuentra en la distribución."]);
-        }
-
-        $cantidad = $cantidades[$index] ?? 1;
-        $precioUnitario = $precios[$index] ?? $producto->precio ?? 0;
-        $totalLinea = $precioUnitario * $cantidad;
-
-        // Acumular el total del pedido
-        $totalPedido += $totalLinea;
-
-        // Insertar en DistribucionLineaPedidos
-        DistribucionLineaPedidos::create([
-          'pedido_id' => $pedido->id,
-          'distribucion_id' => $clienteId,
-          'fecha' => $fechaPedido,
-          'fechaEntrega' => $fechaEntrega,
-          'linea' => $lineaNumeroP++,
-          'producto_id' => $productoId,
-          'cantidad' => $cantidad,
-          'precio_unitario' => $precioUnitario,
-          'totalLinea' => $totalLinea,
-          'status' => 1,
-        ]);
-      }
-
-      if ($tipo === 'T' || $tipo === 'PT') {
-        // Insertar en DistribucionLineaTareas
-        DistribucionLineaTareas::create([
-          'pedido_id' => $pedido->id,
-          'distribucion_id' => $clienteId,
-          'fecha' => $fechaPedido,
-          'fechaEntrega' => $fechaEntrega,
-          'linea' => $lineaNumeroT++,
-          'tarea_id' => $productoId,
-          'status' => 'A',
-        ]);
+      if (in_array($tipos[$index] ?? null, ['P', 'PT']) && !$productosCliente->has($productoId)) {
+        return back()->withInput()->withErrors(['error' => "El producto con ID $productoId no se encuentra en la distribución."]);
       }
     }
 
-    // Actualizar el totalPedidos en el pedido
-    $pedido->update(['totalPedido' => $totalPedido]);
+    $tipoPedido = (in_array('P', $tipos) && in_array('T', $tipos)) ? 'PT' : (in_array('P', $tipos) ? 'P' : 'T');
+
+    DB::transaction(function () use ($request, $clienteId, $fechaPedido, $fechaEntrega, $tipos, $productos, $cantidades, $precios, $productosCliente, $tipoPedido) {
+      $pedido = new DistribucionNroPedidos();
+      $pedido->fecha = $fechaPedido;
+      $pedido->fechaEntrega = $fechaEntrega;
+      $pedido->distribucion_id = $clienteId;
+      $pedido->observaciones = $request->observaciones;
+      $pedido->status = 'A';
+      $pedido->tipo = $tipoPedido;
+      $pedido->totalPedido = 0; // Se actualiza al final
+      $pedido->save();
+
+      $totalPedido = 0;
+      $lineaNumeroP = 1;
+      $lineaNumeroT = 1;
+
+      foreach ($productos as $index => $productoId) {
+        $tipo = $tipos[$index];
+
+        if ($tipo === 'P' || $tipo === 'PT') {
+          $dp = $productosCliente->get($productoId);
+          $cantidad = $cantidades[$index] ?? 1;
+          $precioUnitario = $precios[$index] ?? $dp->precio ?? 0;
+          $totalLinea = productoCDA::calcularTotalLinea($precioUnitario, $cantidad, $this->ivaDe($dp));
+          $totalPedido += $totalLinea;
+
+          DistribucionLineaPedidos::create([
+            'pedido_id' => $pedido->id,
+            'distribucion_id' => $clienteId,
+            'fecha' => $fechaPedido,
+            'fechaEntrega' => $fechaEntrega,
+            'linea' => $lineaNumeroP++,
+            'producto_id' => $productoId,
+            'cantidad' => $cantidad,
+            'precio_unitario' => $precioUnitario,
+            'totalLinea' => $totalLinea,
+            'status' => 1,
+          ]);
+        }
+
+        if ($tipo === 'T' || $tipo === 'PT') {
+          DistribucionLineaTareas::create([
+            'pedido_id' => $pedido->id,
+            'distribucion_id' => $clienteId,
+            'fecha' => $fechaPedido,
+            'fechaEntrega' => $fechaEntrega,
+            'linea' => $lineaNumeroT++,
+            'tarea_id' => $productoId,
+            'status' => 'A',
+          ]);
+        }
+      }
+
+      $pedido->update(['totalPedido' => round($totalPedido, 2)]);
+    });
 
     return redirect()->route('distribucion_agenda.index')->with('success', 'Pedido creado correctamente');
   }
+
   public function getProductosYTareasPorCliente($clienteId)
   {
     // Obtener productos activos del cliente con status 'A' en ambas tablas
@@ -124,7 +124,7 @@ class DistribucionPedidoController extends Controller
       ->where('distribucion_productos.distribucion_id', $clienteId)
       ->where('distribucion_productos.status', 'A') // Filtra productos activos en DistribucionProducto
       ->where('productos_c_d_a.status', 'A') // Filtra productos activos en productos_c_d_a
-      ->select('productos_c_d_a.id', 'productos_c_d_a.productoCDA as nombre', 'distribucion_productos.precio')
+      ->select('productos_c_d_a.id', 'productos_c_d_a.productoCDA as nombre', 'productos_c_d_a.ivacda', 'distribucion_productos.precio')
       ->get();
 
     // Obtener tareas activas con status 'A'
@@ -138,187 +138,189 @@ class DistribucionPedidoController extends Controller
     ]);
   }
 
-
-
   public function edit($id)
   {
-    // Obtener el pedido con sus productos y tareas
-    $pedido = DistribucionNroPedidos::with(['lineasPedidos.producto', 'lineasTareas.tarea'])->findOrFail($id);
+    $pedido = DistribucionNroPedidos::with(['distribucion', 'lineasPedidos.producto', 'lineasTareas.tarea'])->findOrFail($id);
 
-    // Filtrar productos solo para el cliente del pedido
-    $productos = DistribucionProducto::where('distribucion_id', $pedido->distribucion_id)->get();
-
-    // Filtrar tareas solo para el cliente del pedido
-    $tareas = DistribucionTareas::all();
-
-    // dd($pedido);
-
-    return view('pages.Distribucion.Pedido.edit', compact('pedido', 'productos', 'tareas'));
+    return view('pages.Distribucion.Pedido.edit', compact('pedido'));
   }
 
   public function update(Request $request, $id)
   {
-    // dd($request->all(), $id);
+    $request->validate([
+      'fecha_entrega' => 'required|date',
+      'observaciones' => 'nullable|string',
+      'existing_product_line_ids' => 'nullable|array',
+      'existing_product_line_ids.*' => 'integer',
+      'existing_precios' => 'nullable|array',
+      'existing_precios.*' => 'required|numeric|min:0',
+      'existing_cantidades' => 'nullable|array',
+      'existing_cantidades.*' => 'required|numeric|min:0',
+      'new_productos' => 'nullable|array',
+      'new_productos.*' => 'integer',
+      'new_precios' => 'nullable|array',
+      'new_precios.*' => 'required|numeric|min:0',
+      'new_cantidades' => 'nullable|array',
+      'new_cantidades.*' => 'required|numeric|min:0',
+      'existing_tarea_ids' => 'nullable|array',
+      'existing_tarea_ids.*' => 'integer',
+      'new_tareas' => 'nullable|array',
+      'new_tareas.*' => 'integer|exists:distribucion_tareas,id',
+    ]);
 
-    DB::beginTransaction();
     try {
-      // 1. Actualizar datos generales del pedido
-      $pedido = DistribucionNroPedidos::findOrFail($id);
-      $pedido->fechaEntrega  = $request->input('fecha_entrega');
-      $pedido->observaciones = $request->input('observaciones');
-      $pedido->save();
+      $pedido = DB::transaction(function () use ($request, $id) {
+        // 1. Datos generales del pedido
+        $pedido = DistribucionNroPedidos::lockForUpdate()->findOrFail($id);
+        $pedido->fechaEntrega  = $request->input('fecha_entrega');
+        $pedido->observaciones = $request->input('observaciones');
+        $pedido->save();
 
-      // 2. Procesar líneas de productos existentes
-      $existingProductLineIds = $request->input('existing_product_line_ids', []); // IDs de las líneas que siguen en la vista
-      if (!empty($existingProductLineIds)) {
+        $productosCliente = $this->productosDelCliente($pedido->distribucion_id);
+
+        // Solo se tocan líneas que pertenecen a este pedido
+        $lineas = $pedido->lineasPedidos()->get()->keyBy('id');
+
+        // 2. Líneas de productos existentes
+        $existingProductLineIds = array_map('intval', $request->input('existing_product_line_ids', []));
         $existingPrecios    = $request->input('existing_precios', []);
         $existingCantidades = $request->input('existing_cantidades', []);
         foreach ($existingProductLineIds as $index => $lineaId) {
-          $linea = DistribucionLineaPedidos::find($lineaId);
-          if ($linea) {
-            $precio   = $existingPrecios[$index];
-            $cantidad = $existingCantidades[$index];
-            $linea->precio_unitario = $precio;
-            $linea->cantidad        = $cantidad;
-            // Consultar IVA a partir del producto
-            $dp = DistribucionProducto::where('distribucion_id', $pedido->distribucion_id)
-              ->where('producto_id', $linea->producto_id)
-              ->first();
-            $iva = $dp ? ($dp->producto->ivacda ?? 0) : 0;
-            $totalBase = $precio * $cantidad;
-            $linea->totalLinea = $totalBase + ($totalBase * $iva / 100);
-            $linea->save();
+          $linea = $lineas->get($lineaId);
+          if (!$linea) {
+            continue;
           }
+          $linea->precio_unitario = $existingPrecios[$index] ?? $linea->precio_unitario;
+          $linea->cantidad        = $existingCantidades[$index] ?? $linea->cantidad;
+          $linea->totalLinea      = productoCDA::calcularTotalLinea(
+            $linea->precio_unitario,
+            $linea->cantidad,
+            $this->ivaDe($productosCliente->get($linea->producto_id))
+          );
+          $linea->save();
         }
-      }
 
-      // Eliminar de la BD las líneas de productos que hayan sido removidas
-      $idsActualesProductos = DistribucionLineaPedidos::where('pedido_id', $pedido->id)
-        ->pluck('id')
-        ->toArray();
-      $idsAConservar = $existingProductLineIds; // las que llegan en el request
-      $idsAEliminar  = array_diff($idsActualesProductos, $idsAConservar);
-      if (!empty($idsAEliminar)) {
-        DistribucionLineaPedidos::destroy($idsAEliminar);
-      }
+        // Eliminar las líneas de productos que se quitaron en la vista
+        $idsAEliminar = $lineas->keys()->diff($existingProductLineIds);
+        if ($idsAEliminar->isNotEmpty()) {
+          DistribucionLineaPedidos::destroy($idsAEliminar->all());
+          $lineas = $lineas->except($idsAEliminar->all());
+        }
 
-      // 3. Procesar nuevos productos
-      if ($request->has('new_productos')) {
-        $newProductos   = $request->input('new_productos', []);
-        $newPrecios     = $request->input('new_precios', []);
-        $newCantidades  = $request->input('new_cantidades', []);
+        // 3. Nuevos productos
+        $newProductos  = $request->input('new_productos', []);
+        $newPrecios    = $request->input('new_precios', []);
+        $newCantidades = $request->input('new_cantidades', []);
+        $proximaLinea  = (int) $lineas->max('linea');
         foreach ($newProductos as $index => $productoId) {
-          // Verificar si ya existe una línea con este producto
-          $lineaExistente = DistribucionLineaPedidos::where('pedido_id', $pedido->id)
-            ->where('producto_id', $productoId)
-            ->first();
+          $iva = $this->ivaDe($productosCliente->get($productoId));
+          $lineaExistente = $lineas->firstWhere('producto_id', $productoId);
+
           if ($lineaExistente) {
             // Sumar la nueva cantidad a la existente y actualizar precio
             $lineaExistente->cantidad += $newCantidades[$index];
             $lineaExistente->precio_unitario = $newPrecios[$index];
-            $dp = DistribucionProducto::where('distribucion_id', $pedido->distribucion_id)
-              ->where('producto_id', $productoId)
-              ->first();
-            $iva = $dp ? ($dp->producto->ivacda ?? 0) : 0;
-            $totalBase = $lineaExistente->cantidad * $lineaExistente->precio_unitario;
-            $lineaExistente->totalLinea = $totalBase + ($totalBase * $iva / 100);
+            $lineaExistente->totalLinea = productoCDA::calcularTotalLinea($lineaExistente->precio_unitario, $lineaExistente->cantidad, $iva);
             $lineaExistente->save();
           } else {
-            // Crear nueva línea
-            $cantidad = $newCantidades[$index];
-            $precio   = $newPrecios[$index];
-            $dp = DistribucionProducto::where('distribucion_id', $pedido->distribucion_id)
-              ->where('producto_id', $productoId)
-              ->first();
-            $iva = $dp ? ($dp->producto->ivacda ?? 0) : 0;
-            $totalBase  = $cantidad * $precio;
-            $totalLinea = $totalBase + ($totalBase * $iva / 100);
-            DistribucionLineaPedidos::create([
+            $nueva = DistribucionLineaPedidos::create([
               'pedido_id'       => $pedido->id,
               'distribucion_id' => $pedido->distribucion_id,
               'fecha'           => $pedido->fecha,
               'fechaEntrega'    => $pedido->fechaEntrega,
+              'linea'           => ++$proximaLinea,
               'producto_id'     => $productoId,
-              'cantidad'        => $cantidad,
-              'precio_unitario' => $precio,
-              'totalLinea'      => $totalLinea,
+              'cantidad'        => $newCantidades[$index],
+              'precio_unitario' => $newPrecios[$index],
+              'totalLinea'      => productoCDA::calcularTotalLinea($newPrecios[$index], $newCantidades[$index], $iva),
               'status'          => 1,
             ]);
+            $lineas->put($nueva->id, $nueva);
           }
         }
-      }
 
-      // 4. Procesar tareas existentes: conservar las que sigan enviadas
-      $existingTareaIds = $request->input('existing_tarea_ids', []); // IDs de tareas que se mantienen
-      $idsActualesTareas = DistribucionLineaTareas::where('pedido_id', $pedido->id)
-        ->pluck('id')
-        ->toArray();
-      $tareasAEliminar = array_diff($idsActualesTareas, $existingTareaIds);
-      if (!empty($tareasAEliminar)) {
-        DistribucionLineaTareas::destroy($tareasAEliminar);
-      }
+        // 4. Tareas existentes: conservar solo las que siguen en la vista
+        $existingTareaIds = array_map('intval', $request->input('existing_tarea_ids', []));
+        $pedido->lineasTareas()->whereNotIn('id', $existingTareaIds)->delete();
 
-      // 5. Procesar nuevas tareas
-      if ($request->has('new_tareas')) {
-        $newTareas = $request->input('new_tareas', []);
-        // Determinar el próximo número de línea para tareas
-        $maxLinea = DistribucionLineaTareas::where('pedido_id', $pedido->id)->max('linea') ?? 0;
-        foreach ($newTareas as $tareaId) {
-          $maxLinea++;
+        // 5. Nuevas tareas
+        $maxLinea = (int) $pedido->lineasTareas()->max('linea');
+        foreach ($request->input('new_tareas', []) as $tareaId) {
           DistribucionLineaTareas::create([
             'pedido_id'       => $pedido->id,
             'distribucion_id' => $pedido->distribucion_id,
+            'fecha'           => $pedido->fecha,
             'fechaEntrega'    => $pedido->fechaEntrega,
-            'linea'           => $maxLinea,
+            'linea'           => ++$maxLinea,
             'tarea_id'        => $tareaId,
-            'status'          => 'A'
+            'status'          => 'A',
           ]);
         }
-      }
 
-      // 6. Recalcular el total del pedido y definir su tipo
-      $totalPedido = DistribucionLineaPedidos::where('pedido_id', $pedido->id)
-        ->sum('totalLinea');
-      $pedido->totalPedido = $totalPedido;
-      $tieneProductos = DistribucionLineaPedidos::where('pedido_id', $pedido->id)->exists();
-      $tieneTareas    = DistribucionLineaTareas::where('pedido_id', $pedido->id)->exists();
-      if ($tieneProductos && $tieneTareas) {
-        $pedido->tipo = 'PT';
-      } elseif ($tieneProductos) {
-        $pedido->tipo = 'P';
-      } elseif ($tieneTareas) {
-        $pedido->tipo = 'T';
-      } else {
-        $pedido->tipo = null;
-      }
-      $pedido->save();
+        // Las líneas acompañan la fecha de entrega del pedido
+        $pedido->lineasPedidos()->update(['fechaEntrega' => $pedido->fechaEntrega]);
+        $pedido->lineasTareas()->update(['fechaEntrega' => $pedido->fechaEntrega]);
 
-      DB::commit();
-      return redirect()->route('distribucion_reparto.index', ['fecha' => $pedido->fechaEntrega])
-        ->with('success', 'Pedido actualizado correctamente.');
+        // 6. Recalcular total y tipo del pedido
+        $tieneProductos = $lineas->isNotEmpty();
+        $tieneTareas    = $pedido->lineasTareas()->exists();
+        $pedido->totalPedido = round($lineas->sum('totalLinea'), 2);
+        $pedido->tipo = match (true) {
+          $tieneProductos && $tieneTareas => 'PT',
+          $tieneProductos => 'P',
+          $tieneTareas => 'T',
+          default => null,
+        };
+        $pedido->save();
+
+        return $pedido;
+      });
     } catch (\Exception $e) {
       report($e);
-      DB::rollback();
-      return redirect()->back()->with('error', 'Error al actualizar el pedido. Intente nuevamente o contacte al administrador.');
+      return redirect()->back()->withInput()->with('error', 'Error al actualizar el pedido. Intente nuevamente o contacte al administrador.');
     }
-  }
 
+    return redirect()->route('distribucion_reparto.index', ['fecha' => $pedido->fechaEntrega])
+      ->with('success', 'Pedido actualizado correctamente.');
+  }
 
   public function getProductosTareas($distribucion_id)
   {
-    // Filtrar productos por distribucion_id y status 'A'
-    $productos = DistribucionProducto::where('distribucion_id', $distribucion_id)
-      ->where('status', 'A') // Filtrar productos activos
+    // Productos activos del cliente con nombre, precio e IVA
+    $productos = DistribucionProducto::join('productos_c_d_a', 'distribucion_productos.producto_id', '=', 'productos_c_d_a.id')
+      ->where('distribucion_productos.distribucion_id', $distribucion_id)
+      ->where('distribucion_productos.status', 'A')
+      ->select('distribucion_productos.producto_id', 'productos_c_d_a.productoCDA as nombre', 'productos_c_d_a.ivacda', 'distribucion_productos.precio')
+      ->orderBy('productos_c_d_a.productoCDA')
       ->get();
 
-    // Filtrar tareas con status 'A'
-    $tareas = DistribucionTareas::where('status', 'A') // Filtrar tareas activas
-      ->select('id', 'tarea') // Seleccionar solo los campos necesarios
+    // Tareas activas
+    $tareas = DistribucionTareas::where('status', 'A')
+      ->select('id', 'tarea')
       ->get();
 
     return response()->json([
       'productos' => $productos,
       'tareas' => $tareas
     ]);
+  }
+
+  /**
+   * Productos asignados a un cliente, con su producto CDA, indexados por producto_id.
+   */
+  protected function productosDelCliente($clienteId)
+  {
+    return DistribucionProducto::with('producto')
+      ->where('distribucion_id', $clienteId)
+      ->get()
+      ->keyBy('producto_id');
+  }
+
+  /**
+   * Alícuota de IVA de un producto del cliente (21% si no se encuentra).
+   */
+  protected function ivaDe(?DistribucionProducto $dp): float
+  {
+    return $dp?->producto?->porcentajeIva() ?? 21.0;
   }
 }

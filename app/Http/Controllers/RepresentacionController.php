@@ -7,7 +7,6 @@ use App\Models\AuxVeraz;
 use App\Models\AuxZonas;
 use App\Models\AuxCalles;
 use App\Models\AuxCobrar;
-use App\Models\AuxEstado;
 use App\Models\AuxBarrios;
 use App\Models\AuxContacto;
 use App\Models\AuxTipoPagos;

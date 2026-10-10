@@ -41,7 +41,7 @@ class DistribucionAgenda extends Model
   // Relación con productos CDA
   public function productocda()
   {
-    return $this->belongsTo(ProductoCDA::class, 'producto_id', 'id');
+    return $this->belongsTo(productoCDA::class, 'producto_id', 'id');
   }
   // Relación con el personal de distribución
   public function distribucionPersonal()

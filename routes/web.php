@@ -174,7 +174,7 @@ Route::middleware(['auth', 'permission:permiso_6'])->group(function () {
 
 // EXPEDICION (permiso_7)
 Route::middleware(['auth', 'permission:permiso_7'])->group(function () {
-  Route::resource('/expedicion', ExpedicionController::class);
+  Route::get('/expedicion', [ExpedicionController::class, 'index'])->name('expedicion.index');
   Route::resource('/expedicion_cliente', ExpedicionClienteController::class);
   Route::resource('/expedicion_molino', ExpedicionMolinoController::class);
   Route::get('/expedicion-general/export', [ExpedicionGeneralController::class, 'export'])->name('expedicion_general.export');

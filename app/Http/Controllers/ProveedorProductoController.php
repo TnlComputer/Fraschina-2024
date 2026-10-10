@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
-use App\Models\Proveedor_AuxProductos;
-use App\Models\Proveedor_Producto;
 use App\Models\ProveedorAuxProductos;
 use App\Models\ProveedorProducto;
 use Illuminate\Http\Request;

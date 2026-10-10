@@ -10,7 +10,7 @@
     <form action="{{ route('proveedor.store') }}" method="POST" id="proveedorForm">
       @csrf
 
-      @include('Pages.Proveedor.form', ['action' => 'create'])
+      @include('pages.Proveedor.form', ['action' => 'create'])
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
         <a href="{{ route('proveedor.index') }}" class="btn btn-secondary">Cancelar</a>

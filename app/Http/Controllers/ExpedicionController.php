@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\ExpedicionMolino;
-
 class ExpedicionController extends Controller
 {
-  public function index(Request $request)
+  /**
+   * Entrada de Expedición. Hasta tener el tablero de la Central de Pedidos,
+   * lleva a Expedición General.
+   */
+  public function index()
   {
-    $name = trim($request->get('name'));
-    if ($name) {
-      $expediciones =  ExpedicionMolino::paginate(15)->get();
-    }
-    return view('pages.Expedicion.index', compact('expediciones'));
-    //
+    return redirect()->route('expedicion_general.index');
   }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Distribucion_Producto;
 use App\Models\DistribucionProducto;
 use App\Models\productoCDA;
 use Illuminate\Http\Request;

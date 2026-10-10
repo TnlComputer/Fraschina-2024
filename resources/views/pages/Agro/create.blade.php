@@ -11,7 +11,7 @@
   <div class="card-body">
     <form id="agroForm" action="{{ route('agro.store') }}" method="POST">
       @csrf
-      @include('Pages.Agro.form')
+      @include('pages.Agro.form')
 
       <div class="d-flex justify-content-between">
         <button type="submit" id="submitButton" class="btn btn-primary">Guardar</button>

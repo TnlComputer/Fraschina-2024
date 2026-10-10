@@ -12,7 +12,7 @@
     <form action="{{ route('agro.update', $agro->id) }}" method="POST">
       @csrf
       @method('PUT')
-      @include('Pages.Agro.form', ['agro' => $agro])
+      @include('pages.Agro.form', ['agro' => $agro])
 
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary">Actualizar</button>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AuxAcciones;
 use App\Models\AuxPrioridades;
 use App\Models\Distribucion;
-use App\Models\Distribucion_Personal;
 use App\Models\DistribucionAgenda;
 use App\Models\DistribucionLineaPedidos;
 use App\Models\DistribucionPersonal;
@@ -32,6 +31,18 @@ class DistribucionAgendaController extends Controller
       'distribucion.auxcontacto:id,contacto',
       'distribucion.auxveraz:id,estado', // Relación con Veraz desde Distribucion
       'distribucion.auxestado:id,nomEstado', // Relación con Estado desde Distribucion
+      // Datos que muestra el modal (evita consultas por cada fila)
+      'distribucion.auxCalles',
+      'distribucion.auxbarrio',
+      'distribucion.auxmunicipio',
+      'distribucion.auxlocalidad',
+      'distribucion.auxzona',
+      'distribucion.auxrubro',
+      'distribucion.auxtamanio',
+      'distribucion.auxmodo',
+      // Solo los últimos 7 pedidos de cada cliente, no todo el historial
+      'distribucion.distribucionLineaPedidos' => fn($q) => $q->orderByDesc('fecha')->orderByDesc('id')->limit(7),
+      'distribucion.distribucionLineaPedidos.producto:id,productoCDA',
       'distribucionPersonal:id,nombre,apellido,cargo_id',
       // 'distribucionPersonal.tipoPersonal:id,tipo',
       'distribucionPersonal.cargo',

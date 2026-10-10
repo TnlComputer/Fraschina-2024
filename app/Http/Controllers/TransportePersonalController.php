@@ -6,7 +6,6 @@ use App\Models\AuxAreas;
 use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Transporte;
-use App\Models\Transporte_Personal;
 use App\Models\TransportePersonal;
 use Illuminate\Http\Request;
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Representacion_AuxProductos;
 use App\Models\RepresentacionAuxProductos;
 use Illuminate\Http\Request;
 

@@ -10,7 +10,7 @@
     <form action="{{ route('molino.store') }}" method="POST" id="molinoForm">
       @csrf
 
-      @include('Pages.Molino.form', ['action' => 'create'])
+      @include('pages.Molino.form', ['action' => 'create'])
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
         <a href="{{ route('molino.index') }}" class="btn btn-secondary">Cancelar</a>

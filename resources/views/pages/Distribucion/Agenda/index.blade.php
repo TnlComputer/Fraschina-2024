@@ -82,8 +82,8 @@
                 <i class="fas fa-trash-alt fa-sm"></i>
               </button>
             </form>
+            @endcan
           </td>
-          @endcan
         </tr>
         @endforeach
       </tbody>
@@ -116,12 +116,11 @@
           <strong>Veráz:</strong> {{ $agenda->distribucion->auxveraz->estado ?? 'No disponible' }} <br>
           <strong>Estado:</strong> {{ $agenda->distribucion->auxestado->nomEstado ?? 'No disponible' }} <br>
           <strong>Acción:</strong> <span style="background-color: {{ $agenda->auxacciones?->colorAcc ?? '#FFFFFF' }};">
-            {{
-            $agenda->auxacciones->accion }} </span><br>
+            {{ $agenda->auxacciones?->accion ?? '' }} </span><br>
           <strong>Prioridad:</strong><span
             style="background-color: {{ $agenda->auxprioridades?->color ?? '#FFFFFF' }};">
             {{ $agenda->auxprioridades?->nombre ?? 'No disponible' }} </span> <br>
-          <strong>Cargo:</strong>{{ $agenda->distribucionPersonal->cargo->cargo }} <br>
+          <strong>Cargo:</strong>{{ $agenda->distribucionPersonal?->cargo?->cargo ?? '' }} <br>
           <strong>Persona:</strong> {{
           $agenda->distribucionPersonal->nombre ?? '' }} {{ $agenda->distribucionPersonal->apellido ?? '' }} <br>
           <strong>Teléfono:</strong> {{ $agenda->distribucion->telefono }} <br>
@@ -131,24 +130,25 @@
           <strong>Ult.Cotización /Venta:</strong> {{ $agenda->distribucion->telefono }} <br>
           <strong>Fecha Ult.Cotización:</strong> {{ \Carbon\Carbon::parse($agenda->fecha)->format('d-m-Y') }} <br>
           <strong>Cotización:</strong> {{ $agenda->cotizacion }} <br>
-          <strong>Fecha Ult.Entrega:</strong> {{ \Carbon\Carbon::parse($agenda->fecha)->format('d-m-Y') }} <br>
+          @php $ultimaEntrega = $agenda->distribucion->distribucionLineaPedidos->max('fechaEntrega'); @endphp
+          <strong>Fecha Ult.Entrega:</strong> {{ $ultimaEntrega ? \Carbon\Carbon::parse($ultimaEntrega)->format('d-m-Y') : '-' }} <br>
           <strong>Información:</strong> {{ $agenda->distribucion->info }} <br>
 
           <hr class=" bg-green-600">
-          <strong>Calle</strong> {{ $agenda->distribucion->auxcalles->calle ?? 'Sin información' }} <br>
+          <strong>Calle</strong> {{ $agenda->distribucion->auxCalles?->calle ?? 'Sin información' }} <br>
           <strong>Altura</strong> {{ $agenda->distribucion->dire_nro }} {{ $agenda->distribucion->piso }} {{
           $agenda->distribucion->dpto }}<br>
-          <strong>Barrio</strong> {{ $agenda->distribucion->auxbarrio->nombrebarrio }} <br>
-          <strong>Ciudad/Municipio</strong> {{ $agenda->distribucion->auxmunicipio->ciudadmunicipio }} <br>
-          <strong>Localidad</strong> {{ $agenda->distribucion->auxlocalidad->localidad }} <br>
-          <strong>Zona</strong> {{ $agenda->distribucion->auxzona->nombre }} <br>
+          <strong>Barrio</strong> {{ $agenda->distribucion->auxbarrio?->nombrebarrio }} <br>
+          <strong>Ciudad/Municipio</strong> {{ $agenda->distribucion->auxmunicipio?->ciudadmunicipio }} <br>
+          <strong>Localidad</strong> {{ $agenda->distribucion->auxlocalidad?->localidad }} <br>
+          <strong>Zona</strong> {{ $agenda->distribucion->auxzona?->nombre }} <br>
 
           <hr class=" bg-blue-600">
-          <strong>Rubro</strong> {{ $agenda->distribucion->auxrubro->nombre }} <br>
-          <strong>Tamaño</strong> {{ $agenda->distribucion->auxtamanio->nombre }} <br>
-          <strong>Modo</strong> {{ $agenda->distribucion->auxmodo->nombre }} <br>
-          <strong>Productos</strong> {{ $agenda->distribucion->productosCDA}} <br>
-          <strong>Contacto Inicial</strong> {{ $agenda->distribucion->auxcontacto->contacto }} <br>
+          <strong>Rubro</strong> {{ $agenda->distribucion->auxrubro?->nombre }} <br>
+          <strong>Tamaño</strong> {{ $agenda->distribucion->auxtamanio?->nombre }} <br>
+          <strong>Modo</strong> {{ $agenda->distribucion->auxmodo?->nombre }} <br>
+          <strong>Productos</strong> {{ $agenda->distribucion->productoCDA }} <br>
+          <strong>Contacto Inicial</strong> {{ $agenda->distribucion->auxcontacto?->contacto }} <br>
 
           <hr class="bg-blue-900">
           <strong>Horario Entrega Mañana:</strong> {{ $agenda->distribucion->desde }} - {{ $agenda->distribucion->hasta
@@ -182,14 +182,13 @@
               </tr>
             </thead>
             <tbody>
-              @foreach($agenda->distribucion->distribucionLineaPedidos->sortByDesc('fecha')->take(7) as $pedido)
+              @foreach($agenda->distribucion->distribucionLineaPedidos as $pedido)
               <tr>
                 <td class=" text-center">{{ $pedido->pedido_id }}</td>
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ $pedido->cantidad }}</td>
-                <!-- <td>{{ $pedido->producto_id }}</td> -->
-                <td>{{ $pedido->producto_id }}</td>
+                <td>{{ $pedido->producto?->productoCDA ?? $pedido->producto_id }}</td>
                 <td class=" text-right">${{ $pedido->precio_unitario }}</td>
                 <td class=" text-right">${{ $pedido->totalLinea }}</td>
               </tr>

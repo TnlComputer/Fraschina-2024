@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ExpedicionGeneralExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ExpedicionGeneral;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -12,95 +13,23 @@ use Carbon\Carbon;
 class ExpedicionGeneralController extends Controller
 {
   /**
-   * Display a listing of the resource.
+   * Campos que se filtran con LIKE desde el formulario de búsqueda.
    */
+  private const CAMPOS_FILTRO = [
+    'mo', 'cl', 'modo', 'prod', 'p', 'l', 'pl', 'w', 'gh', 'gs', 'gi',
+    'hum', 'cz', 'est', 'abs', 'fn', 'punt', 'particularidades',
+  ];
 
   public function index(Request $request)
   {
-    $query = ExpedicionGeneral::query();
-
-    if ($request->filled('fecha')) {
-      $fecha = $request->fecha;
-
-      // Si ingresó solo el año (YYYY)
-      if (preg_match('/^\d{4}$/', $fecha)) {
-        $query->where('fecha', 'like', "{$fecha}%"); // Busca YYYYxxxx
-      }
-      // Si ingresó año y mes (YYYYMM)
-      elseif (preg_match('/^\d{6}$/', $fecha)) {
-        $query->where('fecha', 'like', "{$fecha}%"); // Busca YYYYMMxx
-      }
-      // Si ingresó la fecha completa (YYYYMMDD)
-      elseif (preg_match('/^\d{8}$/', $fecha)) {
-        try {
-          $fechaFormato = \Carbon\Carbon::createFromFormat('Ymd', $fecha)->format('Y-m-d');
-          $query->whereDate('fecha', $fechaFormato);
-        } catch (\Exception $e) {
-          // Si hay un error en el formato, simplemente no filtra.
-        }
-      }
-    }
-    if ($request->filled('mo')) {
-      $query->where('mo', 'like', "%{$request->mo}%");
-    }
-    if ($request->filled('cl')) {
-      $query->where('cl', 'like', "%{$request->cl}%");
-    }
-    if ($request->filled('modo')) {
-      $query->where('modo', 'like', "%{$request->modo}%");
-    }
-    if ($request->filled('prod')) {
-      $query->where('prod', 'like', "%{$request->prod}%");
-    }
-    if ($request->filled('p')) {
-      $query->where('p', 'like', "%{$request->p}%");
-    }
-    if ($request->filled('l')) {
-      $query->where('l', 'like', "%{$request->l}%");
-    }
-    if ($request->filled('pl')) {
-      $query->where('pl', 'like', "%{$request->pl}%");
-    }
-    if ($request->filled('w')) {
-      $query->where('w', 'like', "%{$request->w}%");
-    }
-    if ($request->filled('gh')) {
-      $query->where('gh', 'like', "%{$request->gh}%");
-    }
-    if ($request->filled('gs')) {
-      $query->where('gs', 'like', "%{$request->gs}%");
-    }
-    if ($request->filled('hum')) {
-      $query->where('hum', 'like', "%{$request->hum}%");
-    }
-    if ($request->filled('cz')) {
-      $query->where('cz', 'like', "%{$request->cz}%");
-    }
-    if ($request->filled('est')) {
-      $query->where('est', 'like', "%{$request->est}%");
-    }
-    if ($request->filled('abs')) {
-      $query->where('abs', 'like', "%{$request->abs}%");
-    }
-    if ($request->filled('fn')) {
-      $query->where('fn', 'like', "%{$request->fn}%");
-    }
-    if ($request->filled('punt')) {
-      $query->where('punt', 'like', "%{$request->punt}%");
-    }
-    if ($request->filled('particularidades')) {
-      $query->where('particularidades', 'like', "%{$request->particularidades}%");
-    }
-
-    $expedicion_general = $query->orderBy('fecha', 'desc')->paginate(10);
+    $expedicion_general = $this->consultaFiltrada($request)
+      ->orderBy('fecha', 'desc')
+      ->paginate(10)
+      ->withQueryString();
 
     return view('pages.Expedicion.General.index', compact('expedicion_general'));
   }
 
-
-  /**
-   * Show the form for creating a new resource.
-   */
   // Mostrar el formulario para crear un nuevo registro
   public function create()
   {
@@ -110,58 +39,107 @@ class ExpedicionGeneralController extends Controller
   // Almacenar el nuevo registro en la base de datos
   public function store(Request $request)
   {
-    $validated = $request->validate([
-      'fecha' => 'required|date',
-      'mo' => 'required|max:5',
-      'cl' => 'required|max:5',
-      'modo' => 'nullable|string',
-      'prod' => 'nullable|string',
-      'p' => 'nullable|numeric',
-      'l' => 'nullable|numeric',
-      'pl' => 'nullable|numeric',
-      'w' => 'nullable|numeric',
-      'gh' => 'nullable|numeric',
-      'gs' => 'nullable|numeric',
-      'gi' => 'nullable|numeric',
-      'hum' => 'nullable|numeric',
-      'cz' => 'nullable|numeric',
-      'est' => 'nullable|numeric',
-      'abs' => 'nullable|numeric',
-      'fn' => 'nullable|numeric',
-      'punt' => 'nullable|numeric',
-      'particularidades' => 'nullable|string',
-    ]);
+    $validated = $request->validate($this->reglas());
 
     ExpedicionGeneral::create($validated);
 
     return redirect()->route('expedicion_general.index')->with('success', 'Expedición creada exitosamente.');
   }
 
-  /**
-   * Display the specified resource.
-   */
   public function show(ExpedicionGeneral $expedicionGeneral)
   {
     //
   }
 
-  /**
-   * Show the form for editing the specified resource.
-   */
   // Mostrar el formulario para editar un registro
   public function edit($id)
   {
-    $expedicionGeneral = ExpedicionGeneral::findOrFail($id);
+    $expedicionGeneral = $this->activos()->findOrFail($id);
     return view('pages.Expedicion.General.edit', compact('expedicionGeneral'));
   }
 
-  /**
-   * Update the specified resource in storage.
-   */
   // Actualizar un registro existente
   public function update(Request $request, $id)
   {
-    $validated = $request->validate([
+    $validated = $request->validate($this->reglas());
+
+    $expedicionGeneral = $this->activos()->findOrFail($id);
+    $expedicionGeneral->update($validated);
+
+    return redirect()->route('expedicion_general.index')->with('success', 'Expedición actualizada exitosamente.');
+  }
+
+  public function destroy($id)
+  {
+    $expedicionGeneral = ExpedicionGeneral::findOrFail($id);
+
+    // Baja lógica: "A" -> "D"
+    $expedicionGeneral->status = 'D';
+    $expedicionGeneral->save();
+
+    return redirect()->route('expedicion_general.index')->with('success', 'Expedición desactivada correctamente.');
+  }
+
+  public function export(Request $request)
+  {
+    $expediciones = $this->consultaFiltrada($request)->orderBy('fecha', 'desc')->get();
+
+    // Si no hay datos, mostrar un mensaje en lugar de generar un archivo vacío
+    if ($expediciones->isEmpty()) {
+      return back()->with('error', 'No hay datos para exportar con los filtros aplicados.');
+    }
+
+    $nombreArchivo = 'expedicion_general-' . Carbon::now()->format('Y-m-d') . '.xlsx';
+
+    return Excel::download(new ExpedicionGeneralExport($expediciones), $nombreArchivo);
+  }
+
+  /**
+   * Registros no dados de baja.
+   */
+  private function activos(): Builder
+  {
+    return ExpedicionGeneral::query()->where(function ($q) {
+      $q->where('status', '!=', 'D')->orWhereNull('status');
+    });
+  }
+
+  /**
+   * Consulta con los filtros del formulario. Compartida por index() y export().
+   * La fecha acepta AAAA (año), AAAAMM (año y mes) o AAAAMMDD (día).
+   */
+  private function consultaFiltrada(Request $request): Builder
+  {
+    $query = $this->activos();
+
+    $fecha = trim((string) $request->input('fecha'));
+    if (preg_match('/^\d{4}$/', $fecha)) {
+      $query->whereYear('fecha', $fecha);
+    } elseif (preg_match('/^(\d{4})(\d{2})$/', $fecha, $m)) {
+      $query->whereYear('fecha', $m[1])->whereMonth('fecha', $m[2]);
+    } elseif (preg_match('/^\d{8}$/', $fecha)) {
+      try {
+        $query->whereDate('fecha', Carbon::createFromFormat('Ymd', $fecha)->format('Y-m-d'));
+      } catch (\Exception $e) {
+        // Fecha mal formada: no se filtra por fecha
+      }
+    }
+
+    foreach (self::CAMPOS_FILTRO as $campo) {
+      if ($request->filled($campo)) {
+        $query->where($campo, 'like', '%' . $request->input($campo) . '%');
+      }
+    }
+
+    return $query;
+  }
+
+  /**
+   * Reglas de validación compartidas por store() y update().
+   */
+  private function reglas(): array
+  {
+    return [
       'fecha' => 'required|date',
       'mo' => 'required|max:5',
       'cl' => 'required|max:5',
@@ -181,121 +159,6 @@ class ExpedicionGeneralController extends Controller
       'fn' => 'nullable|numeric',
       'punt' => 'nullable|numeric',
       'particularidades' => 'nullable|string',
-    ]);
-
-    $expedicionGeneral = ExpedicionGeneral::findOrFail($id);
-    $expedicionGeneral->update($validated);
-
-    return redirect()->route('expedicion_general.index')->with('success', 'Expedición actualizada exitosamente.');
-  }
-
-
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy($id)
-  {
-    // Buscar el registro por ID
-    $expedicionGeneral = ExpedicionGeneral::findOrFail($id);
-
-    // Cambiar el estado de "A" a "D"
-    $expedicionGeneral->status = 'D';
-    $expedicionGeneral->save();
-
-    // Redirigir con un mensaje de éxito
-    return redirect()->route('expedicion_general.index')->with('success', 'Expedición desactivada correctamente.');
-  }
-
-  public function export(Request $request)
-  {
-    $query = ExpedicionGeneral::query();
-
-    if ($request->filled('fecha')) {
-      $fecha = $request->fecha;
-
-      // Si ingresó solo el año (YYYY)
-      if (preg_match('/^\d{4}$/', $fecha)) {
-        $query->where('fecha', 'like', "{$fecha}%"); // Busca YYYYxxxx
-      }
-      // Si ingresó año y mes (YYYYMM)
-      elseif (preg_match('/^\d{6}$/', $fecha)) {
-        $query->where('fecha', 'like', "{$fecha}%"); // Busca YYYYMMxx
-      }
-      // Si ingresó la fecha completa (YYYYMMDD)
-      elseif (preg_match('/^\d{8}$/', $fecha)) {
-        try {
-          $fechaFormato = \Carbon\Carbon::createFromFormat('Ymd', $fecha)->format('Y-m-d');
-          $query->whereDate('fecha', $fechaFormato);
-        } catch (\Exception $e) {
-          // Si hay un error en el formato, simplemente no filtra.
-        }
-      }
-    }
-
-
-    if ($request->filled('mo')) {
-      $query->where('mo', 'like', "%{$request->mo}%");
-    }
-    if ($request->filled('cl')) {
-      $query->where('cl', 'like', "%{$request->cl}%");
-    }
-    if ($request->filled('modo')) {
-      $query->where('modo', 'like', "%{$request->modo}%");
-    }
-    if ($request->filled('prod')) {
-      $query->where('prod', 'like', "%{$request->prod}%");
-    }
-    if ($request->filled('p')) {
-      $query->where('p', 'like', "%{$request->p}%");
-    }
-    if ($request->filled('l')) {
-      $query->where('l', 'like', "%{$request->l}%");
-    }
-    if ($request->filled('pl')) {
-      $query->where('pl', 'like', "%{$request->pl}%");
-    }
-    if ($request->filled('w')) {
-      $query->where('w', 'like', "%{$request->w}%");
-    }
-    if ($request->filled('gh')) {
-      $query->where('gh', 'like', "%{$request->gh}%");
-    }
-    if ($request->filled('gs')) {
-      $query->where('gs', 'like', "%{$request->gs}%");
-    }
-    if ($request->filled('hum')) {
-      $query->where('hum', 'like', "%{$request->hum}%");
-    }
-    if ($request->filled('cz')) {
-      $query->where('cz', 'like', "%{$request->cz}%");
-    }
-    if ($request->filled('est')) {
-      $query->where('est', 'like', "%{$request->est}%");
-    }
-    if ($request->filled('abs')) {
-      $query->where('abs', 'like', "%{$request->abs}%");
-    }
-    if ($request->filled('fn')) {
-      $query->where('fn', 'like', "%{$request->fn}%");
-    }
-    if ($request->filled('punt')) {
-      $query->where('punt', 'like', "%{$request->punt}%");
-    }
-    if ($request->filled('particularidades')) {
-      $query->where('particularidades', 'like', "%{$request->particularidades}%");
-    }
-
-    $expediciones = $query->get();
-
-    // Si no hay datos, mostrar un mensaje en lugar de generar un archivo vacío
-    if ($expediciones->isEmpty()) {
-      return back()->with('error', 'No hay datos para exportar con los filtros aplicados.');
-    }
-
-
-    $fecha = Carbon::now()->format('Y-m-d'); // Obtiene la fecha actual en formato YYYY-MM-DD
-    $nombreArchivo = 'expedicion_general-' . $fecha . '.xlsx'; // Crea el nombre del archivo
-
-    return Excel::download(new ExpedicionGeneralExport($expediciones), $nombreArchivo);
+    ];
   }
 }

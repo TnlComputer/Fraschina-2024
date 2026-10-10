@@ -30,7 +30,7 @@ $total = 0;
         <tr>
           <th>Total</th>
           <td>
-            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $distribucion->id, 'fecha' => $fecha]) }}"
+            <a href="{{ route('distribucion_pedido.edit', ['distribucion_pedido' => $pedido->id, 'fecha' => $pedido->fechaEntrega]) }}"
               class="btn btn-xs" title="Editar Pedido">
               <i class="fas fa-pen fs-xs text-blue"></i>
             </a>
@@ -67,13 +67,12 @@ $total = 0;
         @foreach ($pedido->lineasPedidos as $detalle)
         @php
         $precio = $detalle->cantidad * $detalle->precio_unitario;
-        $conIva = $precio * $detalle->producto->ivancda / 100;
-        $precioConIva = $precio + $conIva;
+        $precioConIva = \App\Models\productoCDA::calcularTotalLinea($detalle->precio_unitario, $detalle->cantidad, $detalle->producto?->porcentajeIva() ?? 21);
         $total = $total + $precioConIva;
         @endphp
         <tr>
           {{-- <td>{{ $detalle->pedido_id }}- {{$detalle->id}}</td> --}}
-          <td>{{ $detalle->producto->productoCDA }}</td>
+          <td>{{ $detalle->producto?->productoCDA }}</td>
           <!-- Asumiendo que tienes una relación 'producto' en el modelo de línea -->
           <td class=" text-center">{{ number_format($detalle->cantidad, 0) }}</td>
           <td class=" text-right">${{ number_format($detalle->precio_unitario, 2) }}</td>

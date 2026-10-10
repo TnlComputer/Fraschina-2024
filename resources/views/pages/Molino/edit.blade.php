@@ -11,7 +11,7 @@
       @csrf
       @method('PUT')
 
-      @include('Pages.Molino.form', ['action' => 'edit', 'molino' => $molino])
+      @include('pages.Molino.form', ['action' => 'edit', 'molino' => $molino])
 
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>

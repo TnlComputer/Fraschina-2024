@@ -12,7 +12,7 @@
       @method('PUT')
 
       {{-- Incluye el formulario común para crear/editar --}}
-      @include('Pages.Agro.Personal.form', ['action' => 'edit', 'personal' => $personal])
+      @include('pages.Agro.Personal.form', ['action' => 'edit', 'personal' => $personal])
 
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="saveButton">Actualizar</button>

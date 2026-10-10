@@ -6,7 +6,6 @@ use App\Models\AuxAreas;
 use App\Models\AuxCargos;
 use App\Models\AuxProfesion;
 use App\Models\Distribucion;
-use App\Models\Distribucion_Personal;
 use App\Models\DistribucionPersonal;
 use Illuminate\Http\Request;
 

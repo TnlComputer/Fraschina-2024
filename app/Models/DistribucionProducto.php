@@ -15,7 +15,7 @@ class DistribucionProducto extends Model
 
   public function producto()
   {
-    return $this->belongsTo(ProductoCDA::class, 'producto_id');
+    return $this->belongsTo(productoCDA::class, 'producto_id');
   }
 
   public function distribucion()

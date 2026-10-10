@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Representacion;
-use App\Models\Representacion_AuxProductos;
-use App\Models\Representacion_Producto;
 use App\Models\RepresentacionAuxProductos;
 use App\Models\RepresentacionProducto;
 use Illuminate\Http\Request;

@@ -11,7 +11,7 @@
       @csrf
       @method('PUT')
 
-      @include('Pages.Proveedor.form', ['action' => 'edit', 'proveedor' => $proveedor])
+      @include('pages.Proveedor.form', ['action' => 'edit', 'proveedor' => $proveedor])
 
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>

@@ -15,13 +15,14 @@ class DistribucionController extends Controller
   {
     $name = trim($request->get('name'));
 
-    // Construir la consulta base con ordenamiento por razonsocial
+    // Consulta base ordenada por razonsocial. LEFT JOIN para no ocultar clientes
+    // a los que les falta calle, barrio, localidad, municipio o zona.
     $query = DB::table('distribucions as d')
-      ->join('auxcalles as auxCalle', 'd.dire_calle_id', '=', 'auxCalle.id')
-      ->join('auxbarrios as auxB', 'd.barrio_id', '=', 'auxB.id')
-      ->join('auxlocalidades as auxLoc', 'd.localidad_id', '=', 'auxLoc.id')
-      ->join('auxmunicipios as auxMun', 'd.municipio_id', '=', 'auxMun.id')
-      ->join('auxzonas as auxZon', 'd.zona_id', '=', 'auxZon.id')
+      ->leftJoin('auxcalles as auxCalle', 'd.dire_calle_id', '=', 'auxCalle.id')
+      ->leftJoin('auxbarrios as auxB', 'd.barrio_id', '=', 'auxB.id')
+      ->leftJoin('auxlocalidades as auxLoc', 'd.localidad_id', '=', 'auxLoc.id')
+      ->leftJoin('auxmunicipios as auxMun', 'd.municipio_id', '=', 'auxMun.id')
+      ->leftJoin('auxzonas as auxZon', 'd.zona_id', '=', 'auxZon.id')
       ->select(
         'd.clisg_id',
         'd.razonsocial',
@@ -49,9 +50,9 @@ class DistribucionController extends Controller
 
     if ($name) {
       $query->where(function ($subQuery) use ($name) {
-        $subQuery->orWhere('nomfantasia', 'like', '%' . $name . '%')
-          ->orWhere('razonsocial', 'like', '%' . $name . '%')
-          ->orWhere('clisg_id', 'like', '%' . $name . '%');
+        $subQuery->orWhere('d.nomfantasia', 'like', '%' . $name . '%')
+          ->orWhere('d.razonsocial', 'like', '%' . $name . '%')
+          ->orWhere('d.clisg_id', 'like', '%' . $name . '%');
       });
     }
 
@@ -77,7 +78,7 @@ class DistribucionController extends Controller
         ->leftJoin('auxcontacto as auxCon', 'd.contacto_id', '=', 'auxCon.id')
         ->leftJoin('auxestados as auxEst', 'd.estado_id', '=', 'auxEst.id')
         ->leftJoin('auxcobrar as auxCob', 'd.cobrar_id', '=', 'auxCob.id')
-        ->leftJoin('auxpagos as auxCar', 'd.cobrar_id', '=', 'auxCar.id')
+        ->leftJoin('auxpagos as auxCar', 'd.cobro_id', '=', 'auxCar.id')
         ->leftJoin('auxtipopagos as auxTPg', 'd.tcobro_id', '=', 'auxTPg.id')
         ->leftJoin('auxveraz as auxVer', 'd.veraz_id', '=', 'auxVer.id')
         ->select(
@@ -195,7 +196,7 @@ class DistribucionController extends Controller
 
     $distribucion = new Distribucion();
     // Pasar datos a la vista
-    return view('Pages.Distribucion.create', compact(
+    return view('pages.Distribucion.create', compact(
       'distribucion',
       'calles',
       'barrios',
@@ -217,51 +218,7 @@ class DistribucionController extends Controller
   public function store(Request $request)
   {
     // Validación de datos
-    $validated = $request->validate([
-      'clisg_id' => 'nullable|integer',
-      'razonsocial' => 'required|string|max:50',
-      'nomfantasia' => 'nullable|string|max:100',
-      'dire_calle_id' => 'required|integer|exists:auxcalles,id',
-      'dire_nro' => 'nullable|string|max:30',
-      'piso' => 'nullable|string|max:10',
-      'dpto' => 'nullable|string|max:10',
-      'codpost' => 'nullable|string|max:30',
-      'dire_obs' => 'nullable|string|max:100',
-      'barrio_id' => 'required|integer|exists:auxbarrios,id',
-      'municipio_id' => 'required|integer|exists:auxmunicipios,id',
-      'localidad_id' => 'required|integer|exists:auxlocalidades,id',
-      'zona_id' => 'required|integer|exists:auxzonas,id',
-      'telefono' => 'nullable|string|max:20',
-      'cuit' => 'nullable|string|max:20',
-      'correo' => 'nullable|string|max:255|email',
-      'marcas' => 'nullable|string|max:255',
-      'info' => 'nullable|string',
-      'rubro_id' => 'required|integer|exists:auxrubros,id',
-      'tamanio_id' => 'required|integer|exists:auxtamanio,id',
-      'modo_id' => 'required|integer|exists:auxmodos,id',
-      'contacto_id' => 'required|integer|exists:auxcontacto,id',
-      'auto' => 'nullable|in:on,off',
-      'veraz_id' => 'required|integer|exists:auxveraz,id',
-      'estado_id' => 'required|integer|exists:auxestados,id',
-      'productoCDA' => 'nullable|string',
-      'desde' => 'nullable|date_format:H:i',
-      'hasta' => 'nullable|date_format:H:i',
-      'desde1' => 'nullable|date_format:H:i',
-      'hasta1' => 'nullable|date_format:H:i',
-      'lunes' => 'nullable|in:on,off',
-      'sabado' => 'nullable|in:on,off',
-      'fac_imp' => 'nullable|in:on,off',
-      'obsrecep' => 'nullable|string|max:255',
-      'cobrar_id' => 'nullable|integer|exists:auxcobrar,id',
-      'cobro_id' => 'nullable|integer|exists:auxpagos,id',
-      'tcobro_id' => 'nullable|integer|exists:auxtipopagos,id',
-    ], [
-      'desde.date_format' => 'El campo "desde" debe estar en el formato HH:mm.',
-      'hasta.date_format' => 'El campo "hasta" debe estar en el formato HH:mm.',
-      'desde1.date_format' => 'El campo "desde1" debe estar en el formato HH:mm.',
-      'hasta1.date_format' => 'El campo "hasta1" debe estar en el formato HH:mm.',
-      'tamanio_id' => 'El campo "tamaño" es obligatorio',
-    ]);
+    $validated = $request->validate($this->reglas(), $this->mensajes());
 
     // dd($validated['auto']);
 
@@ -290,7 +247,8 @@ class DistribucionController extends Controller
 
   public function edit($id)
   {
-    $distribucion = DB::table('distribucions')->where('id', $id)->first();
+    $distribucion = DB::table('distribucions')->where('id', $id)->where('status', 'A')->first();
+    abort_if(!$distribucion, 404);
 
     // $calles = DB::table('auxcalles')->pluck('calle', 'id');
     // $barrios = DB::table('auxbarrios')->pluck('nombrebarrio', 'id');
@@ -339,7 +297,49 @@ class DistribucionController extends Controller
   }
   public function update(Request $request, $id)
   {
-    $validated = $request->validate([
+    $validated = $request->validate($this->reglas(), $this->mensajes());
+
+    // dd($validated['auto']);
+
+    // Validación adicional para horas
+    if ($request->input('desde') && $request->input('hasta') && $request->input('desde') > $request->input('hasta')) {
+      return redirect()->back()->withErrors(['desde' => 'La hora de inicio no puede ser mayor que la hora de fin.']);
+    }
+
+
+    // Normalización de checkboxes
+    $validated['auto'] = $request->has('auto') ? 'on' : 'off';
+    $validated['lunes'] = $request->has('lunes') ? 'on' : 'off';
+    $validated['sabado'] = $request->has('sabado') ? 'on' : 'off';
+    $validated['fac_imp'] = $request->has('fac_imp') ? 'on' : 'off';
+
+    // Actualización del registro (los desactivados no se editan ni se reactivan por esta vía)
+    $distribucion = Distribucion::where('status', 'A')->findOrFail($id);
+    $distribucion->update($validated);
+
+    $name = $request->razonsocial ? $request->razonsocial : $request->nomfantasia;
+    // dd($name);  // Imprime el valor de $name
+    return redirect()->route('distribucion.index', ['name' => $name])->with('success', 'Distribución actualizada exitosamente.');
+  }
+
+  public function destroy($id)
+  {
+    // Buscar el registro por ID
+    $distribucion = Distribucion::findOrFail($id);
+
+    // Actualizar el campo 'status' a 'D'
+    $distribucion->update(['status' => 'D']);
+
+    // Redirigir al índice con un mensaje de éxito
+    return redirect()->route('distribucion.index')->with('success', 'Distribución desactivada exitosamente.');
+  }
+
+  /**
+   * Reglas de validación compartidas por store() y update().
+   */
+  private function reglas(): array
+  {
+    return [
       'clisg_id' => 'nullable|integer',
       'razonsocial' => 'required|string|max:50',
       'nomfantasia' => 'nullable|string|max:100',
@@ -377,48 +377,17 @@ class DistribucionController extends Controller
       'cobrar_id' => 'nullable|integer|exists:auxcobrar,id',
       'cobro_id' => 'nullable|integer|exists:auxpagos,id',
       'tcobro_id' => 'nullable|integer|exists:auxtipopagos,id',
-    ], [
+    ];
+  }
+
+  private function mensajes(): array
+  {
+    return [
       'desde.date_format' => 'El campo "desde" debe estar en el formato HH:mm.',
       'hasta.date_format' => 'El campo "hasta" debe estar en el formato HH:mm.',
       'desde1.date_format' => 'El campo "desde1" debe estar en el formato HH:mm.',
       'hasta1.date_format' => 'El campo "hasta1" debe estar en el formato HH:mm.',
       'tamanio_id' => 'El campo "tamaño" es obligatorio',
-    ]);
-
-    // dd($validated['auto']);
-
-    // Validación adicional para horas
-    if ($request->input('desde') && $request->input('hasta') && $request->input('desde') > $request->input('hasta')) {
-      return redirect()->back()->withErrors(['desde' => 'La hora de inicio no puede ser mayor que la hora de fin.']);
-    }
-
-
-    // Normalización de checkboxes
-    $validated['auto'] = $request->has('auto') ? 'on' : 'off';
-    $validated['lunes'] = $request->has('lunes') ? 'on' : 'off';
-    $validated['sabado'] = $request->has('sabado') ? 'on' : 'off';
-    $validated['fac_imp'] = $request->has('fac_imp') ? 'on' : 'off';
-    $validated['status'] = 'A';
-
-
-    // Actualización del registro
-    $distribucion = Distribucion::findOrFail($id);
-    $distribucion->update($validated);
-
-    $name = $request->razonsocial ? $request->razonsocial : $request->nomfantasia;
-    // dd($name);  // Imprime el valor de $name
-    return redirect()->route('distribucion.index', ['name' => $name])->with('success', 'Distribución actualizada exitosamente.');
-  }
-
-  public function destroy($id)
-  {
-    // Buscar el registro por ID
-    $distribucion = Distribucion::findOrFail($id);
-
-    // Actualizar el campo 'status' a 'D'
-    $distribucion->update(['status' => 'D']);
-
-    // Redirigir al índice con un mensaje de éxito
-    return redirect()->route('distribucion.index')->with('success', 'Distribución desactivada exitosamente.');
+    ];
   }
 }

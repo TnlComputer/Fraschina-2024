@@ -45,11 +45,10 @@
         <tbody>
           {{-- Productos existentes --}}
           @foreach($pedido->lineasPedidos as $linea)
-          <tr data-linea-id="{{ $linea->id }}" class="producto-row">
+          <tr data-linea-id="{{ $linea->id }}" data-iva="{{ $linea->producto?->porcentajeIva() ?? 21 }}" class="producto-row">
             <td>Producto</td>
-            @if ($pedido->tipo != 'T')
             <td>
-              {{ $linea->producto->productoCDA }}
+              {{ $linea->producto?->productoCDA }}
               <input type="hidden" name="existing_product_line_ids[]" value="{{ $linea->id }}">
             </td>
             <td>
@@ -65,7 +64,6 @@
               <button type="button" class="btn btn-danger remove-row">X</button>
             </td>
           </tr>
-          @endif
           @endforeach
 
           {{-- Tareas existentes --}}
@@ -149,7 +147,7 @@
         let options = '<option value="">Seleccione</option>';
         if (tipo === 'P') {
           data.productos.forEach(item => {
-            options += `<option value="${item.producto_id}" data-precio="${item.precio}">${item.nomproducto}</option>`;
+            options += `<option value="${item.producto_id}" data-precio="${item.precio}" data-iva="${ivaDe(item.ivacda)}">${item.nombre}</option>`;
           });
         } else if (tipo === 'T') {
           data.tareas.forEach(item => {
@@ -189,7 +187,9 @@
         alert("Ingrese precio y cantidad para el producto.");
         return;
       }
-      let total = parseFloat(precio) * parseFloat(cantidad);
+      let iva = parseFloat(itemSelect.options[itemSelect.selectedIndex].dataset.iva) || 21;
+      let total = calcularTotalLinea(precio, cantidad, iva);
+      newRow.dataset.iva = iva;
       newRow.innerHTML = `
         <td>Producto</td>
         <td>${itemText}
@@ -227,17 +227,26 @@
   });
 });
 
+// Misma regla que productoCDA::porcentajeIva() y calcularTotalLinea() en el servidor
+function ivaDe(ivacda) {
+  return parseFloat(String(ivacda ?? '').replace(',', '.')) === 10.5 ? 10.5 : 21;
+}
+
+function calcularTotalLinea(precio, cantidad, iva) {
+  return Math.round((parseFloat(precio) || 0) * (parseFloat(cantidad) || 0) * (1 + iva / 100) * 100) / 100;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
-// Función para actualizar el total de cada fila
+// Actualiza el total (con IVA) de una fila, existente o nueva
 function actualizarTotalFila(row) {
-let precioInput = row.querySelector('input[name="existing_precios[]"]');
-let cantidadInput = row.querySelector('input[name="existing_cantidades[]"]');
+let precioInput = row.querySelector('input[name="existing_precios[]"], input[name="new_precios[]"]');
+let cantidadInput = row.querySelector('input[name="existing_cantidades[]"], input[name="new_cantidades[]"]');
 let totalCell = row.querySelector('.linea-total');
+if (!precioInput || !cantidadInput || !totalCell) return;
 
-let precio = parseFloat(precioInput.value) || 0;
-let cantidad = parseInt(cantidadInput.value) || 0;
-let total = precio * cantidad;
+let iva = parseFloat(row.dataset.iva) || 21;
+let total = calcularTotalLinea(precioInput.value, cantidadInput.value, iva);
 
 totalCell.textContent = `$${total.toFixed(2)}`;
 }

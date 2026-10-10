@@ -11,7 +11,7 @@
       @csrf
       @method('PUT')
 
-      @include('Pages.Transporte.form', ['action' => 'edit', 'transporte' => $transporte])
+      @include('pages.Transporte.form', ['action' => 'edit', 'transporte' => $transporte])
 
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>

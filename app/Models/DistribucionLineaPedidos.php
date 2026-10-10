@@ -13,9 +13,14 @@ class DistribucionLineaPedidos extends Model
 
   protected $guarded = [];
 
+  public function pedido()
+  {
+    return $this->belongsTo(DistribucionNroPedidos::class, 'pedido_id');
+  }
+
   public function distribucion()
   {
-    return $this->belongsTo(DistribucionNroPedidos::class, 'id');
+    return $this->belongsTo(Distribucion::class, 'distribucion_id');
   }
 
   public function producto()

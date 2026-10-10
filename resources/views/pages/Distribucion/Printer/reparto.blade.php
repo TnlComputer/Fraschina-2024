@@ -125,14 +125,15 @@
       <td class="text-center">{{ $distribucion->distribucion->auxcobro->accion ?? '' }}</td>
       <td class="text-center">{{ $distribucion->distribucion->auxpago->nombre ?? '' }}</td>
       <td class="text-center">{{ $distribucion->distribucion->auxtcobro->nombre ?? '' }}</td>
-      <td class="text-center">{{ \Carbon\Carbon::parse($distribucion->distribucion->desde)->format('H:i') ?? '' }} -
-        {{ \Carbon\Carbon::parse($distribucion->distribucion->hasta)->format('H:i') ?? '' }}</td>
+      {{-- Horarios guardados como H:i:s; vacíos o 00:00:00 no se muestran --}}
+      <td class="text-center">{{ substr($distribucion->distribucion->desde ?? '', 0, 5) }} -
+        {{ substr($distribucion->distribucion->hasta ?? '', 0, 5) }}</td>
       @if (empty($distribucion->distribucion->desde1) || $distribucion->distribucion->desde1 == '00:00:00')
       <td> </td>
       @else
       <td>
-        {{ \Carbon\Carbon::createFromFormat('H:i:s', $distribucion->distribucion->desde1)->format('H:i') ?? '' }} -
-        {{ \Carbon\Carbon::createFromFormat('H:i:s', $distribucion->distribucion->hasta1)->format('H:i') ?? '' }}
+        {{ substr($distribucion->distribucion->desde1, 0, 5) }} -
+        {{ substr($distribucion->distribucion->hasta1 ?? '', 0, 5) }}
       </td>
       @endif
       <td class="text-center">{{ $distribucion->distribucion->sabado ? 'Sí' : 'No' }}</td>

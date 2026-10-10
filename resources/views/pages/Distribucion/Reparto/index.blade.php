@@ -191,13 +191,13 @@
                 <!-- Cuerpo del Modal -->
                 <div class="modal-body">
                   <strong>Razón Social:</strong> {{ $distribucion->distribucion->nomfantasia }}<br>
-                  <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles->calle }} {{
+                  <strong>Dirección:</strong> {{ $distribucion->distribucion->auxCalles?->calle }} {{
                   $distribucion->distribucion->dire_nro }}
                   {{ $distribucion->distribucion->piso }}
                   {{ $distribucion->distribucion->dpto }} <br>
-                  {{ $distribucion->distribucion->auxbarrio->nombrebarrio }} -
-                  {{ $distribucion->distribucion->auxlocalidad->localidad }} - {{
-                  $distribucion->distribucion->auxmunicipio->ciudadmunicipio }} <br>
+                  {{ $distribucion->distribucion->auxbarrio?->nombrebarrio }} -
+                  {{ $distribucion->distribucion->auxlocalidad?->localidad }} - {{
+                  $distribucion->distribucion->auxmunicipio?->ciudadmunicipio }} <br>
                   <strong>Horarios:</strong><br> Mañana: {{ $distribucion->distribucion->desde }} - {{
                   $distribucion->distribucion->hasta }}<br>
                   Tarde: {{ $distribucion->distribucion->desde1 }} -{{ $distribucion->distribucion->hasta1 }}<br>
