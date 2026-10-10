@@ -188,7 +188,8 @@
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fecha)->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ \Carbon\Carbon::parse($pedido->fechaEntrega )->format('d-m-Y') }}</td>
                 <td class=" text-center">{{ $pedido->cantidad }}</td>
-                <td>{{ $pedido->producto->productoCDA }}</td>
+                <!-- <td>{{ $pedido->producto_id }}</td> -->
+                <td>{{ $pedido->producto_id }}</td>
                 <td class=" text-right">${{ $pedido->precio_unitario }}</td>
                 <td class=" text-right">${{ $pedido->totalLinea }}</td>
               </tr>

@@ -22,4 +22,10 @@ class ProveedorProducto extends Model
   {
     return $this->belongsTo(Proveedor::class, 'proveedor_id');
   }
+
+    public function productoCDA()
+    {
+        return $this->belongsTo(productoCDA::class, 'producto_id', 'id');
+    }
 }
+

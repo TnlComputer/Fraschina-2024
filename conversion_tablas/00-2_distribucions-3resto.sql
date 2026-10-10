@@ -125,5 +125,3 @@ WHERE
     );
 
 SET foreign_key_checks = 1;
-
-SET SESSION sql_mode = @OLD_SQL_MODE;
